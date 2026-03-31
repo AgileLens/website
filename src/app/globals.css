@@ -68,6 +68,18 @@ body {
   z-index: 0;
 }
 
+/* ── Hero title animation ── */
+.hero-title {
+  animation: heroFadeIn 1s ease 0.2s both;
+}
+.hero-subtitle {
+  animation: heroFadeIn 1s ease 0.5s both;
+}
+@keyframes heroFadeIn {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
 /* ── Gradient text ── */
 .gradient-text {
   background: linear-gradient(225deg, var(--color-purple), var(--color-pink));
@@ -91,33 +103,50 @@ body {
   animation: fadeSlide 0.5s ease forwards;
 }
 
-/* ── Hero panels ── */
-.hero-panels-container {
-  height: 200vh;
+/* ── Hero panels (scroll-driven) ── */
+.hero-panels-wrap {
+  height: 250vh;
   position: relative;
 }
 .hero-panels-sticky {
   position: sticky;
-  top: 5vh;
-  height: 90vh;
+  top: 0;
+  height: 100vh;
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 1.5rem;
-  overflow: hidden;
+  padding: 0 2rem;
 }
 .hero-panel {
-  width: 30vw;
-  height: 30vw;
-  max-height: 70vh;
   border-radius: 1.5rem;
   overflow: hidden;
   flex-shrink: 0;
+  transition: transform 0.1s ease-out, opacity 0.3s ease;
+}
+.hero-panel.center {
+  width: min(40vw, 500px);
+  height: min(40vw, 500px);
+  z-index: 3;
+}
+.hero-panel.side {
+  width: min(30vw, 380px);
+  height: min(30vw, 380px);
+  z-index: 2;
+}
+.hero-panel video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
 }
 @media (max-width: 768px) {
-  .hero-panel {
-    width: 40vw;
-    height: 40vw;
+  .hero-panel.center {
+    width: 50vw;
+    height: 50vw;
+  }
+  .hero-panel.side {
+    width: 35vw;
+    height: 35vw;
   }
 }
 

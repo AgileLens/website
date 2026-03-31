@@ -131,32 +131,42 @@ export default function HomePage() {
 
   return (
     <>
-      {/* ── Hero ── */}
-      <section className="relative min-h-screen overflow-hidden">
-        <div className="pink-glow" style={{ bottom: '-10%', left: '-10%' }} />
-        <div className="relative z-10 max-w-[1400px] mx-auto px-6 md:px-12 pt-[25vh]">
-          <div className="max-w-[70ch] mx-auto text-center">
-            <h1 className="text-[clamp(4rem,10vw,10rem)] font-black leading-[0.95] tracking-[-0.04em] mb-6">
+      {/* ── Hero + Panels (unified sticky scroll) ── */}
+      <div className="hero-panels-wrap">
+        <div className="hero-panels-sticky">
+          {/* Pink glow */}
+          <div className="pink-glow" style={{ bottom: '-10%', left: '-10%' }} />
+
+          {/* Layered content */}
+          <div className="absolute inset-0 z-10 flex flex-col items-center justify-start pt-[12vh] pointer-events-none">
+            <h1 className="text-[clamp(4rem,10vw,10rem)] font-black leading-[0.95] tracking-[-0.04em] mb-4 hero-title">
               Agile Lens
             </h1>
-            <p className="text-[clamp(1.2rem,2.5vw,2rem)] font-light leading-relaxed text-muted mb-20">
+            <p className="text-[clamp(1.1rem,2vw,1.75rem)] font-light leading-relaxed text-muted max-w-[50ch] text-center hero-subtitle">
               Crafting immersive experiences for real and virtual worlds and the spectacles within.
             </p>
           </div>
-        </div>
-      </section>
 
-      {/* ── Three Hero Panels (sticky scroll) ── */}
-      <div className="hero-panels-container">
-        <div className="hero-panels-sticky px-4">
-          <div className="hero-panel">
-            <img src="/portfolio/four-seasons/01.jpg" alt="VR experience" className="w-full h-full object-cover" />
-          </div>
-          <div className="hero-panel">
-            <img src="/portfolio/christmas-carol/01.jpg" alt="Immersive production" className="w-full h-full object-cover" />
-          </div>
-          <div className="hero-panel">
-            <img src="/products/hyperreal-estate.png" alt="Architectural visualization" className="w-full h-full object-cover" />
+          {/* Panels */}
+          <div className="relative z-20 flex items-center justify-center gap-4 md:gap-6 mt-[15vh]">
+            <div className="hero-panel side">
+              <img src="/portfolio/four-seasons/01.jpg" alt="VR experience" className="w-full h-full object-cover" />
+            </div>
+            <div className="hero-panel center">
+              <video
+                autoPlay
+                loop
+                muted
+                playsInline
+                poster="https://cdn.prod.website-files.com/68d9482320210cfdb85c1d57%2F68f7caf71105556d6bc665f4_AspenShortv2_2-poster-00001.jpg"
+              >
+                <source src="https://cdn.prod.website-files.com/68d9482320210cfdb85c1d57%2F68f7caf71105556d6bc665f4_AspenShortv2_2-transcode.mp4" type="video/mp4" />
+                <source src="https://cdn.prod.website-files.com/68d9482320210cfdb85c1d57%2F68f7caf71105556d6bc665f4_AspenShortv2_2-transcode.webm" type="video/webm" />
+              </video>
+            </div>
+            <div className="hero-panel side">
+              <img src="/products/hyperreal-estate.png" alt="Architectural visualization" className="w-full h-full object-cover" />
+            </div>
           </div>
         </div>
       </div>

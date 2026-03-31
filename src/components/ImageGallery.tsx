@@ -41,8 +41,8 @@ export default function ImageGallery({ images, projectName }: ImageGalleryProps)
 
   if (!images || images.length === 0) {
     return (
-      <div className="w-full aspect-video rounded-xl overflow-hidden border border-[var(--color-border)]">
-        <div className="w-full h-full bg-gradient-to-br from-[var(--color-accent)]/10 to-[var(--color-accent-2)]/10 flex items-center justify-center">
+      <div className="w-full aspect-video rounded-xl overflow-hidden border border-border">
+        <div className="w-full h-full bg-gradient-to-br from-pink/10 to-purple/10 flex items-center justify-center">
           <span className="text-white/30 text-sm font-medium tracking-wider uppercase">{projectName}</span>
         </div>
       </div>
@@ -53,7 +53,7 @@ export default function ImageGallery({ images, projectName }: ImageGalleryProps)
     <>
       {/* Hero image */}
       <div
-        className="w-full aspect-video rounded-xl overflow-hidden border border-[var(--color-border)] cursor-pointer"
+        className="w-full aspect-video rounded-xl overflow-hidden border border-border cursor-pointer"
         onClick={() => openLightbox(0)}
       >
         <img
@@ -69,7 +69,7 @@ export default function ImageGallery({ images, projectName }: ImageGalleryProps)
           {images.slice(1).map((img, i) => (
             <div
               key={i}
-              className="aspect-video rounded-lg overflow-hidden border border-[var(--color-border)] cursor-pointer"
+              className="aspect-video rounded-lg overflow-hidden border border-border cursor-pointer"
               onClick={() => openLightbox(i + 1)}
             >
               <img

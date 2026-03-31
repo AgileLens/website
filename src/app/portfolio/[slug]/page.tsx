@@ -33,7 +33,7 @@ export default async function ProjectPage({ params }: { params: Promise<{ slug: 
     return (
       <div className="max-w-4xl mx-auto px-6 py-24 text-center">
         <h1 className="text-3xl font-bold mb-4">Project Not Found</h1>
-        <Link href="/portfolio" className="text-[var(--color-accent)] hover:underline">Back to Portfolio</Link>
+        <Link href="/portfolio" className="text-pink hover:underline">Back to Portfolio</Link>
       </div>
     );
   }
@@ -64,23 +64,23 @@ export default async function ProjectPage({ params }: { params: Promise<{ slug: 
 
   return (
     <div className="max-w-7xl mx-auto px-6 py-24">
-      <Link href="/portfolio" className="inline-flex items-center gap-2 text-sm text-[var(--color-text-muted)] hover:text-[var(--color-accent)] transition-colors mb-8">
+      <Link href="/portfolio" className="inline-flex items-center gap-2 text-sm text-muted hover:text-pink transition-colors mb-8">
         <span>&larr;</span> Back to Portfolio
       </Link>
 
       <div className="mb-12">
         <div className="flex items-center gap-3 mb-4">
-          <span className="text-xs uppercase tracking-wider text-[var(--color-accent)] font-semibold">{category}</span>
+          <span className="text-xs uppercase tracking-wider text-pink font-semibold">{category}</span>
           {project.category2 && (
             <>
-              <span className="text-[var(--color-text-muted)]">/</span>
-              <span className="text-xs uppercase tracking-wider text-[var(--color-accent)] font-semibold">{project.category2}</span>
+              <span className="text-muted">/</span>
+              <span className="text-xs uppercase tracking-wider text-pink font-semibold">{project.category2}</span>
             </>
           )}
           {yearDisplay && (
             <>
-              <span className="text-[var(--color-text-muted)]">|</span>
-              <span className="text-xs text-[var(--color-text-muted)]">{yearDisplay}</span>
+              <span className="text-muted">|</span>
+              <span className="text-xs text-muted">{yearDisplay}</span>
             </>
           )}
         </div>
@@ -94,7 +94,7 @@ export default async function ProjectPage({ params }: { params: Promise<{ slug: 
           {project.overview && (
             <div>
               <h2 className="text-xl font-bold mb-4">Overview</h2>
-              <p className="text-[var(--color-text-muted)] leading-relaxed text-base">{project.overview}</p>
+              <p className="text-muted leading-relaxed text-base">{project.overview}</p>
             </div>
           )}
 
@@ -102,7 +102,7 @@ export default async function ProjectPage({ params }: { params: Promise<{ slug: 
             <div>
               <h2 className="text-xl font-bold mb-4">About the Project</h2>
               {project.description.split('\n\n').map((para, i) => (
-                <p key={i} className="text-[var(--color-text-muted)] leading-relaxed text-base mb-4">{para}</p>
+                <p key={i} className="text-muted leading-relaxed text-base mb-4">{para}</p>
               ))}
             </div>
           )}
@@ -110,7 +110,7 @@ export default async function ProjectPage({ params }: { params: Promise<{ slug: 
           {youtubeId && (
             <div>
               <h2 className="text-xl font-bold mb-4">Video</h2>
-              <div className="aspect-video rounded-xl overflow-hidden border border-[var(--color-border)]">
+              <div className="aspect-video rounded-xl overflow-hidden border border-border">
                 <iframe
                   src={`https://www.youtube.com/embed/${youtubeId}`}
                   title={`${project.name} video`}
@@ -124,7 +124,7 @@ export default async function ProjectPage({ params }: { params: Promise<{ slug: 
           {vimeoId && !youtubeId && (
             <div>
               <h2 className="text-xl font-bold mb-4">Video</h2>
-              <div className="aspect-video rounded-xl overflow-hidden border border-[var(--color-border)]">
+              <div className="aspect-video rounded-xl overflow-hidden border border-border">
                 <iframe
                   src={`https://player.vimeo.com/video/${vimeoId}`}
                   title={`${project.name} video`}
@@ -141,7 +141,7 @@ export default async function ProjectPage({ params }: { params: Promise<{ slug: 
               <h2 className="text-xl font-bold mb-4">Credits and Collaborators</h2>
               <div className="space-y-1">
                 {creditLines.map((line, i) => (
-                  <p key={i} className="text-sm text-[var(--color-text-muted)]">{line}</p>
+                  <p key={i} className="text-sm text-muted">{line}</p>
                 ))}
               </div>
             </div>
@@ -150,73 +150,73 @@ export default async function ProjectPage({ params }: { params: Promise<{ slug: 
           {project.additionalContributors && (
             <div>
               <h2 className="text-xl font-bold mb-4">Additional Contributors</h2>
-              <p className="text-sm text-[var(--color-text-muted)] leading-relaxed">{project.additionalContributors}</p>
+              <p className="text-sm text-muted leading-relaxed">{project.additionalContributors}</p>
             </div>
           )}
 
           {project.papers && (
             <div>
               <h2 className="text-xl font-bold mb-4">Published Papers</h2>
-              <p className="text-sm text-[var(--color-text-muted)] leading-relaxed">{project.papers}</p>
+              <p className="text-sm text-muted leading-relaxed">{project.papers}</p>
             </div>
           )}
         </div>
 
         <div className="space-y-6">
-          <div className="p-6 rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)] space-y-5">
-            <h3 className="text-sm font-bold uppercase tracking-wider text-[var(--color-accent)]">Project Details</h3>
+          <div className="p-6 rounded-xl border border-border bg-surface space-y-5">
+            <h3 className="text-sm font-bold uppercase tracking-wider text-pink">Project Details</h3>
 
             {yearDisplay && (
               <div>
-                <div className="text-xs text-[var(--color-text-muted)] uppercase tracking-wider mb-1">Year</div>
+                <div className="text-xs text-muted uppercase tracking-wider mb-1">Year</div>
                 <div className="text-sm font-medium">{yearDisplay}</div>
               </div>
             )}
 
             {project.clients && (
               <div>
-                <div className="text-xs text-[var(--color-text-muted)] uppercase tracking-wider mb-1">Client / Partner</div>
+                <div className="text-xs text-muted uppercase tracking-wider mb-1">Client / Partner</div>
                 <div className="text-sm font-medium">{project.clients}</div>
               </div>
             )}
 
             {project.platform && (
               <div>
-                <div className="text-xs text-[var(--color-text-muted)] uppercase tracking-wider mb-1">Platform</div>
+                <div className="text-xs text-muted uppercase tracking-wider mb-1">Platform</div>
                 <div className="text-sm font-medium">{project.platform}</div>
               </div>
             )}
 
             {project.tech && (
               <div>
-                <div className="text-xs text-[var(--color-text-muted)] uppercase tracking-wider mb-1">Tech Stack</div>
+                <div className="text-xs text-muted uppercase tracking-wider mb-1">Tech Stack</div>
                 <div className="text-sm font-medium">{project.tech}</div>
               </div>
             )}
 
             {project.awards && (
               <div>
-                <div className="text-xs text-[var(--color-text-muted)] uppercase tracking-wider mb-1">Awards</div>
+                <div className="text-xs text-muted uppercase tracking-wider mb-1">Awards</div>
                 <div className="text-sm font-medium text-yellow-400">{project.awards}</div>
               </div>
             )}
 
             {project.status && (
               <div>
-                <div className="text-xs text-[var(--color-text-muted)] uppercase tracking-wider mb-1">Status</div>
+                <div className="text-xs text-muted uppercase tracking-wider mb-1">Status</div>
                 <div className="text-sm font-medium">{project.status}</div>
               </div>
             )}
           </div>
 
           {pressList.length > 0 && (
-            <div className="p-6 rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)]">
-              <h3 className="text-sm font-bold uppercase tracking-wider text-[var(--color-accent)] mb-4">Press</h3>
+            <div className="p-6 rounded-xl border border-border bg-surface">
+              <h3 className="text-sm font-bold uppercase tracking-wider text-pink mb-4">Press</h3>
               <div className="space-y-2">
                 {pressList.map((item, i) => (
-                  <p key={i} className="text-sm text-[var(--color-text-muted)]">
+                  <p key={i} className="text-sm text-muted">
                     {item.startsWith('http') ? (
-                      <a href={item} target="_blank" rel="noopener noreferrer" className="text-[var(--color-accent)] hover:underline break-all">{item}</a>
+                      <a href={item} target="_blank" rel="noopener noreferrer" className="text-pink hover:underline break-all">{item}</a>
                     ) : item}
                   </p>
                 ))}
@@ -225,11 +225,11 @@ export default async function ProjectPage({ params }: { params: Promise<{ slug: 
           )}
 
           {linksList.length > 0 && (
-            <div className="p-6 rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)]">
-              <h3 className="text-sm font-bold uppercase tracking-wider text-[var(--color-accent)] mb-4">Links</h3>
+            <div className="p-6 rounded-xl border border-border bg-surface">
+              <h3 className="text-sm font-bold uppercase tracking-wider text-pink mb-4">Links</h3>
               <div className="space-y-2">
                 {linksList.map((link, i) => (
-                  <a key={i} href={link} target="_blank" rel="noopener noreferrer" className="block text-sm text-[var(--color-accent)] hover:underline break-all">{link}</a>
+                  <a key={i} href={link} target="_blank" rel="noopener noreferrer" className="block text-sm text-pink hover:underline break-all">{link}</a>
                 ))}
               </div>
             </div>
@@ -237,21 +237,21 @@ export default async function ProjectPage({ params }: { params: Promise<{ slug: 
         </div>
       </div>
 
-      <div className="mt-16 pt-8 border-t border-[var(--color-border)] flex justify-between items-center">
+      <div className="mt-16 pt-8 border-t border-border flex justify-between items-center">
         {prev ? (
-          <Link href={`/portfolio/${prev.slug}`} className="group flex items-center gap-2 text-sm text-[var(--color-text-muted)] hover:text-[var(--color-accent)] transition-colors">
+          <Link href={`/portfolio/${prev.slug}`} className="group flex items-center gap-2 text-sm text-muted hover:text-pink transition-colors">
             <span>&larr;</span>
             <div>
               <div className="text-xs uppercase tracking-wider mb-1">Previous</div>
-              <div className="font-medium group-hover:text-[var(--color-accent)]">{prev.name}</div>
+              <div className="font-medium group-hover:text-pink">{prev.name}</div>
             </div>
           </Link>
         ) : <div />}
         {next ? (
-          <Link href={`/portfolio/${next.slug}`} className="group flex items-center gap-2 text-sm text-[var(--color-text-muted)] hover:text-[var(--color-accent)] transition-colors text-right">
+          <Link href={`/portfolio/${next.slug}`} className="group flex items-center gap-2 text-sm text-muted hover:text-pink transition-colors text-right">
             <div>
               <div className="text-xs uppercase tracking-wider mb-1">Next</div>
-              <div className="font-medium group-hover:text-[var(--color-accent)]">{next.name}</div>
+              <div className="font-medium group-hover:text-pink">{next.name}</div>
             </div>
             <span>&rarr;</span>
           </Link>

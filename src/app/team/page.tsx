@@ -45,19 +45,19 @@ function PersonCard({ name, role, bio, photo }: { name: string; role: string; bi
   const initials = words.length === 1 ? words[0].slice(0, 2).toUpperCase() : words.map(n => n[0]).join('');
 
   return (
-    <div className="group p-6 rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)] hover:border-[var(--color-accent)]/40 transition-all">
+    <div className="group p-6 rounded-xl border border-border bg-surface hover:border-pink/40 transition-all">
       {photo ? (
-        <div className="w-20 h-20 rounded-full overflow-hidden border border-[var(--color-border)] mb-4">
+        <div className="w-20 h-20 rounded-full overflow-hidden border border-border mb-4">
           <img src={photo} alt={name} className="w-full h-full object-cover" />
         </div>
       ) : (
-        <div className="w-20 h-20 rounded-full bg-gradient-to-br from-[var(--color-accent)]/20 to-[var(--color-accent-2)]/20 border border-[var(--color-border)] flex items-center justify-center text-xl font-bold text-[var(--color-accent)] mb-4">
+        <div className="w-20 h-20 rounded-full bg-gradient-to-br from-pink/20 to-purple/20 border border-border flex items-center justify-center text-xl font-bold text-pink mb-4">
           {initials}
         </div>
       )}
       <h3 className="text-lg font-bold">{name}</h3>
-      <div className="text-sm text-[var(--color-accent)] mb-3">{role}</div>
-      {bio && <p className="text-sm text-[var(--color-text-muted)] leading-relaxed">{bio}</p>}
+      <div className="text-sm text-pink mb-3">{role}</div>
+      {bio && <p className="text-sm text-muted leading-relaxed">{bio}</p>}
     </div>
   );
 }
@@ -67,7 +67,7 @@ export default function TeamPage() {
     <div className="max-w-7xl mx-auto px-6 py-24">
       <div className="text-center mb-16">
         <h1 className="text-4xl md:text-6xl font-black mb-4">Our Team</h1>
-        <p className="text-lg text-[var(--color-text-muted)] max-w-2xl mx-auto">
+        <p className="text-lg text-muted max-w-2xl mx-auto">
           Architects, technologists, performers, and storytellers — building the future of immersive experiences.
         </p>
       </div>
