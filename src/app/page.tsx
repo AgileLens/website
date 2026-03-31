@@ -280,12 +280,28 @@ export default function HomePage() {
       <section className="relative overflow-hidden">
         <div className="pink-glow" style={{ bottom: '10%', left: '-15%' }} />
         <div className="relative z-10 text-center px-6 pt-[25vh] mb-12">
-          <h1 className="text-[clamp(4rem,10vw,10rem)] font-black leading-[0.95] tracking-[-0.04em] mb-4 hero-title">
+          <h1 className="text-[clamp(4rem,10vw,10rem)] font-black leading-[0.95] tracking-[-0.04em] mb-6 hero-title">
             Agile Lens
           </h1>
-          <p className="text-[clamp(1.1rem,2vw,1.75rem)] font-light leading-relaxed text-muted max-w-[50ch] mx-auto hero-subtitle">
-            Crafting immersive experiences for real and virtual worlds and the spectacles within.
+          <p className="text-[clamp(1.3rem,2.5vw,2rem)] font-bold leading-snug max-w-[50ch] mx-auto hero-subtitle mb-10">
+            Crafting immersive experiences for{' '}
+            <span className="gradient-text">real and virtual worlds</span>{' '}
+            and the spectacles within.
           </p>
+          <div className="flex gap-4 justify-center hero-subtitle" style={{ animationDelay: '0.7s' }}>
+            <Link
+              href="/portfolio"
+              className="btn-gradient px-7 py-3.5 rounded-lg font-bold text-white text-sm"
+            >
+              View Our Work
+            </Link>
+            <Link
+              href="/contact"
+              className="px-7 py-3.5 border border-grey rounded-lg font-medium text-sm hover:border-muted transition-colors"
+            >
+              Get in Touch
+            </Link>
+          </div>
         </div>
 
         {/* Logo marquee — between hero text and panels */}
