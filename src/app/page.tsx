@@ -118,6 +118,104 @@ function PinkQuote() {
   );
 }
 
+/* ── Scroll-Driven Hero Panels ── */
+function HeroPanels() {
+  const containerRef = useRef<HTMLDivElement>(null);
+  const leftRef = useRef<HTMLDivElement>(null);
+  const middleRef = useRef<HTMLDivElement>(null);
+  const rightRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const container = containerRef.current;
+    if (!container) return;
+
+    const onScroll = () => {
+      const rect = container.getBoundingClientRect();
+      const vh = window.innerHeight;
+      // Progress: 0 when top of container hits top of viewport, 1 when bottom hits top
+      const totalScroll = container.offsetHeight - vh;
+      const scrolled = -rect.top;
+      const raw = Math.max(0, Math.min(1, scrolled / totalScroll));
+
+      // Eased progress for smoother feel
+      const progress = raw;
+
+      // Phase 1 (0-50%): panels expand. Center: 30vw->90vw, 50vh->90vh. Sides: 30vw, 50vh->90vh
+      // Phase 2 (50-60%): side panels fly off screen
+      const expandT = Math.min(1, progress / 0.5); // 0->1 over first 50%
+      const flyT = Math.max(0, Math.min(1, (progress - 0.5) / 0.1)); // 0->1 over 50-60%
+
+      const left = leftRef.current;
+      const middle = middleRef.current;
+      const right = rightRef.current;
+      if (!left || !middle || !right) return;
+
+      // Center panel: width 30vw -> 90vw, height 50vh -> 90vh
+      const centerW = 30 + expandT * 60; // 30 -> 90 vw
+      const centerH = 50 + expandT * 40; // 50 -> 90 vh
+      middle.style.width = `${centerW}vw`;
+      middle.style.height = `${centerH}vh`;
+
+      // Side panels: height 50vh -> 90vh, width stays 30vw
+      const sideH = 50 + expandT * 40;
+      left.style.height = `${sideH}vh`;
+      right.style.height = `${sideH}vh`;
+
+      // Side panels fly off: translate X and slight Y
+      const leftX = flyT * -40; // 0 -> -40vw
+      const rightX = flyT * 40; // 0 -> 40vw
+      const sideY = flyT * -5; // 0 -> -5vh
+      left.style.transform = `translate(${leftX}vw, ${sideY}vh)`;
+      right.style.transform = `translate(${rightX}vw, ${sideY}vh)`;
+
+      // Border radius shrinks as center expands
+      const radius = 1.5 * (1 - expandT * 0.7);
+      middle.style.borderRadius = `${radius}rem`;
+    };
+
+    window.addEventListener('scroll', onScroll, { passive: true });
+    onScroll();
+    return () => window.removeEventListener('scroll', onScroll);
+  }, []);
+
+  return (
+    <div ref={containerRef} className="hero-scroll-container">
+      <div className="hero-scroll-sticky">
+        {/* Left panel */}
+        <div ref={leftRef} className="hero-img-panel hero-img-left">
+          <img
+            src="https://cdn.prod.website-files.com/68d9482320210cfdb85c1d57/68f7a2f10aa3450ae58b3419_RoyalCaribbeanUser.jpg"
+            alt="Royal Caribbean VR activation"
+            className="w-full h-full object-cover"
+          />
+        </div>
+        {/* Center video */}
+        <div ref={middleRef} className="hero-img-panel hero-img-center">
+          <video
+            autoPlay
+            loop
+            muted
+            playsInline
+            poster="https://cdn.prod.website-files.com/68d9482320210cfdb85c1d57%2F68f7caf71105556d6bc665f4_AspenShortv2_2-poster-00001.jpg"
+            className="w-full h-full object-cover"
+          >
+            <source src="https://cdn.prod.website-files.com/68d9482320210cfdb85c1d57%2F68f7caf71105556d6bc665f4_AspenShortv2_2-transcode.mp4" type="video/mp4" />
+            <source src="https://cdn.prod.website-files.com/68d9482320210cfdb85c1d57%2F68f7caf71105556d6bc665f4_AspenShortv2_2-transcode.webm" type="video/webm" />
+          </video>
+        </div>
+        {/* Right panel */}
+        <div ref={rightRef} className="hero-img-panel hero-img-right">
+          <img
+            src="https://cdn.prod.website-files.com/68d9482320210cfdb85c1d57/68f4c0ba5c9627c728ed3cf0_Rice-fromConceptToCompletion%20(2).avif"
+            alt="Rice University virtual theater"
+            className="w-full h-full object-cover"
+          />
+        </div>
+      </div>
+    </div>
+  );
+}
+
 /* ── Homepage ── */
 export default function HomePage() {
   const [slideIndex, setSlideIndex] = useState(0);
@@ -131,45 +229,21 @@ export default function HomePage() {
 
   return (
     <>
-      {/* ── Hero + Panels (unified sticky scroll) ── */}
-      <div className="hero-panels-wrap">
-        <div className="hero-panels-sticky">
-          {/* Pink glow */}
-          <div className="pink-glow" style={{ bottom: '-10%', left: '-10%' }} />
-
-          {/* Layered content */}
-          <div className="absolute inset-0 z-10 flex flex-col items-center justify-start pt-[12vh] pointer-events-none">
-            <h1 className="text-[clamp(4rem,10vw,10rem)] font-black leading-[0.95] tracking-[-0.04em] mb-4 hero-title">
-              Agile Lens
-            </h1>
-            <p className="text-[clamp(1.1rem,2vw,1.75rem)] font-light leading-relaxed text-muted max-w-[50ch] text-center hero-subtitle">
-              Crafting immersive experiences for real and virtual worlds and the spectacles within.
-            </p>
-          </div>
-
-          {/* Panels */}
-          <div className="relative z-20 flex items-center justify-center gap-4 md:gap-6 mt-[15vh]">
-            <div className="hero-panel side">
-              <img src="/portfolio/four-seasons/01.jpg" alt="VR experience" className="w-full h-full object-cover" />
-            </div>
-            <div className="hero-panel center">
-              <video
-                autoPlay
-                loop
-                muted
-                playsInline
-                poster="https://cdn.prod.website-files.com/68d9482320210cfdb85c1d57%2F68f7caf71105556d6bc665f4_AspenShortv2_2-poster-00001.jpg"
-              >
-                <source src="https://cdn.prod.website-files.com/68d9482320210cfdb85c1d57%2F68f7caf71105556d6bc665f4_AspenShortv2_2-transcode.mp4" type="video/mp4" />
-                <source src="https://cdn.prod.website-files.com/68d9482320210cfdb85c1d57%2F68f7caf71105556d6bc665f4_AspenShortv2_2-transcode.webm" type="video/webm" />
-              </video>
-            </div>
-            <div className="hero-panel side">
-              <img src="/products/hyperreal-estate.png" alt="Architectural visualization" className="w-full h-full object-cover" />
-            </div>
-          </div>
+      {/* ── Hero Text ── */}
+      <section className="relative min-h-[70vh] overflow-hidden flex flex-col items-center justify-center">
+        <div className="pink-glow" style={{ bottom: '-10%', left: '-10%' }} />
+        <div className="relative z-10 text-center px-6">
+          <h1 className="text-[clamp(4rem,10vw,10rem)] font-black leading-[0.95] tracking-[-0.04em] mb-4 hero-title">
+            Agile Lens
+          </h1>
+          <p className="text-[clamp(1.1rem,2vw,1.75rem)] font-light leading-relaxed text-muted max-w-[50ch] mx-auto hero-subtitle">
+            Crafting immersive experiences for real and virtual worlds and the spectacles within.
+          </p>
         </div>
-      </div>
+      </section>
+
+      {/* ── Scroll-Driven Hero Panels ── */}
+      <HeroPanels />
 
       {/* ── Client Logo Marquee ── */}
       <Section className="py-20">

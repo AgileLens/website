@@ -103,50 +103,67 @@ body {
   animation: fadeSlide 0.5s ease forwards;
 }
 
-/* ── Hero panels (scroll-driven) ── */
-.hero-panels-wrap {
-  height: 250vh;
+/* ── Scroll-driven hero panels ── */
+.hero-scroll-container {
+  height: 200vh;
   position: relative;
+  overflow: clip;
 }
-.hero-panels-sticky {
+.hero-scroll-sticky {
   position: sticky;
-  top: 0;
+  top: 5vh;
   height: 100vh;
   display: flex;
-  align-items: center;
   justify-content: center;
-  gap: 1.5rem;
-  padding: 0 2rem;
+  align-items: flex-start;
+  margin-top: 5.5rem;
 }
-.hero-panel {
+.hero-img-panel {
+  position: absolute;
   border-radius: 1.5rem;
   overflow: hidden;
-  flex-shrink: 0;
-  transition: transform 0.1s ease-out, opacity 0.3s ease;
+  width: 30vw;
+  will-change: width, height, transform, border-radius;
 }
-.hero-panel.center {
-  width: min(40vw, 500px);
-  height: min(40vw, 500px);
-  z-index: 3;
-}
-.hero-panel.side {
-  width: min(30vw, 380px);
-  height: min(30vw, 380px);
+.hero-img-panel.hero-img-left {
   z-index: 2;
+  right: 58vw;
+  margin-top: 5vh;
+  height: 50vh;
 }
-.hero-panel video {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
+.hero-img-panel.hero-img-center {
+  z-index: 3;
+  width: 30vw;
+  height: 50vh;
+}
+.hero-img-panel.hero-img-right {
+  z-index: 1;
+  left: 58vw;
+  margin-top: 5vh;
+  height: 50vh;
 }
 @media (max-width: 768px) {
-  .hero-panel.center {
-    width: 50vw;
-    height: 50vw;
+  .hero-scroll-container {
+    height: auto;
+    overflow: visible;
   }
-  .hero-panel.side {
-    width: 35vw;
-    height: 35vw;
+  .hero-scroll-sticky {
+    position: relative;
+    top: 0;
+    height: auto;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+    padding: 2rem 1rem;
+  }
+  .hero-img-panel {
+    position: relative !important;
+    width: 90vw !important;
+    height: 50vw !important;
+    right: auto !important;
+    left: auto !important;
+    margin-top: 0 !important;
+    transform: none !important;
   }
 }
 
