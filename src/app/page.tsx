@@ -415,14 +415,15 @@ export default function HomePage() {
               experiences.
             </p>
             <div className="text-sm text-muted">
-              <span className="block mb-2 text-xs uppercase tracking-wider opacity-60">Sister companies</span>
-              <a href="https://www.fda.net" target="_blank" rel="noopener noreferrer" className="text-text hover:text-pink transition-colors">
-                Fisher Dachs Associates
-              </a>
-              <span className="mx-2 opacity-30">|</span>
-              <a href="https://www.fishermarantzstone.com" target="_blank" rel="noopener noreferrer" className="text-text hover:text-pink transition-colors">
-                Fisher Marantz Stone
-              </a>
+              <span className="block mb-4 text-xs uppercase tracking-wider opacity-60">Sister companies</span>
+              <div className="flex items-center gap-8">
+                <a href="https://www.fda.net" target="_blank" rel="noopener noreferrer" className="hover:opacity-80 transition-opacity">
+                  <img src="https://cdn.prod.website-files.com/68d9482320210cfdb85c1d57/68ef514f4e7935c27e31cad5_FDA.png" alt="Fisher Dachs Associates" className="h-10" />
+                </a>
+                <a href="https://www.fishermarantzstone.com" target="_blank" rel="noopener noreferrer" className="hover:opacity-80 transition-opacity">
+                  <img src="https://cdn.prod.website-files.com/68d9482320210cfdb85c1d57/68ef5224d8cab60d5f30eda5_FMS.png" alt="Fisher Marantz Stone" className="h-10" />
+                </a>
+              </div>
             </div>
           </div>
           <AboutSlideshow />
