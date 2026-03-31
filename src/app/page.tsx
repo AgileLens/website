@@ -276,10 +276,10 @@ export default function HomePage() {
 
   return (
     <>
-      {/* ── Hero Text ── */}
-      <section className="relative min-h-[70vh] overflow-hidden flex flex-col items-center justify-center">
-        <div className="pink-glow" style={{ bottom: '-10%', left: '-10%' }} />
-        <div className="relative z-10 text-center px-6">
+      {/* ── Hero Text + Marquee + Panels (unified like Webflow) ── */}
+      <section className="relative overflow-hidden">
+        <div className="pink-glow" style={{ bottom: '10%', left: '-15%' }} />
+        <div className="relative z-10 text-center px-6 pt-[25vh] mb-12">
           <h1 className="text-[clamp(4rem,10vw,10rem)] font-black leading-[0.95] tracking-[-0.04em] mb-4 hero-title">
             Agile Lens
           </h1>
@@ -287,26 +287,26 @@ export default function HomePage() {
             Crafting immersive experiences for real and virtual worlds and the spectacles within.
           </p>
         </div>
+
+        {/* Logo marquee — between hero text and panels */}
+        <div className="relative z-10 py-10">
+          <p className="text-center text-sm uppercase tracking-widest text-muted opacity-60 mb-8">
+            Innovation for
+          </p>
+          <div className="marquee-container">
+            <div className="marquee-track">
+              {[...clients, ...clients].map((c, i) => (
+                <div key={i} className="shrink-0 mx-8 md:mx-12">
+                  <img src={c.logo} alt={c.name} className="h-12 md:h-16 opacity-60 hover:opacity-100 transition-opacity" />
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
       </section>
 
       {/* ── Scroll-Driven Hero Panels ── */}
       <HeroPanels />
-
-      {/* ── Client Logo Marquee ── */}
-      <Section className="py-20">
-        <p className="text-center text-sm uppercase tracking-widest text-muted opacity-60 mb-10">
-          Innovation for
-        </p>
-        <div className="marquee-container">
-          <div className="marquee-track">
-            {[...clients, ...clients].map((c, i) => (
-              <div key={i} className="shrink-0 mx-8 md:mx-12">
-                <img src={c.logo} alt={c.name} className="h-12 md:h-16 opacity-60 hover:opacity-100 transition-opacity" />
-              </div>
-            ))}
-          </div>
-        </div>
-      </Section>
 
       {/* ── Two Pillars: Our Primary Customers ── */}
       <Section className="max-w-[1400px] mx-auto px-6 md:px-12 pt-32 pb-24">
