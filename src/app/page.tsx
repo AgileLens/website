@@ -49,7 +49,7 @@ const pillars = [
   },
   {
     title: 'Entertainment',
-    color: 'pink' as const,
+    color: 'pink-card' as const,
     description:
       'For media, brands, and performing artists, we lead in blending experimental and experiential for large, live audiences, complex production facilitation, and high-flow rate activations. Our solutions streamline performance capture and virtual production management to get the most out of legacy event techs and operators.',
   },
@@ -133,15 +133,13 @@ export default function HomePage() {
     <>
       {/* ── Hero ── */}
       <section className="relative min-h-screen overflow-hidden">
-        {/* Pink radial glow */}
         <div className="pink-glow" style={{ bottom: '-10%', left: '-10%' }} />
-
         <div className="relative z-10 max-w-[1400px] mx-auto px-6 md:px-12 pt-[25vh]">
           <div className="max-w-[70ch] mx-auto text-center">
             <h1 className="text-[clamp(4rem,10vw,10rem)] font-black leading-[0.95] tracking-[-0.04em] mb-6">
               Agile Lens
             </h1>
-            <p className="text-[clamp(1.2rem,2.5vw,2rem)] font-light leading-relaxed opacity-80 mb-20">
+            <p className="text-[clamp(1.2rem,2.5vw,2rem)] font-light leading-relaxed text-muted mb-20">
               Crafting immersive experiences for real and virtual worlds and the spectacles within.
             </p>
           </div>
@@ -152,44 +150,27 @@ export default function HomePage() {
       <div className="hero-panels-container">
         <div className="hero-panels-sticky px-4">
           <div className="hero-panel">
-            <img
-              src="/portfolio/four-seasons/01.jpg"
-              alt="VR experience"
-              className="w-full h-full object-cover"
-            />
+            <img src="/portfolio/four-seasons/01.jpg" alt="VR experience" className="w-full h-full object-cover" />
           </div>
           <div className="hero-panel">
-            {/* Video placeholder — replace with real video when available */}
-            <img
-              src="/portfolio/christmas-carol/01.jpg"
-              alt="Immersive production"
-              className="w-full h-full object-cover"
-            />
+            <img src="/portfolio/christmas-carol/01.jpg" alt="Immersive production" className="w-full h-full object-cover" />
           </div>
           <div className="hero-panel">
-            <img
-              src="/products/hyperreal-estate.png"
-              alt="Architectural visualization"
-              className="w-full h-full object-cover"
-            />
+            <img src="/products/hyperreal-estate.png" alt="Architectural visualization" className="w-full h-full object-cover" />
           </div>
         </div>
       </div>
 
       {/* ── Client Logo Marquee ── */}
       <Section className="py-20">
-        <p className="text-center text-sm uppercase tracking-widest text-[var(--color-text-muted)] opacity-60 mb-10">
+        <p className="text-center text-sm uppercase tracking-widest text-muted opacity-60 mb-10">
           Innovation for
         </p>
         <div className="marquee-container">
           <div className="marquee-track">
             {[...clients, ...clients].map((c, i) => (
-              <div key={i} className="flex-shrink-0 mx-8 md:mx-12">
-                <img
-                  src={c.logo}
-                  alt={c.name}
-                  className="h-12 md:h-16 opacity-60 hover:opacity-100 transition-opacity"
-                />
+              <div key={i} className="shrink-0 mx-8 md:mx-12">
+                <img src={c.logo} alt={c.name} className="h-12 md:h-16 opacity-60 hover:opacity-100 transition-opacity" />
               </div>
             ))}
           </div>
@@ -203,16 +184,10 @@ export default function HomePage() {
           {pillars.map((p) => (
             <div key={p.title} className={`phase-card ${p.color}`}>
               <div className="mb-4">
-                <span
-                  className={`inline-block w-10 h-10 rounded-full ${
-                    p.color === 'green' ? 'bg-[var(--color-green)]' : 'bg-[var(--color-pink)]'
-                  } opacity-30`}
-                />
+                <span className={`inline-block w-10 h-10 rounded-full opacity-30 ${p.color === 'green' ? 'bg-green' : 'bg-pink'}`} />
               </div>
               <h3 className="text-2xl md:text-3xl font-bold mb-4">{p.title}</h3>
-              <p className="text-[var(--color-text-muted)] leading-relaxed text-base md:text-lg">
-                {p.description}
-              </p>
+              <p className="text-muted leading-relaxed text-base md:text-lg">{p.description}</p>
             </div>
           ))}
         </div>
@@ -222,35 +197,27 @@ export default function HomePage() {
       <Section id="products" className="max-w-[1100px] mx-auto px-6 md:px-12 pt-32 pb-24">
         <div className="mb-16">
           <h2 className="text-[clamp(2rem,4vw,4rem)] font-bold mb-4">Our Core Products</h2>
-          <p className="text-[var(--color-text-muted)] max-w-[42ch] text-lg">
+          <p className="text-muted max-w-[42ch] text-lg">
             Explore our key products designed for pre-construction and entertainment industries.
           </p>
         </div>
         <div className="flex flex-col gap-5">
           {products.map((product, i) => (
             <div key={product.name} className="sticky-card" style={{ top: `calc(8vh + ${i * 20}px)` }}>
-              <div className="grid md:grid-cols-[1fr_1.75fr] bg-[#141313] border border-[var(--color-border)] rounded-2xl overflow-hidden min-h-[50vh]">
+              <div className="grid md:grid-cols-[1fr_1.75fr] bg-card border border-border rounded-2xl overflow-hidden min-h-[50vh]">
                 <div className="p-8 md:p-12 flex flex-col justify-center">
-                  <span
-                    className={`inline-block px-3 py-1 rounded-full text-xs font-medium border mb-6 w-fit ${
-                      product.tag === 'green'
-                        ? 'border-[var(--color-green)] text-[var(--color-green)]'
-                        : 'border-[var(--color-pink)] text-[var(--color-pink)]'
-                    }`}
-                  >
+                  <span className={`inline-block px-3 py-1 rounded-full text-xs font-medium border mb-6 w-fit ${
+                    product.tag === 'green'
+                      ? 'border-green text-green'
+                      : 'border-pink text-pink'
+                  }`}>
                     {product.group}
                   </span>
                   <h3 className="text-2xl md:text-3xl font-semibold mb-4">{product.name}</h3>
-                  <p className="text-[var(--color-text-muted)] leading-relaxed">
-                    {product.description}
-                  </p>
+                  <p className="text-muted leading-relaxed">{product.description}</p>
                 </div>
                 <div className="relative min-h-[250px] md:min-h-0">
-                  <img
-                    src={product.image}
-                    alt={product.name}
-                    className="absolute inset-0 w-full h-full object-cover"
-                  />
+                  <img src={product.image} alt={product.name} className="absolute inset-0 w-full h-full object-cover" />
                 </div>
               </div>
             </div>
@@ -266,26 +233,18 @@ export default function HomePage() {
           </Section>
 
           <div className="relative overflow-hidden min-h-[400px]">
-            <div
-              key={slideIndex}
-              className="testimonial-enter grid md:grid-cols-2 gap-8"
-            >
+            <div key={slideIndex} className="testimonial-enter grid md:grid-cols-2 gap-8">
               {testimonialSlides[slideIndex].map((t) => (
-                <div
-                  key={t.name}
-                  className="bg-[var(--color-dark-grey)] rounded-[30px] p-10 md:p-12 flex flex-col"
-                >
+                <div key={t.name} className="bg-dark-grey rounded-[30px] p-10 md:p-12 flex flex-col">
                   <PinkQuote />
-                  <blockquote className="mt-8 text-lg md:text-xl leading-relaxed flex-1 font-[Manrope]">
+                  <blockquote className="mt-8 text-lg md:text-xl leading-relaxed flex-1" style={{ fontFamily: 'Manrope, sans-serif' }}>
                     &ldquo;{t.quote}&rdquo;
                   </blockquote>
-                  <div className="mt-8 pt-6 border-t border-[var(--color-grey)]">
+                  <div className="mt-8 pt-6 border-t border-grey">
                     <div className="font-bold text-base">{t.name}</div>
-                    <div className="text-sm text-[var(--color-text-muted)] mt-1">{t.title}</div>
+                    <div className="text-sm text-muted mt-1">{t.title}</div>
                     {t.project && (
-                      <div className="text-xs text-[var(--color-pink)] mt-2">
-                        on {t.project}
-                      </div>
+                      <div className="text-xs text-pink mt-2">on {t.project}</div>
                     )}
                   </div>
                 </div>
@@ -300,9 +259,7 @@ export default function HomePage() {
                 key={i}
                 onClick={() => setSlideIndex(i)}
                 className={`w-3 h-3 rounded-full transition-all ${
-                  i === slideIndex
-                    ? 'bg-[var(--color-pink)] scale-110'
-                    : 'bg-[var(--color-grey)] hover:bg-[var(--color-text-muted)]'
+                  i === slideIndex ? 'bg-pink scale-110' : 'bg-grey hover:bg-muted'
                 }`}
                 aria-label={`Slide ${i + 1}`}
               />
@@ -316,28 +273,18 @@ export default function HomePage() {
         <div className="grid md:grid-cols-2 gap-16 items-center">
           <div>
             <h2 className="text-[clamp(2rem,4vw,4rem)] font-bold mb-8">About</h2>
-            <p className="text-[var(--color-text-muted)] text-lg leading-relaxed mb-8">
+            <p className="text-muted text-lg leading-relaxed mb-8">
               Founded in 2014, Agile Lens was born from a mission to redefine storytelling through
               immersive technology, merging design, architecture, and XR to create transformative spatial
               experiences.
             </p>
-            <div className="text-sm text-[var(--color-text-muted)]">
+            <div className="text-sm text-muted">
               <span className="block mb-2 text-xs uppercase tracking-wider opacity-60">Sister companies</span>
-              <a
-                href="https://www.fda.net"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-[var(--color-text)] hover:text-[var(--color-pink)] transition-colors"
-              >
+              <a href="https://www.fda.net" target="_blank" rel="noopener noreferrer" className="text-text hover:text-pink transition-colors">
                 Fisher Dachs Associates
               </a>
               <span className="mx-2 opacity-30">|</span>
-              <a
-                href="https://www.fishermarantzstone.com"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-[var(--color-text)] hover:text-[var(--color-pink)] transition-colors"
-              >
+              <a href="https://www.fishermarantzstone.com" target="_blank" rel="noopener noreferrer" className="text-text hover:text-pink transition-colors">
                 Fisher Marantz Stone
               </a>
             </div>

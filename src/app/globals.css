@@ -1,19 +1,17 @@
 @import "tailwindcss";
 
-:root {
-  --color-black: #101011;
-  --color-white: #fbfbfb;
-  --color-pink: #fe00b5;
-  --color-dark-grey: #1f1f1f;
-  --color-grey: #353535;
-  --color-green: #00c98d;
+@theme {
   --color-bg: #101011;
   --color-surface: #151515;
+  --color-card: #141313;
+  --color-dark-grey: #1f1f1f;
+  --color-grey: #353535;
   --color-border: #393939;
   --color-text: #fbfbfb;
-  --color-text-muted: #999999;
-  --color-accent: #fe00b5;
-  --color-accent-2: #3500a7;
+  --color-muted: #999999;
+  --color-pink: #fe00b5;
+  --color-green: #00c98d;
+  --color-purple: #3500a7;
 }
 
 * {
@@ -72,7 +70,7 @@ body {
 
 /* ── Gradient text ── */
 .gradient-text {
-  background: linear-gradient(225deg, var(--color-accent-2), var(--color-accent));
+  background: linear-gradient(225deg, var(--color-purple), var(--color-pink));
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
@@ -93,7 +91,7 @@ body {
   animation: fadeSlide 0.5s ease forwards;
 }
 
-/* ── Hero panels parallax ── */
+/* ── Hero panels ── */
 .hero-panels-container {
   height: 200vh;
   position: relative;
@@ -161,7 +159,7 @@ body {
     linear-gradient(to bottom, #0c0c0cf0, #0f0f0f63),
     url('/portfolio/four-seasons/01.jpg') center/cover no-repeat;
 }
-.phase-card.pink {
+.phase-card.pink-card {
   border-bottom: 30px solid var(--color-pink);
   background:
     linear-gradient(to bottom, #0f0f0fed, #0f0f0f1c),
