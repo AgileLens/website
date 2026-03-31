@@ -44,12 +44,16 @@ const pillars = [
   {
     title: 'Pre-construction',
     color: 'green' as const,
+    icon: 'https://cdn.prod.website-files.com/68d9482320210cfdb85c1d57/68f5d847f44ff8a8474d006f_GreenHouse.svg',
+    href: '/portfolio?category=Architecture',
     description:
       'For industrial and real estate developers going beyond, we offer the opportunity to be in the most visceral virtual environment you can envision before it\u2019s built. Our solutions have saved millions of dollars in design review and change requests and have driven 9-figures in pre-construction sales.',
   },
   {
     title: 'Entertainment',
     color: 'pink-card' as const,
+    icon: 'https://cdn.prod.website-files.com/68d9482320210cfdb85c1d57/68f5d847c6a552d1f3bee96d_PinkBrush.svg',
+    href: '/portfolio?category=Entertainment',
     description:
       'For media, brands, and performing artists, we lead in blending experimental and experiential for large, live audiences, complex production facilitation, and high-flow rate activations. Our solutions streamline performance capture and virtual production management to get the most out of legacy event techs and operators.',
   },
@@ -222,6 +226,43 @@ function HeroPanels() {
   );
 }
 
+/* ── About Section Slideshow ── */
+const aboutImages = [
+  { src: 'https://cdn.prod.website-files.com/68d9482320210cfdb85c1d57/68ebb87618be3f55d14d8608_image%2032.avif', alt: 'Early VR paper architecture project' },
+  { src: 'https://cdn.prod.website-files.com/68d9482320210cfdb85c1d57/68ef3581ab6859db539b04a4_Shed.jpg', alt: 'The Shed theater NYC' },
+  { src: 'https://cdn.prod.website-files.com/68d9482320210cfdb85c1d57/68f7ab0c726658f5fdb8f437_FSLA-Boathouse.png', alt: 'Four Seasons Lake Austin Boathouse' },
+];
+
+function AboutSlideshow() {
+  const [idx, setIdx] = useState(0);
+  useEffect(() => {
+    const timer = setInterval(() => setIdx((i) => (i + 1) % aboutImages.length), 4000);
+    return () => clearInterval(timer);
+  }, []);
+  return (
+    <div className="relative rounded-2xl overflow-hidden aspect-[4/3]">
+      {aboutImages.map((img, i) => (
+        <img
+          key={img.src}
+          src={img.src}
+          alt={img.alt}
+          className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-700 ${i === idx ? 'opacity-100' : 'opacity-0'}`}
+        />
+      ))}
+      <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-2">
+        {aboutImages.map((_, i) => (
+          <button
+            key={i}
+            onClick={() => setIdx(i)}
+            className={`w-2 h-2 rounded-full transition-all ${i === idx ? 'bg-pink scale-110' : 'bg-white/40'}`}
+            aria-label={`Image ${i + 1}`}
+          />
+        ))}
+      </div>
+    </div>
+  );
+}
+
 /* ── Homepage ── */
 export default function HomePage() {
   const [slideIndex, setSlideIndex] = useState(0);
@@ -272,20 +313,13 @@ export default function HomePage() {
         <h2 className="text-[clamp(2rem,4vw,4rem)] font-bold mb-16">Our Primary Customers</h2>
         <div className="grid md:grid-cols-2 gap-8">
           {pillars.map((p) => (
-            <div key={p.title} className={`phase-card ${p.color}`}>
-              <div className="mb-4">
-                <img
-                  src={p.color === 'green'
-                    ? 'https://cdn.prod.website-files.com/68d9482320210cfdb85c1d57/68f5d847f44ff8a8474d006f_GreenHouse.svg'
-                    : 'https://cdn.prod.website-files.com/68d9482320210cfdb85c1d57/68f5d847c6a552d1f3bee96d_PinkBrush.svg'
-                  }
-                  alt=""
-                  className="w-12 h-12"
-                />
+            <Link key={p.title} href={p.href} className={`phase-card ${p.color} group cursor-pointer hover:scale-[1.01] transition-transform`}>
+              <div className="flex justify-center mb-6">
+                <img src={p.icon} alt="" className="w-14 h-14" />
               </div>
               <h3 className="text-2xl md:text-3xl font-bold mb-4">{p.title}</h3>
               <p className="text-muted leading-relaxed text-base md:text-lg">{p.description}</p>
-            </div>
+            </Link>
           ))}
         </div>
       </Section>
@@ -391,14 +425,7 @@ export default function HomePage() {
               </a>
             </div>
           </div>
-          <div className="grid grid-cols-2 gap-4">
-            <div className="rounded-2xl overflow-hidden aspect-square">
-              <img src="https://cdn.prod.website-files.com/68d9482320210cfdb85c1d57/68ebb87618be3f55d14d8608_image%2032.avif" alt="Early VR architecture project" className="w-full h-full object-cover" />
-            </div>
-            <div className="rounded-2xl overflow-hidden aspect-square mt-8">
-              <img src="https://cdn.prod.website-files.com/68d9482320210cfdb85c1d57/68ef3581ab6859db539b04a4_Shed.jpg" alt="The Shed NYC" className="w-full h-full object-cover" />
-            </div>
-          </div>
+          <AboutSlideshow />
         </div>
       </Section>
     </>

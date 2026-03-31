@@ -202,12 +202,12 @@ body {
 .phase-card.green {
   border-bottom: 30px solid var(--color-green);
   background:
-    linear-gradient(to bottom, #0c0c0cf0, #0f0f0f63),
-    url('/portfolio/four-seasons/01.jpg') center/cover no-repeat;
+    linear-gradient(rgba(12, 12, 12, 0.94), rgba(15, 15, 15, 0.39)),
+    url('https://cdn.prod.website-files.com/68d9482320210cfdb85c1d57/68f7a516924c624343640a0c_8771caf9fe3919788520b6c68acbf601_HBL-Night-Contrasted.png') center/cover no-repeat;
 }
 .phase-card.pink-card {
   border-bottom: 30px solid var(--color-pink);
   background:
-    linear-gradient(to bottom, #0f0f0fed, #0f0f0f1c),
-    url('/portfolio/christmas-carol/01.jpg') center/cover no-repeat;
+    linear-gradient(rgba(15, 15, 15, 0.93), rgba(15, 15, 15, 0.11)),
+    url('https://cdn.prod.website-files.com/68d9482320210cfdb85c1d57/68f7a6abb923420601d7f84e_df237c795e90632bec69a6e66e40fadf_YMG_Audience-Contrasted.png') center/cover no-repeat;
 }
