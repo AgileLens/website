@@ -199,13 +199,29 @@ Vercel. When connected:
 
 ## Workflow for Future Updates
 
-When Alex says "add a portfolio page for [project name]":
-1. Create a branch
-2. Add project data to `data/projects.ts`
-3. Add images to `public/portfolio/[slug]/`
-4. Push — Vercel generates preview URL
-5. Alex reviews
-6. Merge to main on approval
+When anyone says "add a portfolio page for [project name]":
+1. Add images to `public/portfolio/[slug]/`
+2. Add project data to `src/data/projects.ts` (follow the exact schema of existing entries)
+3. Push to `main` — Vercel auto-deploys and generates preview URL
+4. Verify the portfolio grid and detail page render correctly
+5. Share preview URL for review
+
+**Important**: Read the brand guidelines at `C:\Users\Sam\.claude\knowledge\context\brand\brand-identity.md` before writing any copy. Read the full project doc at `C:\Users\Sam\.claude\knowledge\projects\website.md` for architecture details and gotchas.
+
+## Content Rules
+
+- **Never paraphrase testimonials** — use exact quotes from the testimonials list above
+- **Never invent product descriptions** — use the verified descriptions above
+- **No hype language** — avoid "revolutionary", "disruptive", "game-changing"
+- **Portfolio pages must match existing layout** — same card style, same metadata sidebar, same gallery
+- **Use Tailwind theme tokens** — never `text-[var(--color-*)]`, always `text-muted`, `text-pink`, etc.
+
+## Technical Gotchas
+
+- **Deploy via git push only** — `vercel deploy` CLI fails on this project. Always `git push origin main`.
+- **Turbopack CSS bug** — never use arbitrary CSS var() values in Tailwind classes. Use `@theme` tokens defined in `globals.css`.
+- **Static export** — `output: 'export'` is required in next.config.ts. Don't remove it.
+- **Homepage images from Webflow CDN** — will break when Webflow subscription ends. Self-host migration is TODO.
 
 ## Owner
 
