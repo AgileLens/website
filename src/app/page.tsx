@@ -56,12 +56,12 @@ const pillars = [
 ];
 
 const products = [
-  { group: 'Pre-construction', tag: 'green', name: 'Hyperreal Estate', description: 'Photoreal 3D architectural and design visualization. Raytraced with UE and optimized for high-end VR.', image: '/products/hyperreal-estate.png' },
-  { group: 'Pre-construction', tag: 'green', name: 'Blueprint Immersive', description: 'High-fidelity event venue configuration and previs software. Used by top architects and design professionals to optimize construction planning.', image: '/products/blueprint-immersive.png' },
-  { group: 'Pre-construction', tag: 'green', name: 'Floor Tour', description: 'Self-service, real-world scale floor plan visualization software. Walk your portfolio of designs and renders in VR with just a few clicks.', image: '/products/floor-tour.png' },
-  { group: 'Entertainment', tag: 'pink', name: 'Holodeck Anywhere', description: 'Multiuser colocated VR. Solutions are available for both ultra-high fidelity and standalone flexibility.', image: '/products/holodeck-anywhere.png' },
-  { group: 'Entertainment', tag: 'pink', name: 'Stage Presence', description: 'Rehearsal tool and performance platform. Designed and streamlined to integrate with existing media and live event industry practices.', image: '/products/stage-presence.png' },
-  { group: 'Entertainment', tag: 'pink', name: 'PerforMR', description: 'Live-actor animation pipeline. A multi-source mocap tool for performers to animate one or many MetaHumans, real-time or saved for playback, in Virtual Reality or Mixed Reality.', image: '/products/performr.png' },
+  { group: 'Pre-construction', tag: 'green', name: 'Hyperreal Estate', description: 'Photoreal 3D architectural and design visualization. Raytraced with UE and optimized for high-end VR.', image: 'https://cdn.prod.website-files.com/68d9482320210cfdb85c1d57/68f7ab0c726658f5fdb8f437_FSLA-Boathouse.png' },
+  { group: 'Pre-construction', tag: 'green', name: 'Blueprint Immersive', description: 'High-fidelity event venue configuration and previs software. Used by top architects and design professionals to optimize construction planning.', image: 'https://cdn.prod.website-files.com/68d9482320210cfdb85c1d57/68ef32e1a167946204a6770e_blueprint3.avif' },
+  { group: 'Pre-construction', tag: 'green', name: 'Floor Tour', description: 'Self-service, real-world scale floor plan visualization software. Walk your portfolio of designs and renders in VR with just a few clicks.', image: 'https://cdn.prod.website-files.com/68d9482320210cfdb85c1d57/68f7a976635f1d32bcc41c82_floorTour.avif' },
+  { group: 'Entertainment', tag: 'pink', name: 'Holodeck Anywhere', description: 'Multiuser colocated VR. Solutions are available for both ultra-high fidelity and standalone flexibility.', image: 'https://cdn.prod.website-files.com/68d9482320210cfdb85c1d57/68f7a77310538a13ec8f9d28_NYC-Holodeck_Cropped.png' },
+  { group: 'Entertainment', tag: 'pink', name: 'Stage Presence', description: 'Rehearsal tool and performance platform. Designed and streamlined to integrate with existing media and live event industry practices.', image: 'https://cdn.prod.website-files.com/68d9482320210cfdb85c1d57/68f7d774d50595d5e99566ba_rsc-cropped.png' },
+  { group: 'Entertainment', tag: 'pink', name: 'PerforMR', description: 'Live-actor animation pipeline. A multi-source mocap tool for performers to animate one or many MetaHumans, real-time or saved for playback, in Virtual Reality or Mixed Reality.', image: 'https://cdn.prod.website-files.com/68d9482320210cfdb85c1d57/68f7a2f04c60eb921038d52d_XmasCarol_Scrooge-Future.jpg' },
 ];
 
 const testimonials = [
@@ -70,36 +70,42 @@ const testimonials = [
     name: 'Jonathan Coon',
     title: 'CEO, Impossible Ventures',
     project: 'Four Seasons Holodeck',
+    photo: 'https://cdn.prod.website-files.com/68d9482320210cfdb85c1d57/68f7aff3f5303e2cbfb63258_jonathan_coon.jpg',
   },
   {
     quote: "What Agile Lens did, it's not what others do. They gave our actors and crew control of the avatars. What they did was harder, was newer, and honestly they rocked.",
     name: 'Hope Hutman',
     title: 'Artist, Experiential Producer',
     project: 'Your Mind, Girls...',
+    photo: 'https://cdn.prod.website-files.com/68d9482320210cfdb85c1d57/68f7bb01ee96a6b3f33fe966_hopeHutman.jpg',
   },
   {
     quote: 'Agile Lens works like engineers but think like storytellers. They pursue excellence in the details which is what you need for a turnkey luxury experience.',
     name: 'Amanda Watson',
     title: 'Inventor of Air Link and CTO of REK',
     project: '',
+    photo: 'https://cdn.prod.website-files.com/68d9482320210cfdb85c1d57/692710f61be3d74bd5832215_Watson.jpg',
   },
   {
     quote: 'From Vision Pro to Galaxy XR, few are more experienced and knowledgeable when it comes to deploying immersive experiences on the latest devices on the market.',
     name: 'Gabriele Romagnoli',
     title: 'Host of XR AI Spotlight',
     project: '',
+    photo: 'https://cdn.prod.website-files.com/68d9482320210cfdb85c1d57/6927126f98d002f170d51764_Romagnoli.jpg',
   },
   {
     quote: 'Agile Lens creates a visionary experience that skillfully breaks the fourth wall and invites audiences to the center of a 150-year-old story told for a brand new generation.',
     name: 'Raindance Immersive',
     title: '2025 Awards Ceremony',
     project: 'A Christmas Carol VR',
+    photo: 'https://cdn.prod.website-files.com/68d9482320210cfdb85c1d57/68f85ba86a066eefc1593e52_Raindance%2BImmersive.webp',
   },
   {
     quote: 'The Holodeck is so ambitious no single hardware provider has been able to make everything work that it needs to do. And yet, it does work.',
     name: 'Ian Hamilton',
     title: 'Editor-in-Chief, UploadVR',
     project: 'Four Seasons Holodeck',
+    photo: 'https://cdn.prod.website-files.com/68d9482320210cfdb85c1d57/68f7aee48291e76812f07f93_Ian-Hamilton.png',
   },
 ];
 
@@ -268,7 +274,14 @@ export default function HomePage() {
           {pillars.map((p) => (
             <div key={p.title} className={`phase-card ${p.color}`}>
               <div className="mb-4">
-                <span className={`inline-block w-10 h-10 rounded-full opacity-30 ${p.color === 'green' ? 'bg-green' : 'bg-pink'}`} />
+                <img
+                  src={p.color === 'green'
+                    ? 'https://cdn.prod.website-files.com/68d9482320210cfdb85c1d57/68f5d847f44ff8a8474d006f_GreenHouse.svg'
+                    : 'https://cdn.prod.website-files.com/68d9482320210cfdb85c1d57/68f5d847c6a552d1f3bee96d_PinkBrush.svg'
+                  }
+                  alt=""
+                  className="w-12 h-12"
+                />
               </div>
               <h3 className="text-2xl md:text-3xl font-bold mb-4">{p.title}</h3>
               <p className="text-muted leading-relaxed text-base md:text-lg">{p.description}</p>
@@ -324,12 +337,17 @@ export default function HomePage() {
                   <blockquote className="mt-8 text-lg md:text-xl leading-relaxed flex-1" style={{ fontFamily: 'Manrope, sans-serif' }}>
                     &ldquo;{t.quote}&rdquo;
                   </blockquote>
-                  <div className="mt-8 pt-6 border-t border-grey">
-                    <div className="font-bold text-base">{t.name}</div>
-                    <div className="text-sm text-muted mt-1">{t.title}</div>
-                    {t.project && (
-                      <div className="text-xs text-pink mt-2">on {t.project}</div>
+                  <div className="mt-8 pt-6 border-t border-grey flex items-center gap-4">
+                    {t.photo && (
+                      <img src={t.photo} alt={t.name} className="w-12 h-12 rounded-full object-cover shrink-0" />
                     )}
+                    <div>
+                      <div className="font-bold text-base">{t.name}</div>
+                      <div className="text-sm text-muted mt-0.5">{t.title}</div>
+                      {t.project && (
+                        <div className="text-xs text-pink mt-1">on {t.project}</div>
+                      )}
+                    </div>
                   </div>
                 </div>
               ))}
@@ -375,10 +393,10 @@ export default function HomePage() {
           </div>
           <div className="grid grid-cols-2 gap-4">
             <div className="rounded-2xl overflow-hidden aspect-square">
-              <img src="/portfolio/four-seasons/01.jpg" alt="Holodeck" className="w-full h-full object-cover" />
+              <img src="https://cdn.prod.website-files.com/68d9482320210cfdb85c1d57/68ebb87618be3f55d14d8608_image%2032.avif" alt="Early VR architecture project" className="w-full h-full object-cover" />
             </div>
             <div className="rounded-2xl overflow-hidden aspect-square mt-8">
-              <img src="/portfolio/christmas-carol/01.jpg" alt="Christmas Carol VR" className="w-full h-full object-cover" />
+              <img src="https://cdn.prod.website-files.com/68d9482320210cfdb85c1d57/68ef3581ab6859db539b04a4_Shed.jpg" alt="The Shed NYC" className="w-full h-full object-cover" />
             </div>
           </div>
         </div>
