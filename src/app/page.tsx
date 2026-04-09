@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
+import NewsletterSignup from '@/components/NewsletterSignup';
 
 /* ── Scroll Reveal Hook ── */
 function useReveal() {
@@ -419,6 +420,11 @@ export default function HomePage() {
           </div>
         </div>
       </section>
+
+      {/* ── Newsletter Signup ── */}
+      <Section className="max-w-[1100px] mx-auto px-6 md:px-12 py-16">
+        <NewsletterSignup />
+      </Section>
 
       {/* ── About ── */}
       <Section id="about" className="max-w-[1100px] mx-auto px-6 md:px-12 py-32">
