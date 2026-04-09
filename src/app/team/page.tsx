@@ -128,7 +128,7 @@ const team = [
     name: 'Elizabeth Coulombe',
     role: 'Operations Strategist',
     photo: '/team/elizabeth.jpg',
-    bio: "Elizabeth is a sought-after supervisor, manager and clarion strategist who has been advising the company's initiatives since its earliest days. She provides both no nonsense advice along with supportive joy and resolve as needed.",
+    bio: "As a production strategist, Elizabeth has been advising the company's initiatives since its earliest days. With experience in film, television, photography, and theatre, she brings flexible, cross-platform knowledge and a comprehensive grasp on pre-production through post to Agile Lens's work at the forefront of the ever-evolving XR industry.",
     row: 5,
   },
 ];
