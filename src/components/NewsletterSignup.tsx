@@ -80,10 +80,10 @@ export default function NewsletterSignup() {
           position: relative;
         }
         #mlb2-39575133.ml-form-embedContainer .ml-form-align-center { text-align: center; }
-        #mlb2-39575133.ml-form-embedContainer .ml-form-embedWrapper.embedForm { max-width: 400px; width: 100%; }
+        #mlb2-39575133.ml-form-embedContainer .ml-form-embedWrapper.embedForm { max-width: 100%; width: 100%; }
         #mlb2-39575133.ml-form-embedContainer .ml-form-embedWrapper .ml-form-embedBody,
         #mlb2-39575133.ml-form-embedContainer .ml-form-embedWrapper .ml-form-successBody {
-          padding: 20px 20px 0 20px;
+          padding: 40px 48px 0 48px;
         }
         #mlb2-39575133.ml-form-embedContainer .ml-form-embedWrapper .ml-form-embedBody.ml-form-embedBodyHorizontal {
           padding-bottom: 0;

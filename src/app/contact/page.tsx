@@ -12,7 +12,7 @@ export default function ContactPage() {
     <div className="max-w-7xl mx-auto px-6 py-24">
       <div className="text-center mb-16">
         <h1 className="text-4xl md:text-6xl font-black mb-4">Get in Touch</h1>
-        <p className="text-lg text-muted">We typically respond to inquiries within 5 working days.</p>
+        <p className="text-lg text-muted">We typically respond to inquiries within 3 working days.</p>
       </div>
 
       <div className="max-w-5xl mx-auto space-y-16">
