@@ -57,7 +57,6 @@ export default function PortfolioPage() {
                 )}
               </div>
               <div className="flex items-center gap-2 mb-2">
-                <span className="text-xs uppercase tracking-wider text-pink">{p.category1}</span>
                 <span className="text-xs text-muted">{yearDisplay}</span>
               </div>
               <h3 className="text-lg font-bold mb-2 group-hover:text-pink transition-colors">{p.name}</h3>
