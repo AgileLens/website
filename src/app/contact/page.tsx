@@ -18,22 +18,31 @@ export default function ContactPage() {
       <div className="max-w-5xl mx-auto space-y-16">
         {/* Contact Info */}
         <div className="grid md:grid-cols-2 gap-16">
-          <div>
-            <h2 className="text-2xl font-bold mb-6">Contact Info</h2>
-            <div className="space-y-6 text-muted">
-              <div>
-                <h3 className="font-semibold text-text mb-1">Address</h3>
-                <p>22 West 19th Street, 6th Floor</p>
-                <p>New York, NY 10011</p>
+          <div className="flex flex-col gap-6">
+            <div>
+              <h2 className="text-2xl font-bold mb-6">Contact Info</h2>
+              <div className="space-y-6 text-muted">
+                <div>
+                  <h3 className="font-semibold text-text mb-1">Address</h3>
+                  <p>22 West 19th Street, 6th Floor</p>
+                  <p>New York, NY 10011</p>
+                </div>
+                <div>
+                  <h3 className="font-semibold text-text mb-1">Phone</h3>
+                  <a href="tel:+12126913020" className="hover:text-text">+1 (212) 691 3020</a>
+                </div>
+                <div>
+                  <h3 className="font-semibold text-text mb-1">Email</h3>
+                  <a href="mailto:info@agilelens.com" className="hover:text-text">info@agilelens.com</a>
+                </div>
               </div>
-              <div>
-                <h3 className="font-semibold text-text mb-1">Phone</h3>
-                <a href="tel:+12126913020" className="hover:text-text">+1 (212) 691 3020</a>
-              </div>
-              <div>
-                <h3 className="font-semibold text-text mb-1">Email</h3>
-                <a href="mailto:info@agilelens.com" className="hover:text-text">info@agilelens.com</a>
-              </div>
+            </div>
+            <div className="flex-1 rounded-xl overflow-hidden border border-border min-h-[180px]">
+              <img
+                src="/portfolio/four-seasons-holodeck.jpg"
+                alt="Four Seasons Lake Austin Holodeck"
+                className="w-full h-full object-cover"
+              />
             </div>
           </div>
 
