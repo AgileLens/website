@@ -370,9 +370,9 @@ https://www.theguardian.com/artanddesign/2022/jul/16/on-my-radar-marina-abramovi
     yearCompleted: '2022',
     platform: 'Alice Tully Hall @ Lincoln Center',
     awards: '',
-    press: 'The New York Times - Music, Science and Healing Intersect in an A.I. Opera
+    press: `The New York Times - Music, Science and Healing Intersect in an A.I. Opera
 BOMB Magazine - Making the Invisible Visible: K Allado-McDowell, Derrick Skye, and Refik Anadol in Conversation
-The Wie Suite - Lincoln Center\'s Chief Artistic Officer, Shanta Thake, Is Sharing Her Brain (Waves) With the World's Chief Artistic Officer, Shanta Thake, Is Sharing Her Brain (Waves) With the World',
+The Wie Suite - Lincoln Center's Chief Artistic Officer, Shanta Thake, Is Sharing Her Brain (Waves) With the World`,
     clients: 'Lincoln Center, K Allado-McDowell',
     overview: 'Agile Lens provided previz for this experimental piece at Alice Tully Hall featured lighting design by Refik Anadol, now doing the Las Vegas Sphere.',
     video: 'https://youtu.be/gY5GA_L9NXM',
