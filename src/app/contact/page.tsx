@@ -55,7 +55,7 @@ export default function ContactPage() {
 
         {/* Contact Form via Formspree */}
         <div>
-          <h2 className="text-2xl font-bold mb-6">Leave us a message</h2>
+          <h2 className="text-2xl font-bold mb-6 mt-8">Leave us a message</h2>
           <form action="https://formspree.io/f/xpznqkdl" method="POST" className="space-y-5">
             <div>
               <label htmlFor="name" className="block text-sm font-medium mb-2">Name</label>
