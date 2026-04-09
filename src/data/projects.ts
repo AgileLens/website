@@ -69,8 +69,8 @@ export const projects: Project[] = [
     links: '',
     category1: 'Architecture',
     category2: '',
-    image: '/portfolio/frederic-church-ombra-exhibition/01.gif',
-    images: ['/portfolio/frederic-church-ombra-exhibition/01.gif', '/portfolio/frederic-church-ombra-exhibition/02.gif', '/portfolio/frederic-church-ombra-exhibition/03.gif'],
+    image: '/portfolio/frederic-church-ombra-exhibition/01.jpg',
+    images: ['/portfolio/frederic-church-ombra-exhibition/01.jpg', '/portfolio/frederic-church-ombra-exhibition/02.gif', '/portfolio/frederic-church-ombra-exhibition/03.gif', '/portfolio/frederic-church-ombra-exhibition/04.gif'],
   },
   {
     slug: 'statue-of-liberty-museum',
