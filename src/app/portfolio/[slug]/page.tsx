@@ -168,7 +168,7 @@ export default async function ProjectPage({ params }: { params: Promise<{ slug: 
 
             {yearDisplay && (
               <div>
-                <div className="text-xs text-muted uppercase tracking-wider mb-1">Year</div>
+                <div className="text-xs text-muted uppercase tracking-wider mb-1">Year Released</div>
                 <div className="text-sm font-medium">{yearDisplay}</div>
               </div>
             )}
