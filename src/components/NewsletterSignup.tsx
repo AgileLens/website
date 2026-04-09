@@ -3,17 +3,31 @@
 import { useEffect } from 'react';
 import Script from 'next/script';
 
+function showSuccess() {
+  const form = document.querySelector('.ml-subscribe-form-39575133 .row-form') as HTMLElement;
+  const success = document.querySelector('.ml-subscribe-form-39575133 .row-success') as HTMLElement;
+  if (form) form.style.display = 'none';
+  if (success) success.style.display = '';
+}
+
 export default function NewsletterSignup() {
   useEffect(() => {
-    // Define success callback without jQuery dependency
-    (window as any).ml_webform_success_39575133 = function () {
-      const form = document.querySelector('.ml-subscribe-form-39575133 .row-form') as HTMLElement;
-      const success = document.querySelector('.ml-subscribe-form-39575133 .row-success') as HTMLElement;
-      if (form) form.style.display = 'none';
-      if (success) success.style.display = '';
-    };
+    (window as any).ml_webform_success_39575133 = showSuccess;
     fetch('https://assets.mailerlite.com/jsonp/2179151/forms/184118159004927824/takel');
   }, []);
+
+  async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
+    e.preventDefault();
+    const form = e.currentTarget;
+    const data = new FormData(form);
+    data.append('ml-submit', '1');
+    try {
+      await fetch(form.action, { method: 'POST', body: data, mode: 'no-cors' });
+    } catch {
+      // no-cors fetch always throws on response read — that's fine
+    }
+    showSuccess();
+  }
 
   return (
     <>
@@ -255,7 +269,7 @@ export default function NewsletterSignup() {
                 action="https://assets.mailerlite.com/jsonp/2179151/forms/184118159004927824/subscribe"
                 data-code=""
                 method="post"
-                target="_blank"
+                onSubmit={handleSubmit}
               >
                 <div className="ml-form-formContent horozintalForm">
                   <div className="ml-form-horizontalRow">
