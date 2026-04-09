@@ -16,33 +16,25 @@ export default function ContactPage() {
       </div>
 
       <div className="max-w-5xl mx-auto space-y-16">
-        {/* Contact Info */}
-        <div className="grid md:grid-cols-2 gap-16">
-          <div className="flex flex-col gap-6">
-            <div>
-              <h2 className="text-2xl font-bold mb-6">Contact Info</h2>
-              <div className="space-y-6 text-muted">
-                <div>
-                  <h3 className="font-semibold text-text mb-1">Address</h3>
-                  <p>22 West 19th Street, 6th Floor</p>
-                  <p>New York, NY 10011</p>
-                </div>
-                <div>
-                  <h3 className="font-semibold text-text mb-1">Phone</h3>
-                  <a href="tel:+12126913020" className="hover:text-text">+1 (212) 691 3020</a>
-                </div>
-                <div>
-                  <h3 className="font-semibold text-text mb-1">Email</h3>
-                  <a href="mailto:info@agilelens.com" className="hover:text-text">info@agilelens.com</a>
-                </div>
+        {/* Contact Info + Map + Photo */}
+        <div className="grid md:grid-cols-3 gap-8 items-start">
+          {/* Contact Info */}
+          <div>
+            <h2 className="text-2xl font-bold mb-6">Contact Info</h2>
+            <div className="space-y-6 text-muted">
+              <div>
+                <h3 className="font-semibold text-text mb-1">Address</h3>
+                <p>22 West 19th Street, 6th Floor</p>
+                <p>New York, NY 10011</p>
               </div>
-            </div>
-            <div className="flex-1 rounded-xl overflow-hidden border border-border min-h-[180px]">
-              <img
-                src="/portfolio/four-seasons-holodeck.jpg"
-                alt="Four Seasons Lake Austin Holodeck"
-                className="w-full h-full object-cover"
-              />
+              <div>
+                <h3 className="font-semibold text-text mb-1">Phone</h3>
+                <a href="tel:+12126913020" className="hover:text-text">+1 (212) 691 3020</a>
+              </div>
+              <div>
+                <h3 className="font-semibold text-text mb-1">Email</h3>
+                <a href="mailto:info@agilelens.com" className="hover:text-text">info@agilelens.com</a>
+              </div>
             </div>
           </div>
 
@@ -56,6 +48,15 @@ export default function ContactPage() {
               allowFullScreen
               loading="lazy"
               title="Agile Lens office location"
+            />
+          </div>
+
+          {/* SXSW photo */}
+          <div className="aspect-video rounded-xl overflow-hidden border border-border">
+            <img
+              src="/sxsw-2026.jpg"
+              alt="Agile Lens at SXSW 2026"
+              className="w-full h-full object-cover object-center"
             />
           </div>
         </div>
