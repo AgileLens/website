@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
 import NewsletterSignup from '@/components/NewsletterSignup';
+import ContactForm from '@/components/ContactForm';
 
 export const metadata: Metadata = {
   title: 'Contact | Agile Lens',
@@ -56,67 +57,7 @@ export default function ContactPage() {
         {/* Contact Form via Formspree */}
         <div>
           <h2 className="text-2xl font-bold mb-6 mt-8">Leave us a message</h2>
-          <form action="https://formspree.io/f/xpznqkdl" method="POST" className="space-y-5">
-            <div>
-              <label htmlFor="name" className="block text-sm font-medium mb-2">Name</label>
-              <input
-                type="text"
-                id="name"
-                name="name"
-                required
-                className="w-full px-4 py-3 bg-surface border border-border rounded-lg text-text placeholder:text-muted focus:outline-none focus:border-pink transition"
-                placeholder="Your name"
-              />
-            </div>
-            <div>
-              <label htmlFor="email" className="block text-sm font-medium mb-2">Email</label>
-              <input
-                type="email"
-                id="email"
-                name="email"
-                required
-                className="w-full px-4 py-3 bg-surface border border-border rounded-lg text-text placeholder:text-muted focus:outline-none focus:border-pink transition"
-                placeholder="your@email.com"
-              />
-            </div>
-            <div>
-              <label htmlFor="subject" className="block text-sm font-medium mb-2">Subject</label>
-              <select
-                id="subject"
-                name="subject"
-                className="w-full px-4 py-3 bg-surface border border-border rounded-lg text-text focus:outline-none focus:border-pink transition"
-              >
-                <option value="general">General Inquiry</option>
-                <option value="blueprint">Blueprint Immersive</option>
-                <option value="holodeck">Holodeck Anywhere</option>
-                <option value="stagepresence">Stage Presence</option>
-                <option value="partnership">Partnership</option>
-              </select>
-            </div>
-            <div>
-              <label htmlFor="message" className="block text-sm font-medium mb-2">Message</label>
-              <textarea
-                id="message"
-                name="message"
-                rows={6}
-                required
-                className="w-full px-4 py-3 bg-surface border border-border rounded-lg text-text placeholder:text-muted focus:outline-none focus:border-pink transition resize-none"
-                placeholder="Tell us about your project..."
-              />
-            </div>
-            <button
-              type="submit"
-              className="w-full py-4 bg-pink text-black font-bold rounded-lg hover:opacity-90 transition text-lg"
-            >
-              Send Message
-            </button>
-            <p className="text-sm text-muted text-center mt-3">
-              Or email us directly at{' '}
-              <a href="mailto:info@agilelens.com" className="underline hover:text-text">
-                info@agilelens.com
-              </a>
-            </p>
-          </form>
+          <ContactForm />
         </div>
 
       </div>
