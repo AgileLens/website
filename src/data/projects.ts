@@ -344,9 +344,9 @@ export const projects: Project[] = [
     yearCompleted: '2022',
     platform: 'Baryshnikov Arts Center Off Broadway',
     awards: '',
-    press: 'https://playbill.com/article/the-orchard-starring-mikhail-baryshnikov-and-jessica-hecht-opens-off-broadway-june-16
+    press: `https://playbill.com/article/the-orchard-starring-mikhail-baryshnikov-and-jessica-hecht-opens-off-broadway-june-16
 https://www.bostonglobe.com/2022/11/03/arts/mikhail-baryshnikov-explores-orchard-anew-with-robot-tow/
-https://www.theguardian.com/artanddesign/2022/jul/16/on-my-radar-marina-abramovic-cultural-highlights's Cultural Highlights for The Globe UK',
+https://www.theguardian.com/artanddesign/2022/jul/16/on-my-radar-marina-abramovic-cultural-highlights's Cultural Highlights for The Globe UK`,
     clients: 'Arlekin Players & zero-G Virtual Theater Lab / Groundswell Theatre, Inc.',
     overview: 'Agile Lens created and implemented the virtual side of this groundbreaking hybrid performance starring Mikhael Baryshnikov and Jessica Hecht in an adaptation of Anton Chekhov\'s The Cherry Orchard',
     video: 'https://youtu.be/vAE3DQ4rnHw',
@@ -420,8 +420,8 @@ The Wie Suite - Lincoln Center\'s Chief Artistic Officer, Shanta Thake, Is Shari
     yearCompleted: '',
     platform: '',
     awards: '',
-    press: 'https://www.papercitymag.com/real-estate/four-seasons-private-residences-lake-austin-creates-2-million-holodeck-real-estate-amenities/#465572
-https://www.uploadvr.com/four-seasons-private-residences-austin-vr-holodeck/',
+    press: `https://www.papercitymag.com/real-estate/four-seasons-private-residences-lake-austin-creates-2-million-holodeck-real-estate-amenities/#465572
+https://www.uploadvr.com/four-seasons-private-residences-austin-vr-holodeck/`,
     clients: 'Four Seasons, Impossible Ventures, DBOX, Pureblink',
     overview: 'This 5,300 square foot space allows guests to virtually experience what $300 million worth of amenities and shared facilities will feel like at Four Seasons Private Residences. Guests can walk freely and wirelessly around an 82 x 65-foot space and feel like they are walking around a finished residence, the lake clubhouse, indoor sports club, private restaurant, and theater. The experience ends with guests walking into a virtual 96-seat theater and then sitting in four real theater seats.',
     video: 'https://youtu.be/6la2yieiCG0',
@@ -469,8 +469,8 @@ https://www.uploadvr.com/four-seasons-private-residences-austin-vr-holodeck/',
     yearCompleted: '2023',
     platform: '',
     awards: '',
-    press: 'https://www.globenewswire.com/news-release/2024/02/21/2832816/0/en/Infinite-Reality-and-Vodafone-to-Unveil-Revolutionary-Automotive-Onboarding-Service-Featuring-Generative-AI-and-VR-at-Mobile-World-Congress-Barcelona-2024.html
-https://www.businesswire.com/news/home/20230719281018/en/Infinite-Reality-and-Vodafone-Digital-Asset-Broker-Join-Forces-to-Create-Extraordinary-Metaverse-Showroom-at-London-Tech-Week',
+    press: `https://www.globenewswire.com/news-release/2024/02/21/2832816/0/en/Infinite-Reality-and-Vodafone-to-Unveil-Revolutionary-Automotive-Onboarding-Service-Featuring-Generative-AI-and-VR-at-Mobile-World-Congress-Barcelona-2024.html
+https://www.businesswire.com/news/home/20230719281018/en/Infinite-Reality-and-Vodafone-Digital-Asset-Broker-Join-Forces-to-Create-Extraordinary-Metaverse-Showroom-at-London-Tech-Week`,
     clients: 'Vodafone, Infinite Reality',
     overview: 'Agile Lens developed an immersive VR car showroom experience with an AI car salesman powered by inworld.ai and vehicle customization, showcasing Vodafone\'s DAB platform for London Tech Week.',
     video: '',
@@ -638,8 +638,8 @@ https://www.businesswire.com/news/home/20230719281018/en/Infinite-Reality-and-Vo
     yearCompleted: '2025',
     platform: 'Live Theater, Stage Presence VR',
     awards: '',
-    press: 'https://www.brooklynpaper.com/laibson-chekhov-vr-show-the-harmnf/
-https://www.broadwayworld.com/off-off-broadway/article/THE-HARMNF-LiveVR-Hybrid-Returns-to-Caveat-Following-Los-Angeles-Run-20260118',
+    press: `https://www.brooklynpaper.com/laibson-chekhov-vr-show-the-harmnf/
+https://www.broadwayworld.com/off-off-broadway/article/THE-HARMNF-LiveVR-Hybrid-Returns-to-Caveat-Following-Los-Angeles-Run-20260118`,
     clients: 'Kevin Laibson',
     overview: 'A live theater play produced by Agile Lens, written and performed by Senior Experience Director Kevin Laibson — exploring the difficulties of working with AI through the structural lens of Chekhov\'s "On the Harmfulness of Tobacco." Performed across New York and Los Angeles.',
     video: '',
