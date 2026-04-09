@@ -445,8 +445,8 @@ export default function HomePage() {
                 <a href="https://www.fmsp.com" target="_blank" rel="noopener noreferrer" className="hover:opacity-80 transition-opacity">
                   <img src="https://cdn.prod.website-files.com/68d9482320210cfdb85c1d57/68ef5224d8cab60d5f30eda5_FMS.png" alt="Fisher Marantz Stone" className="h-10" />
                 </a>
-                <a href="https://www.alexcoulombepresents.com" target="_blank" rel="noopener noreferrer" className="hover:opacity-80 transition-opacity text-sm font-medium text-muted hover:text-white transition-colors">
-                  Alex Coulombe Presents
+                <a href="https://www.alexcoulombepresents.com" target="_blank" rel="noopener noreferrer" className="hover:opacity-80 transition-opacity">
+                  <img src="/logos/AlexCoulombePresents.png" alt="Alex Coulombe Presents" className="h-10" />
                 </a>
               </div>
             </div>
