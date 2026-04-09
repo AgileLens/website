@@ -438,12 +438,15 @@ export default function HomePage() {
             </p>
             <div className="text-sm text-muted">
               <span className="block mb-4 text-xs uppercase tracking-wider opacity-60">Sister companies</span>
-              <div className="flex items-center gap-8">
-                <a href="https://www.fda.net" target="_blank" rel="noopener noreferrer" className="hover:opacity-80 transition-opacity">
+              <div className="flex items-center gap-8 flex-wrap">
+                <a href="https://www.fisherdachs.com" target="_blank" rel="noopener noreferrer" className="hover:opacity-80 transition-opacity">
                   <img src="https://cdn.prod.website-files.com/68d9482320210cfdb85c1d57/68ef514f4e7935c27e31cad5_FDA.png" alt="Fisher Dachs Associates" className="h-10" />
                 </a>
-                <a href="https://www.fishermarantzstone.com" target="_blank" rel="noopener noreferrer" className="hover:opacity-80 transition-opacity">
+                <a href="https://www.fmsp.com" target="_blank" rel="noopener noreferrer" className="hover:opacity-80 transition-opacity">
                   <img src="https://cdn.prod.website-files.com/68d9482320210cfdb85c1d57/68ef5224d8cab60d5f30eda5_FMS.png" alt="Fisher Marantz Stone" className="h-10" />
+                </a>
+                <a href="https://www.alexcoulombepresents.com" target="_blank" rel="noopener noreferrer" className="hover:opacity-80 transition-opacity text-sm font-medium text-muted hover:text-white transition-colors">
+                  Alex Coulombe Presents
                 </a>
               </div>
             </div>

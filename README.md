@@ -110,8 +110,9 @@ To add a new project:
 
 Agile Lens is part of a family of design and performance consulting firms:
 
-- [Fisher Dachs Associates](https://www.fda.net) — Theater planning & design
-- [Fisher Marantz Stone](https://www.fishermarantzstone.com) — Architectural lighting design
+- [Fisher Dachs Associates](https://www.fisherdachs.com) — Theater planning & design
+- [Fisher Marantz Stone](https://www.fmsp.com) — Architectural lighting design
+- [Alex Coulombe Presents](https://www.alexcoulombepresents.com) — XR performance & immersive experiences
 
 ---
 
