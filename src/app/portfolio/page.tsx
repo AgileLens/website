@@ -56,10 +56,10 @@ export default function PortfolioPage() {
                   <span className="text-white/40 text-sm font-medium tracking-wider uppercase">{p.category1}</span>
                 )}
               </div>
+              <h3 className="text-lg font-bold mb-1 group-hover:text-pink transition-colors">{p.name}</h3>
               <div className="flex items-center gap-2 mb-2">
                 <span className="text-xs text-muted">{yearDisplay}</span>
               </div>
-              <h3 className="text-lg font-bold mb-2 group-hover:text-pink transition-colors">{p.name}</h3>
               {p.clients && <div className="text-xs text-muted mb-2">Client: {p.clients}</div>}
               <p className="text-sm text-muted leading-relaxed mb-3 line-clamp-3">{p.overview || p.description}</p>
               {p.awards && <div className="text-xs text-yellow-400 mb-2 line-clamp-2">{p.awards}</div>}

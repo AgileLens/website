@@ -56,6 +56,10 @@ export default async function ProjectPage({ params }: { params: Promise<{ slug: 
     ? project.press.split('\n').map(l => l.trim()).filter(Boolean)
     : [];
 
+  const papersList = project.papers
+    ? project.papers.split('\n').map(l => l.trim()).filter(Boolean)
+    : [];
+
   const creditLines = project.credits
     ? project.credits.split('\n').map(l => l.trim()).filter(Boolean)
     : [];
@@ -154,12 +158,6 @@ export default async function ProjectPage({ params }: { params: Promise<{ slug: 
             </div>
           )}
 
-          {project.papers && (
-            <div>
-              <h2 className="text-xl font-bold mb-4">Published Papers</h2>
-              <p className="text-sm text-muted leading-relaxed">{project.papers}</p>
-            </div>
-          )}
         </div>
 
         <div className="space-y-6">
@@ -215,6 +213,21 @@ export default async function ProjectPage({ params }: { params: Promise<{ slug: 
               <div className="space-y-2">
                 {pressList.map((item, i) => (
                   <p key={i} className="text-sm text-muted">
+                    {item.startsWith('http') ? (
+                      <a href={item} target="_blank" rel="noopener noreferrer" className="text-pink hover:underline break-all">{item}</a>
+                    ) : item}
+                  </p>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {papersList.length > 0 && (
+            <div className="p-6 rounded-xl border border-border bg-surface">
+              <h3 className="text-sm font-bold uppercase tracking-wider text-pink mb-4">Publications</h3>
+              <div className="space-y-3">
+                {papersList.map((item, i) => (
+                  <p key={i} className="text-sm text-muted leading-relaxed">
                     {item.startsWith('http') ? (
                       <a href={item} target="_blank" rel="noopener noreferrer" className="text-pink hover:underline break-all">{item}</a>
                     ) : item}
