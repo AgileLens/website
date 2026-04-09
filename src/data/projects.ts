@@ -302,8 +302,7 @@ export const projects: Project[] = [
     video: '',
     imageCarousel: '',
     description: 'For Jettison and its revival in the first On Board XR Festival, our producing team handled general management tasks for the production as well as heading up design, house management and stage management, in both systems and operation.',
-    papers: 'Coulombe, A., Gochfeld, D., Bradley, B., Laibson, K., Long, R., Miletitch, R. "Virtual Reality Live theatre on No Budget: A Model for Independent Theatrical Productions using Open-Source Social VR" SIGGRAPH \'21: ACM SIGGRAPH 2021 Educators Forum Aug 2021 Article No.: 2
-https://doi.org/10.1145/3450549.3464413'21: ACM SIGGRAPH 2021 Educators Forum Aug 2021 Article No.: 2 https://doi.org/10.1145/3450549.3464413',
+    papers: `Coulombe, A., Gochfeld, D., Bradley, B., Laibson, K., Long, R., Miletitch, R. "Virtual Reality Live theatre on No Budget: A Model for Independent Theatrical Productions using Open-Source Social VR" SIGGRAPH '21: ACM SIGGRAPH 2021 Educators Forum Aug 2021 Article No.: 2 https://doi.org/10.1145/3450549.3464413`,
     tech: 'Mozilla Hubs, OBS, OBS Ninja',
     credits: 'By Brendan A. Bradley\nDirected by David Gochfeld\nProduced by Alex Coulombe, Kevin Laibson, David Gochfeld, Brendan A. Bradley\nVirtual Space Integration by Roman Miletitch\nFeaturing: Brendan A. Bradley, Nick Carrillo, Nican Robinson\nDigital Puppetry by Ashley Clements\nPerformed in Mozilla Hubs at The Brendan A. Bradley Future Stages Theater',
     additionalContributors: '',
