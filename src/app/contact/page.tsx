@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import NewsletterSignup from '@/components/NewsletterSignup';
 import ContactForm from '@/components/ContactForm';
+import RevealBox from '@/components/RevealBox';
 
 export const metadata: Metadata = {
   title: 'Contact | Agile Lens',
@@ -62,7 +63,9 @@ export default function ContactPage() {
         </div>
 
         {/* Newsletter Signup */}
-        <NewsletterSignup />
+        <RevealBox variant="reveal-left" threshold={0.08}>
+          <NewsletterSignup />
+        </RevealBox>
 
         {/* Contact Form via Formspree */}
         <div>

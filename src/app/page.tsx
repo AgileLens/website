@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
+import RevealBox from '@/components/RevealBox';
 import NewsletterSignup from '@/components/NewsletterSignup';
 
 /* ── Scroll Reveal Hook ── */
@@ -427,16 +428,19 @@ export default function HomePage() {
       </Section>
 
       {/* ── About ── */}
-      <Section id="about" className="max-w-[1100px] mx-auto px-6 md:px-12 py-32">
+      <section id="about" className="max-w-[1100px] mx-auto px-6 md:px-12 py-32">
         <div className="grid md:grid-cols-2 gap-16 items-end">
+          {/* Left col — staggered slide-from-left */}
           <div>
-            <h2 className="text-[clamp(2rem,4vw,4rem)] font-bold mb-8">About</h2>
-            <p className="text-muted text-lg leading-relaxed mb-8">
-              Founded in 2014, Agile Lens was born from a mission to redefine storytelling through
-              immersive technology, merging design, architecture, and XR to create transformative spatial
-              experiences.
-            </p>
-            <div>
+            <RevealBox variant="reveal-left" delay={0}>
+              <h2 className="text-[clamp(2rem,4vw,4rem)] font-bold mb-8">About</h2>
+              <p className="text-muted text-lg leading-relaxed mb-8">
+                Founded in 2014, Agile Lens was born from a mission to redefine storytelling through
+                immersive technology, merging design, architecture, and XR to create transformative spatial
+                experiences.
+              </p>
+            </RevealBox>
+            <RevealBox variant="reveal-left" delay={150}>
               <span className="block mb-6 text-xs uppercase tracking-wider opacity-60">Sister companies</span>
               <div className="flex flex-col gap-6">
                 {[
@@ -445,46 +449,54 @@ export default function HomePage() {
                     logo: 'https://cdn.prod.website-files.com/68d9482320210cfdb85c1d57/68ef514f4e7935c27e31cad5_FDA.png',
                     alt: 'Fisher Dachs Associates',
                     desc: 'is the most trusted and experienced theater planning and design team in the industry.',
+                    delay: 0,
                   },
                   {
                     href: 'https://www.fmsp.com',
                     logo: 'https://cdn.prod.website-files.com/68d9482320210cfdb85c1d57/68ef5224d8cab60d5f30eda5_FMS.png',
                     alt: 'Fisher Marantz Stone',
                     desc: 'is an architectural lighting design firm offering complete planning, design and commissioning services.',
+                    delay: 80,
                   },
                   {
                     href: 'https://www.alexcoulombepresents.com',
                     logo: '/logos/AlexCoulombePresentsWhite.png',
                     alt: 'Alex Coulombe Presents',
                     desc: 'is the best (and only) authorized training center for Unreal Engine in Manhattan, featuring members of Agile Lens as gold authorized instructors.',
+                    delay: 160,
                   },
                 ].map((co) => (
-                  <a
-                    key={co.href}
-                    href={co.href}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="flex items-center gap-5 group hover:opacity-90 transition-opacity"
-                  >
-                    <span className="shrink-0 h-10 w-10 flex items-center justify-center rounded overflow-hidden"
-                      style={co.alt === 'Alex Coulombe Presents' ? {
-                        background: 'linear-gradient(145deg, #2a1a1a, #1a0a0a)',
-                        boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.12), inset 0 -1px 0 rgba(0,0,0,0.4), 0 2px 4px rgba(0,0,0,0.5)',
-                        border: '1px solid rgba(180,60,40,0.5)',
-                      } : {}}>
-                      <img src={co.logo} alt={co.alt} className="h-10 w-auto object-contain" style={co.alt === 'Alex Coulombe Presents' ? { height: '80%', width: '80%' } : {}} />
-                    </span>
-                    <p className="text-sm text-muted leading-snug">
-                      <span className="font-semibold text-text">{co.alt} </span>{co.desc}
-                    </p>
-                  </a>
+                  <div key={co.href} className="reveal-stagger" style={{ '--reveal-delay': `${co.delay + 200}ms` } as React.CSSProperties}>
+                    <a
+                      href={co.href}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="flex items-center gap-5 group hover:opacity-90 transition-opacity"
+                    >
+                      <span className="shrink-0 h-10 w-10 flex items-center justify-center rounded overflow-hidden"
+                        style={co.alt === 'Alex Coulombe Presents' ? {
+                          background: 'linear-gradient(145deg, #2a1a1a, #1a0a0a)',
+                          boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.12), inset 0 -1px 0 rgba(0,0,0,0.4), 0 2px 4px rgba(0,0,0,0.5)',
+                          border: '1px solid rgba(180,60,40,0.5)',
+                        } : {}}>
+                        <img src={co.logo} alt={co.alt} className="h-10 w-auto object-contain" style={co.alt === 'Alex Coulombe Presents' ? { height: '80%', width: '80%' } : {}} />
+                      </span>
+                      <p className="text-sm text-muted leading-snug">
+                        <span className="font-semibold text-text">{co.alt} </span>{co.desc}
+                      </p>
+                    </a>
+                  </div>
                 ))}
               </div>
-            </div>
+            </RevealBox>
           </div>
-          <AboutSlideshow />
+
+          {/* Right col — scale up with spring */}
+          <RevealBox variant="reveal-scale" delay={100}>
+            <AboutSlideshow />
+          </RevealBox>
         </div>
-      </Section>
+      </section>
     </>
   );
 }
