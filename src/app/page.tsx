@@ -436,18 +436,42 @@ export default function HomePage() {
               immersive technology, merging design, architecture, and XR to create transformative spatial
               experiences.
             </p>
-            <div className="text-sm text-muted">
-              <span className="block mb-4 text-xs uppercase tracking-wider opacity-60">Sister companies</span>
-              <div className="flex items-center gap-8 flex-wrap">
-                <a href="https://www.fisherdachs.com" target="_blank" rel="noopener noreferrer" className="hover:opacity-80 transition-opacity">
-                  <img src="https://cdn.prod.website-files.com/68d9482320210cfdb85c1d57/68ef514f4e7935c27e31cad5_FDA.png" alt="Fisher Dachs Associates" className="h-10" />
-                </a>
-                <a href="https://www.fmsp.com" target="_blank" rel="noopener noreferrer" className="hover:opacity-80 transition-opacity">
-                  <img src="https://cdn.prod.website-files.com/68d9482320210cfdb85c1d57/68ef5224d8cab60d5f30eda5_FMS.png" alt="Fisher Marantz Stone" className="h-10" />
-                </a>
-                <a href="https://www.alexcoulombepresents.com" target="_blank" rel="noopener noreferrer" className="hover:opacity-80 transition-opacity">
-                  <img src="/logos/AlexCoulombePresents.png" alt="Alex Coulombe Presents" className="h-10" />
-                </a>
+            <div>
+              <span className="block mb-6 text-xs uppercase tracking-wider opacity-60">Sister companies</span>
+              <div className="flex flex-col gap-6">
+                {[
+                  {
+                    href: 'https://www.fisherdachs.com',
+                    logo: 'https://cdn.prod.website-files.com/68d9482320210cfdb85c1d57/68ef514f4e7935c27e31cad5_FDA.png',
+                    alt: 'Fisher Dachs Associates',
+                    desc: 'is the most trusted and experienced theater planning and design team in the industry.',
+                  },
+                  {
+                    href: 'https://www.fmsp.com',
+                    logo: 'https://cdn.prod.website-files.com/68d9482320210cfdb85c1d57/68ef5224d8cab60d5f30eda5_FMS.png',
+                    alt: 'Fisher Marantz Stone',
+                    desc: 'is an architectural lighting design firm offering complete planning, design and commissioning services.',
+                  },
+                  {
+                    href: 'https://www.alexcoulombepresents.com',
+                    logo: '/logos/AlexCoulombePresentsWhite.png',
+                    alt: 'Alex Coulombe Presents',
+                    desc: 'is the best (and only) authorized training center for Unreal Engine in Manhattan, featuring members of Agile Lens as gold authorized instructors.',
+                  },
+                ].map((co) => (
+                  <a
+                    key={co.href}
+                    href={co.href}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center gap-5 group hover:opacity-90 transition-opacity"
+                  >
+                    <img src={co.logo} alt={co.alt} className="h-10 w-auto shrink-0 object-contain" />
+                    <p className="text-sm text-muted leading-snug">
+                      <span className="font-semibold text-text">{co.alt} </span>{co.desc}
+                    </p>
+                  </a>
+                ))}
               </div>
             </div>
           </div>
