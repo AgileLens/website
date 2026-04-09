@@ -428,7 +428,7 @@ export default function HomePage() {
 
       {/* ── About ── */}
       <Section id="about" className="max-w-[1100px] mx-auto px-6 md:px-12 py-32">
-        <div className="grid md:grid-cols-2 gap-16 items-center">
+        <div className="grid md:grid-cols-2 gap-16 items-end">
           <div>
             <h2 className="text-[clamp(2rem,4vw,4rem)] font-bold mb-8">About</h2>
             <p className="text-muted text-lg leading-relaxed mb-8">
@@ -466,7 +466,14 @@ export default function HomePage() {
                     rel="noopener noreferrer"
                     className="flex items-center gap-5 group hover:opacity-90 transition-opacity"
                   >
-                    <img src={co.logo} alt={co.alt} className="h-10 w-auto shrink-0 object-contain" />
+                    <span className="shrink-0 h-10 w-10 flex items-center justify-center rounded overflow-hidden"
+                      style={co.alt === 'Alex Coulombe Presents' ? {
+                        background: 'linear-gradient(145deg, #2a1a1a, #1a0a0a)',
+                        boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.12), inset 0 -1px 0 rgba(0,0,0,0.4), 0 2px 4px rgba(0,0,0,0.5)',
+                        border: '1px solid rgba(180,60,40,0.5)',
+                      } : {}}>
+                      <img src={co.logo} alt={co.alt} className="h-10 w-auto object-contain" style={co.alt === 'Alex Coulombe Presents' ? { height: '80%', width: '80%' } : {}} />
+                    </span>
                     <p className="text-sm text-muted leading-snug">
                       <span className="font-semibold text-text">{co.alt} </span>{co.desc}
                     </p>
