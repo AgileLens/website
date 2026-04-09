@@ -6,11 +6,22 @@ import { projects } from '@/data/projects';
 
 const categories = ['All', 'Architecture', 'Entertainment', 'Immersive Marketing', 'Real Estate', 'Social Impact'];
 
+// Only show Completed and Ongoing projects, sorted: featured first, then by yearCompleted desc
+const visibleProjects = projects
+  .filter(p => p.status === 'Completed' || p.status === 'Ongoing')
+  .sort((a, b) => {
+    if (a.featured && !b.featured) return -1;
+    if (!a.featured && b.featured) return 1;
+    const ay = parseInt(a.yearCompleted || a.yearStarted || '0');
+    const by = parseInt(b.yearCompleted || b.yearStarted || '0');
+    return by - ay;
+  });
+
 export default function PortfolioPage() {
   const [activeCategory, setActiveCategory] = useState('All');
   const filtered = activeCategory === 'All'
-    ? projects
-    : projects.filter(p => [p.category1, p.category2].filter(Boolean).includes(activeCategory));
+    ? visibleProjects
+    : visibleProjects.filter(p => [p.category1, p.category2].filter(Boolean).includes(activeCategory));
 
   return (
     <div className="max-w-7xl mx-auto px-6 py-24">
@@ -41,11 +52,7 @@ export default function PortfolioPage() {
       {/* Projects grid */}
       <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
         {filtered.map((p) => {
-          const yearDisplay = p.yearStarted && p.yearCompleted
-            ? (p.yearStarted === p.yearCompleted ? p.yearStarted : `${p.yearStarted}-${p.yearCompleted}`)
-            : p.yearStarted
-              ? `${p.yearStarted}+`
-              : '';
+          const yearLabel = p.yearCompleted ? `Released: ${p.yearCompleted}` : '';
 
           return (
             <Link key={p.slug} href={`/portfolio/${p.slug}`} className="group block p-6 rounded-xl border border-border bg-surface hover:border-pink/40 transition-all">
@@ -57,9 +64,11 @@ export default function PortfolioPage() {
                 )}
               </div>
               <h3 className="text-lg font-bold mb-1 group-hover:text-pink transition-colors">{p.name}</h3>
-              <div className="flex items-center gap-2 mb-2">
-                <span className="text-xs text-muted">{yearDisplay}</span>
-              </div>
+              {yearLabel && (
+                <div className="mb-2">
+                  <span className="text-xs text-muted">{yearLabel}</span>
+                </div>
+              )}
               {p.clients && <div className="text-xs text-muted mb-2">Client: {p.clients}</div>}
               <p className="text-sm text-muted leading-relaxed mb-3 line-clamp-3">{p.overview || p.description}</p>
               {p.awards && <div className="text-xs text-yellow-400 mb-2 line-clamp-2">{p.awards}</div>}
