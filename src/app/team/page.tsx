@@ -155,14 +155,13 @@ function PersonCard({ name, role, bio, photo }: { name: string; role: string; bi
   );
 }
 
-// Group team members by row
-const rows = team.reduce((acc, person) => {
+const founders = team.filter(p => p.row === 0);
+const restByRow = team.filter(p => p.row > 0).reduce((acc, person) => {
   if (!acc[person.row]) acc[person.row] = [];
   acc[person.row].push(person);
   return acc;
 }, {} as Record<number, typeof team>);
-
-const rowKeys = Object.keys(rows).map(Number).sort((a, b) => a - b);
+const restRowKeys = Object.keys(restByRow).map(Number).sort((a, b) => a - b);
 
 export default function TeamPage() {
   return (
@@ -174,10 +173,18 @@ export default function TeamPage() {
         </p>
       </div>
 
+      <h2 className="text-2xl font-bold mb-8 gradient-text">Founders</h2>
+      <div className="grid md:grid-cols-2 gap-6 mb-16">
+        {founders.map(p => (
+          <PersonCard key={p.name} name={p.name} role={p.role} bio={p.bio} photo={p.photo} />
+        ))}
+      </div>
+
+      <h2 className="text-2xl font-bold mb-8 gradient-text">Team</h2>
       <div className="space-y-6">
-        {rowKeys.map(rowKey => (
+        {restRowKeys.map(rowKey => (
           <div key={rowKey} className="grid md:grid-cols-3 gap-6">
-            {rows[rowKey].map(p => (
+            {restByRow[rowKey].map(p => (
               <PersonCard key={p.name} name={p.name} role={p.role} bio={p.bio} photo={p.photo} />
             ))}
           </div>
