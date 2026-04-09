@@ -731,7 +731,7 @@ https://www.broadwayworld.com/off-off-broadway/article/THE-HARMNF-LiveVR-Hybrid-
     category1: 'Social Impact',
     category2: 'Architecture',
     image: '/portfolio/mastaba/01.png',
-    images: ['/portfolio/mastaba/01.png', '/portfolio/mastaba/02.PNG', '/portfolio/mastaba/03.jpg', '/portfolio/mastaba/04.jpg', '/portfolio/mastaba/05.jpg', '/portfolio/mastaba/06.jpg', '/portfolio/mastaba/07.png', '/portfolio/mastaba/08.png', '/portfolio/mastaba/09.png'],
+    images: ['/portfolio/mastaba/01.png', '/portfolio/mastaba/02.png', '/portfolio/mastaba/03.jpg', '/portfolio/mastaba/04.jpg', '/portfolio/mastaba/05.jpg', '/portfolio/mastaba/06.jpg', '/portfolio/mastaba/07.png', '/portfolio/mastaba/08.png', '/portfolio/mastaba/09.png'],
   },
   {
     slug: 'city-of-apparition-chapter-one',
