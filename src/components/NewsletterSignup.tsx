@@ -75,6 +75,7 @@ export default function NewsletterSignup() {
           padding: 0;
           position: relative;
         }
+        #mlb2-39575133.ml-form-embedContainer .ml-form-align-center { text-align: center; }
         #mlb2-39575133.ml-form-embedContainer .ml-form-embedWrapper.embedForm { max-width: 400px; width: 100%; }
         #mlb2-39575133.ml-form-embedContainer .ml-form-embedWrapper .ml-form-embedBody,
         #mlb2-39575133.ml-form-embedContainer .ml-form-embedWrapper .ml-form-successBody {
