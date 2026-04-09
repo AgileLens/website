@@ -65,6 +65,10 @@ export default function NewsletterSignup() {
         }
         #mlb2-39575133.ml-form-embedContainer .ml-form-embedWrapper {
           background-color: #d7bbbb;
+          background-image: url(https://storage.mlcdn.com/account_image/2179151/zYYANSJ3bI6MMUlD2BbqcYecoDxNOUPbn4fW71jc.png);
+          background-position: center center;
+          background-repeat: no-repeat;
+          background-size: cover;
           border-width: 0px;
           border-color: transparent;
           border-radius: 4px;
@@ -91,7 +95,7 @@ export default function NewsletterSignup() {
         }
         #mlb2-39575133.ml-form-embedContainer .ml-form-embedWrapper .ml-form-embedBody .ml-form-embedContent h4,
         #mlb2-39575133.ml-form-embedContainer .ml-form-embedWrapper .ml-form-successBody .ml-form-successContent h4 {
-          color: #000000;
+          color: #f0dfdf;
           font-family: 'Open Sans', Arial, Helvetica, sans-serif;
           font-size: 30px;
           font-weight: 400;
@@ -101,7 +105,7 @@ export default function NewsletterSignup() {
         }
         #mlb2-39575133.ml-form-embedContainer .ml-form-embedWrapper .ml-form-embedBody .ml-form-embedContent p,
         #mlb2-39575133.ml-form-embedContainer .ml-form-embedWrapper .ml-form-successBody .ml-form-successContent p {
-          color: #000000;
+          color: #faebeb;
           font-family: 'Open Sans', Arial, Helvetica, sans-serif;
           font-size: 14px;
           font-weight: 400;
