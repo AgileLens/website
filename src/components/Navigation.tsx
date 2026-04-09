@@ -29,7 +29,7 @@ export default function Navigation() {
 
   const allLinks = isHome
     ? [...navLinks, ...pageLinks]
-    : [{ href: '/', label: 'Home' }, ...pageLinks, { href: '/contact', label: 'Contact' }];
+    : [{ href: '/', label: 'Home' }, ...pageLinks];
 
   return (
     <nav
