@@ -69,21 +69,21 @@ const team = [
   {
     name: 'Zander Leff',
     role: 'Technical Artist',
-    photo: null,
+    photo: '/team/zander.jpg',
     bio: "Zander is quick generalist focused on architecture and game dev. He has led Agile Lens' approach to ingesting CAD/Datasmith files from other softwares into Unreal Engine for upgrade into high-end photoreal VR architectural visualizations.",
     row: 3,
   },
   {
     name: 'Peter Zhang',
     role: 'Product Designer',
-    photo: null,
+    photo: '/team/peter.jpg',
     bio: 'Peter is a sharp UX designer and AI-powered Unreal UI programmer. At Agile, he has redesigned and directly implemented, for both existing applications and refactor overhauls, the usability of our bespoke applications for enterprise onboarding and general adoption.',
     row: 3,
   },
   {
     name: 'Yidan Hu',
     role: 'Media and AI Consultant',
-    photo: null,
+    photo: '/team/yidan.jpg',
     bio: 'Yidan is a keen media producer and content creative. She leads internal media production and social content at Agile Lens and supports research and development of AI tooling pipelines.',
     row: 3,
   },
@@ -91,7 +91,7 @@ const team = [
   {
     name: 'Saurabh Saxena',
     role: 'Engineering Consultant',
-    photo: null,
+    photo: '/team/saurabh.jpg',
     bio: 'Saurabh is a seasoned software developer with deep expertise in Unreal Engine, XR, robotics and hardware-integrated systems. At Agile, he has taken point on software refactoring for enterprise applications transitioning from 1.x to 2.0, upgrading and prepare software for market release.',
     row: 4,
   },
