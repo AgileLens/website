@@ -22,6 +22,7 @@ export type Project = {
   image: string;
   images: string[];
   featured?: boolean;
+  hidden?: boolean;
 };
 
 function slugify(name: string): string {
@@ -710,7 +711,8 @@ https://www.broadwayworld.com/off-off-broadway/article/THE-HARMNF-LiveVR-Hybrid-
     slug: 'mastaba',
     name: 'Mastaba',
     status: 'Completed',
-    featured: true,
+    featured: false,
+    hidden: true,
     yearStarted: '2025',
     yearCompleted: '2026',
     platform: 'Meta Quest 3 (Standalone)',
@@ -729,7 +731,7 @@ https://www.broadwayworld.com/off-off-broadway/article/THE-HARMNF-LiveVR-Hybrid-
     category1: 'Social Impact',
     category2: 'Architecture',
     image: '/portfolio/mastaba/01.png',
-    images: ['/portfolio/mastaba/01.png', '/portfolio/mastaba/02.png', '/portfolio/mastaba/03.png', '/portfolio/mastaba/04.png'],
+    images: ['/portfolio/mastaba/01.png', '/portfolio/mastaba/02.PNG', '/portfolio/mastaba/03.jpg', '/portfolio/mastaba/04.jpg', '/portfolio/mastaba/05.jpg', '/portfolio/mastaba/06.jpg', '/portfolio/mastaba/07.png', '/portfolio/mastaba/08.png', '/portfolio/mastaba/09.png'],
   },
   {
     slug: 'city-of-apparition-chapter-one',

@@ -8,7 +8,7 @@ const categories = ['All', 'Architecture', 'Entertainment', 'Immersive Marketing
 
 // Only show Completed and Ongoing projects, sorted: featured first, then by yearCompleted desc
 const visibleProjects = projects
-  .filter(p => p.status === 'Completed' || p.status === 'Ongoing')
+  .filter(p => (p.status === 'Completed' || p.status === 'Ongoing') && !p.hidden)
   .sort((a, b) => {
     if (a.featured && !b.featured) return -1;
     if (!a.featured && b.featured) return 1;
