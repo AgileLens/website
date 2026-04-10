@@ -460,7 +460,7 @@ export default function HomePage() {
                   },
                   {
                     href: 'https://www.alexcoulombepresents.com',
-                    logo: '/logos/ACP.png',
+                    logo: '/logos/ACP2.png',
                     alt: 'Alex Coulombe Presents',
                     desc: 'is the best (and only) authorized training center for Unreal Engine in Manhattan, featuring members of Agile Lens as gold authorized instructors.',
                     delay: 160,
@@ -473,7 +473,10 @@ export default function HomePage() {
                       rel="noopener noreferrer"
                       className="flex items-center gap-5 group hover:opacity-90 transition-opacity"
                     >
-                      <span className="shrink-0 h-10 w-10 flex items-center justify-center rounded overflow-hidden">
+                      <span className="shrink-0 h-10 w-10 flex items-center justify-center rounded overflow-hidden"
+                        style={co.alt === 'Alex Coulombe Presents' ? {
+                          boxShadow: '0 0 0 1px rgba(0,0,0,0.18), 0 1px 4px rgba(0,0,0,0.18)',
+                        } : {}}>
                         <img src={co.logo} alt={co.alt} className="h-10 w-auto object-contain" />
                       </span>
                       <p className="text-sm text-muted leading-snug">
