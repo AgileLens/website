@@ -423,9 +423,9 @@ export default function HomePage() {
       </section>
 
       {/* ── Newsletter Signup ── */}
-      <Section className="max-w-[1100px] mx-auto px-6 md:px-12 py-16">
+      <RevealBox variant="reveal-left" threshold={0.08} className="max-w-[1100px] mx-auto px-6 md:px-12 py-16">
         <NewsletterSignup />
-      </Section>
+      </RevealBox>
 
       {/* ── About ── */}
       <section id="about" className="max-w-[1100px] mx-auto px-6 md:px-12 py-32">
