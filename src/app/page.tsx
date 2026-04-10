@@ -475,6 +475,7 @@ export default function HomePage() {
                     >
                       <span className="shrink-0 h-10 w-10 flex items-center justify-center rounded overflow-hidden"
                         style={co.alt === 'Alex Coulombe Presents' ? {
+                          backgroundColor: 'white',
                           boxShadow: '0 0 0 1.5px rgba(255,255,255,0.22), 0 2px 6px rgba(0,0,0,0.45)',
                         } : {}}>
                         <img src={co.logo} alt={co.alt} className="h-10 w-auto object-contain" />
