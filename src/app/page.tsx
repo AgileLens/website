@@ -460,7 +460,7 @@ export default function HomePage() {
                   },
                   {
                     href: 'https://www.alexcoulombepresents.com',
-                    logo: '/logos/AlexCoulombePresentsBig.png',
+                    logo: '/logos/ACP.png',
                     alt: 'Alex Coulombe Presents',
                     desc: 'is the best (and only) authorized training center for Unreal Engine in Manhattan, featuring members of Agile Lens as gold authorized instructors.',
                     delay: 160,

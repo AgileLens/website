@@ -8,6 +8,7 @@ interface RevealBoxProps {
   variant?: 'reveal' | 'reveal-left' | 'reveal-right' | 'reveal-scale' | 'reveal-stagger';
   delay?: number;
   threshold?: number;
+  rootMargin?: string;
 }
 
 export default function RevealBox({
@@ -16,6 +17,7 @@ export default function RevealBox({
   variant = 'reveal',
   delay = 0,
   threshold = 0.12,
+  rootMargin = '0px 0px -15% 0px',
 }: RevealBoxProps) {
   const ref = useRef<HTMLDivElement>(null);
 
@@ -30,11 +32,11 @@ export default function RevealBox({
           io.unobserve(el);
         }
       },
-      { threshold },
+      { threshold, rootMargin },
     );
     io.observe(el);
     return () => io.disconnect();
-  }, [delay, threshold]);
+  }, [delay, threshold, rootMargin]);
 
   return (
     <div ref={ref} className={`${variant} ${className}`}>
