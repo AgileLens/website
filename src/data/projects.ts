@@ -298,7 +298,7 @@ export const projects: Project[] = [
     category1: 'Entertainment',
     category2: '',
     image: '/portfolio/ghosted/01.jpg',
-    images: ['/portfolio/ghosted/01.jpg', '/portfolio/ghosted/02.gif', '/portfolio/ghosted/03.jpg', '/portfolio/ghosted/04.jpg', '/portfolio/ghosted/05.jpg'],
+    images: ['/portfolio/ghosted/01.jpg', '/portfolio/ghosted/02.jpg', '/portfolio/ghosted/03.jpg', '/portfolio/ghosted/04.jpg', '/portfolio/ghosted/05.gif'],
   },
   {
     slug: 'jettison-on-board-xr',
@@ -375,7 +375,7 @@ https://www.theguardian.com/artanddesign/2022/jul/16/on-my-radar-marina-abramovi
     category1: 'Entertainment',
     category2: '',
     image: '/portfolio/the-orchard/01.jpg',
-    images: ['/portfolio/the-orchard/01.jpg', '/portfolio/the-orchard/02.webp', '/portfolio/the-orchard/03.jpg', '/portfolio/the-orchard/04.jpg'],
+    images: ['/portfolio/the-orchard/01.jpg', '/portfolio/the-orchard/02.jpg', '/portfolio/the-orchard/03.jpg', '/portfolio/the-orchard/04.jpg'],
   },
   {
     slug: 'song-of-the-ambassadors',
