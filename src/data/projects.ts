@@ -830,8 +830,8 @@ https://www.broadwayworld.com/off-off-broadway/article/THE-HARMNF-LiveVR-Hybrid-
     links: '',
     category1: 'Architecture',
     category2: '',
-    image: '/portfolio/blueprint-immersive/01.jpg',
-    images: ['/portfolio/blueprint-immersive/01.jpg', '/portfolio/blueprint-immersive/02.jpg', '/portfolio/blueprint-immersive/03.jpg', '/portfolio/blueprint-immersive/04.jpg'],
+    image: '/portfolio/blueprint-immersive/01.png',
+    images: ['/portfolio/blueprint-immersive/01.png', '/portfolio/blueprint-immersive/02.jpg', '/portfolio/blueprint-immersive/03.jpg', '/portfolio/blueprint-immersive/04.jpg'],
   },
   {
     slug: 'star-wars-halcyon-vr',
