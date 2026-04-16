@@ -84,6 +84,14 @@ Because `output: 'export'` is set in `next.config.ts`, the build produces a full
 
 ---
 
+## Things to Try
+
+1. **Run `npm install && npm run dev` and open `http://localhost:3000`** — the Agile Lens homepage loads with hero, services, portfolio preview, and team sections; no credentials needed.
+2. **Navigate to `/portfolio`** — real client projects organized by category (Architecture, Entertainment, Marketing, R&D) with filterable tabs.
+3. **Open `src/` and edit the hero headline copy in the home page component** — Next.js HMR reflects the change instantly in the browser without a full reload.
+4. **Run `npm run build`** — Next.js produces a fully static export in `/out`; open `out/index.html` directly in a browser to verify it works with no server.
+5. **Push to `main`** — Vercel auto-deploys; check [agilelens.com](https://agilelens.com) within ~90 seconds to see the live update.
+
 ## Deployment
 
 The site deploys automatically to **Vercel** on every push to `main`. No manual steps needed.
