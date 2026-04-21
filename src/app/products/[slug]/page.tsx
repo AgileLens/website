@@ -68,17 +68,18 @@ export default async function ProductPage({ params }: { params: Promise<{ slug: 
               <div className={`rounded-2xl border p-8 ${isGreen ? 'border-green/30 bg-green/5' : 'border-pink/30 bg-pink/5'}`}>
                 <h2 className="text-lg font-bold mb-2">Product Deck</h2>
                 <p className="text-muted text-sm mb-5">
-                  Download the full product deck for detailed specs, case studies, and pricing guidance.
+                  View the full product deck for detailed specs, case studies, and pricing guidance.
                 </p>
                 <a
                   href={product.deckUrl}
-                  download
+                  target="_blank"
+                  rel="noopener noreferrer"
                   className={`inline-flex items-center gap-2 px-5 py-2.5 rounded-lg font-semibold text-sm text-black ${accentBgSolid}`}
                 >
                   <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-                    <path d="M8 1v9M4.5 6.5 8 10l3.5-3.5M2 13h12" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                    <path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
                   </svg>
-                  Download Deck
+                  View Deck
                 </a>
               </div>
             ) : (
