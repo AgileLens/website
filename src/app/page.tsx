@@ -62,12 +62,12 @@ const pillars = [
 ];
 
 const products = [
-  { group: 'Pre-construction', tag: 'green', name: 'Hyperreal Estate', description: 'Photoreal 3D architectural and design visualization. Raytraced with UE and optimized for high-end VR.', image: 'https://cdn.prod.website-files.com/68d9482320210cfdb85c1d57/68f7ab0c726658f5fdb8f437_FSLA-Boathouse.png' },
-  { group: 'Pre-construction', tag: 'green', name: 'Blueprint Immersive', description: 'High-fidelity event venue configuration and previs software. Used by top architects and design professionals to optimize construction planning.', image: 'https://cdn.prod.website-files.com/68d9482320210cfdb85c1d57/68ef32e1a167946204a6770e_blueprint3.avif' },
-  { group: 'Pre-construction', tag: 'green', name: 'Floor Tour', description: 'Self-service, real-world scale floor plan visualization software. Walk your portfolio of designs and renders in VR with just a few clicks.', image: 'https://cdn.prod.website-files.com/68d9482320210cfdb85c1d57/68f7a976635f1d32bcc41c82_floorTour.avif' },
-  { group: 'Entertainment', tag: 'pink', name: 'Holodeck Anywhere', description: 'Multiuser colocated VR. Solutions are available for both ultra-high fidelity and standalone flexibility.', image: 'https://cdn.prod.website-files.com/68d9482320210cfdb85c1d57/68f7a77310538a13ec8f9d28_NYC-Holodeck_Cropped.png' },
-  { group: 'Entertainment', tag: 'pink', name: 'Stage Presence', description: 'Rehearsal tool and performance platform. Designed and streamlined to integrate with existing media and live event industry practices.', image: 'https://cdn.prod.website-files.com/68d9482320210cfdb85c1d57/68f7d774d50595d5e99566ba_rsc-cropped.png' },
-  { group: 'Entertainment', tag: 'pink', name: 'PerforMR', description: 'Live-actor animation pipeline. A multi-source mocap tool for performers to animate one or many MetaHumans, real-time or saved for playback, in Virtual Reality or Mixed Reality.', image: 'https://cdn.prod.website-files.com/68d9482320210cfdb85c1d57/68f7a2f04c60eb921038d52d_XmasCarol_Scrooge-Future.jpg' },
+  { group: 'Pre-construction', tag: 'green', name: 'Hyperreal Estate', slug: 'hyperreal-estate', description: 'Photoreal 3D architectural and design visualization. Raytraced with UE and optimized for high-end VR.', image: 'https://cdn.prod.website-files.com/68d9482320210cfdb85c1d57/68f7ab0c726658f5fdb8f437_FSLA-Boathouse.png' },
+  { group: 'Pre-construction', tag: 'green', name: 'Blueprint Immersive', slug: 'blueprint-immersive', description: 'High-fidelity event venue configuration and previs software. Used by top architects and design professionals to optimize construction planning.', image: 'https://cdn.prod.website-files.com/68d9482320210cfdb85c1d57/68ef32e1a167946204a6770e_blueprint3.avif' },
+  { group: 'Pre-construction', tag: 'green', name: 'Floor Tour', slug: 'floor-tour', description: 'Self-service, real-world scale floor plan visualization software. Walk your portfolio of designs and renders in VR with just a few clicks.', image: 'https://cdn.prod.website-files.com/68d9482320210cfdb85c1d57/68f7a976635f1d32bcc41c82_floorTour.avif' },
+  { group: 'Entertainment', tag: 'pink', name: 'Holodeck Anywhere', slug: 'holodeck-anywhere', description: 'Multiuser colocated VR. Solutions are available for both ultra-high fidelity and standalone flexibility.', image: 'https://cdn.prod.website-files.com/68d9482320210cfdb85c1d57/68f7a77310538a13ec8f9d28_NYC-Holodeck_Cropped.png' },
+  { group: 'Entertainment', tag: 'pink', name: 'Stage Presence', slug: 'stage-presence', description: 'Rehearsal tool and performance platform. Designed and streamlined to integrate with existing media and live event industry practices.', image: 'https://cdn.prod.website-files.com/68d9482320210cfdb85c1d57/68f7d774d50595d5e99566ba_rsc-cropped.png' },
+  { group: 'Entertainment', tag: 'pink', name: 'PerforMR', slug: 'performr', description: 'Live-actor animation pipeline. A multi-source mocap tool for performers to animate one or many MetaHumans, real-time or saved for playback, in Virtual Reality or Mixed Reality.', image: 'https://cdn.prod.website-files.com/68d9482320210cfdb85c1d57/68f7a2f04c60eb921038d52d_XmasCarol_Scrooge-Future.jpg' },
 ];
 
 const testimonials = [
@@ -353,22 +353,30 @@ export default function HomePage() {
         <div className="flex flex-col gap-5">
           {products.map((product, i) => (
             <div key={product.name} className="sticky-card" style={{ top: `calc(8vh + ${i * 20}px)` }}>
-              <div className="grid md:grid-cols-[1fr_1.75fr] bg-card border border-border rounded-2xl overflow-hidden min-h-[50vh]">
-                <div className="p-8 md:p-12 flex flex-col justify-center">
-                  <span className={`inline-block px-3 py-1 rounded-full text-xs font-medium border mb-6 w-fit ${
-                    product.tag === 'green'
-                      ? 'border-green text-green'
-                      : 'border-pink text-pink'
-                  }`}>
-                    {product.group}
-                  </span>
-                  <h3 className="text-2xl md:text-3xl font-semibold mb-4">{product.name}</h3>
-                  <p className="text-muted leading-relaxed">{product.description}</p>
+              <Link href={`/products/${product.slug}`} className="group block">
+                <div className="grid md:grid-cols-[1fr_1.75fr] bg-card border border-border rounded-2xl overflow-hidden min-h-[50vh] transition-colors group-hover:border-border/80">
+                  <div className="p-8 md:p-12 flex flex-col justify-center">
+                    <span className={`inline-block px-3 py-1 rounded-full text-xs font-medium border mb-6 w-fit ${
+                      product.tag === 'green'
+                        ? 'border-green text-green'
+                        : 'border-pink text-pink'
+                    }`}>
+                      {product.group}
+                    </span>
+                    <h3 className="text-2xl md:text-3xl font-semibold mb-4">{product.name}</h3>
+                    <p className="text-muted leading-relaxed mb-6">{product.description}</p>
+                    <span className={`text-sm font-semibold flex items-center gap-2 w-fit ${product.tag === 'green' ? 'text-green' : 'text-pink'}`}>
+                      Learn more
+                      <svg width="16" height="16" viewBox="0 0 16 16" fill="none" className="transition-transform group-hover:translate-x-1">
+                        <path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                      </svg>
+                    </span>
+                  </div>
+                  <div className="relative min-h-[250px] md:min-h-0 overflow-hidden">
+                    <img src={product.image} alt={product.name} className="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-[1.03]" />
+                  </div>
                 </div>
-                <div className="relative min-h-[250px] md:min-h-0">
-                  <img src={product.image} alt={product.name} className="absolute inset-0 w-full h-full object-cover" />
-                </div>
-              </div>
+              </Link>
             </div>
           ))}
         </div>
