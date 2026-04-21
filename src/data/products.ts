@@ -86,6 +86,7 @@ export const products: Product[] = [
     ],
     image:
       'https://cdn.prod.website-files.com/68d9482320210cfdb85c1d57/68f7a77310538a13ec8f9d28_NYC-Holodeck_Cropped.png',
+    deckUrl: '/decks/holodeck-anywhere/',
   },
   {
     slug: 'stage-presence',
