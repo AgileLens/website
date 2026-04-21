@@ -24,7 +24,7 @@ const SECTIONS = [
     lesson: { title:'The First Time in\nPhotorealistic VR Sells Itself.', short:'PHOTOREAL VR', tagline:'The moment a guest puts on the headset and takes their first step into a room that doesn\u2019t exist yet \u2014 that\u2019s the moment your project sells itself. Holodeck Anywhere makes that moment possible at any venue.', tags:'Quest 3 \u00b7 AirLink \u00b7 Unreal Engine 5 \u00b7 Multi-User' },
     cases: [
       { title:'Photorealism. Wireless.', subtitle:'Meta Quest via AirLink \u2014 no backpacks, no cables',
-        img:'/portfolio/ny-dbox-holodeck/01.jpg',
+        img:'/portfolio/four-seasons-lake-austin/03.jpg',
         bullets:['Guests wear a Meta Quest 3 or Quest Pro headset \u2014 nothing else', 'The experience streams wirelessly via AirLink from a high-end PCVR rig \u2014 full Unreal Engine 5 photorealism, standalone headset simplicity', 'Deploy in any physical space: hotel ballroom, sales center, event venue, or purpose-built room'] },
       { title:'The Same World. Together.', subtitle:'Multi-user colocated VR with spatial alignment',
         img:'/portfolio/four-seasons-lake-austin/06.jpg',
@@ -52,7 +52,7 @@ const SECTIONS = [
     ] },
 ];
 
-const BONUS = { year:'NEXT STEPS', title:'Let\u2019s Find Your\nRight-Fit Deployment.',
+const BONUS = { year:'NEXT STEPS', title:'Your Holodeck\nStarts Here.',
   tagline:'Every Holodeck Anywhere installation is scoped to your venue, your audience, and your goals. Tell us about your project \u2014 we\u2019ll tell you what\u2019s possible and what it takes to deliver it.' };
 </script>
 <script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.164.1/build/three.module.min.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.164.1/examples/jsm/"}}</script>
@@ -270,7 +270,7 @@ body.edit-text .slide.active [contenteditable="true"]{outline:2px solid var(--te
 .layout-grid-cell{border:1px dashed rgba(0,212,255,.2);display:flex;align-items:center;justify-content:center;font:700 1.2rem 'Space Grotesk',sans-serif;color:rgba(0,212,255,.25);letter-spacing:.1em}
 
 /* ── Holodeck Anywhere: progress bar ── */
-#hd-progress{position:fixed;bottom:0;left:0;right:0;height:3px;background:rgba(255,255,255,.07);z-index:15;pointer-events:none}
+#hd-progress{position:fixed;bottom:0;left:0;right:0;height:3px;background:rgba(255,255,255,.18);z-index:15;pointer-events:none}
 #hd-progress-fill{height:100%;background:var(--teal);transition:width .4s cubic-bezier(.4,0,.2,1)}
 body.presentation-mode #hd-progress{opacity:.35}
 /* ── nav hint ── */
@@ -492,7 +492,7 @@ deck.appendChild(bon);allSlides.push(bon);
 // Map
 const mapS=document.createElement('div');mapS.className='slide slide-map';mapS.dataset.type='map';
 mapS.innerHTML=`<div class="map-label">The Journey, Mapped</div><svg id="map-svg" viewBox="0 0 1000 600"></svg>`;
-deck.appendChild(mapS);allSlides.push(mapS);
+deck.appendChild(mapS);allSlides.push(mapS);mapS.dataset.hidden='1';
 
 // Close slide with inline Agile Lens SVG logo
 const cls=document.createElement('div');cls.className='slide';cls.dataset.type='close';
