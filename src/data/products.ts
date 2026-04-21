@@ -76,7 +76,7 @@ export const products: Product[] = [
     description:
       'Multiuser colocated VR. Solutions are available for both ultra-high fidelity and standalone flexibility.',
     longDescription:
-      "Holodeck Anywhere is Agile Lens's flagship multiuser colocated VR platform. Groups experience the same virtual environment simultaneously in physical space — available in ultra-high fidelity tethered configurations and standalone options for flexible deployment.",
+      "Holodeck Anywhere is Agile Lens's flagship multiuser colocated VR platform. Groups experience the same virtual environment simultaneously in physical space — available in ultra-high fidelity PCVR configurations and standalone options for flexible deployment.",
     features: [
       'Simultaneous multiuser colocated experience',
       'Ultra-high fidelity tethered configuration',
