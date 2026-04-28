@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import RevealBox from '@/components/RevealBox';
+import PhotoMarquee from '@/components/PhotoMarquee';
 
 export const metadata: Metadata = {
   title: 'Unreal NYC | Agile Lens',
@@ -70,6 +71,9 @@ const PAST_EVENTS = [
     recording: 'https://youtu.be/skftiacxR2E',
   },
 ];
+
+// Event photos from Meetup, May 2025 onward — chronological (May → July → October).
+const EVENT_PHOTOS = Array.from({ length: 35 }, (_, i) => `/unrealnyc/photos/photo-${String(i + 1).padStart(2, '0')}.webp`);
 
 const FOLLOW_LINKS = [
   {
@@ -180,6 +184,26 @@ export default function UnrealNYCPage() {
               The Meetup archive remains live as a record of past gatherings.
             </p>
           </div>
+        </RevealBox>
+      </section>
+
+      {/* PHOTO MARQUEE */}
+      <section className="py-12 md:py-16">
+        <div className="max-w-7xl mx-auto px-6 mb-8">
+          <RevealBox>
+            <div className="flex items-end justify-between gap-6 flex-wrap">
+              <div>
+                <div className="text-xs uppercase tracking-wider text-pink font-semibold mb-2">In the room</div>
+                <h2 className="text-2xl md:text-3xl font-black">Since May 2025</h2>
+              </div>
+              <p className="text-sm text-muted max-w-md">
+                A peek at recent meetups across NYC — talks, demos, and the people who show up. Hover to pause, click any photo to enlarge.
+              </p>
+            </div>
+          </RevealBox>
+        </div>
+        <RevealBox>
+          <PhotoMarquee images={EVENT_PHOTOS} duration={120} />
         </RevealBox>
       </section>
 
