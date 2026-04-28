@@ -52,8 +52,8 @@ const PAST_EVENTS = [
     date: 'December 4, 2025',
     image: '/unrealnyc/04.jpg',
     sponsors: 'Hosted at School of Visual Arts · Food & swag sponsored by Epic Games',
-    speakers: 'Andrew Delgado, Yu-Jun Yeh, Ajinkya Hukerikar',
-    recording: '',
+    speakers: 'Andrew Delgado (ICRAVE), Yu-Jun Yeh (Agile Lens), Ajinkya Hukerikar (Zero Density)',
+    recording: 'https://youtu.be/skftiacxR2E',
   },
   {
     title: 'October Event',
@@ -62,14 +62,6 @@ const PAST_EVENTS = [
     sponsors: 'Sponsored by Epic Games (21+)',
     speakers: 'Matt Workman, Woody Devs',
     recording: 'https://youtu.be/_XBF9MzW7MA',
-  },
-  {
-    title: 'School of Visual Arts Showcase',
-    date: '2025',
-    image: '',
-    sponsors: 'Hosted at School of Visual Arts · Sponsored by Epic Games',
-    speakers: 'ICRAVE, Zero Density, Agile Lens',
-    recording: 'https://youtu.be/skftiacxR2E',
   },
   {
     title: 'August Meet-Up',
