@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
+import { createPortal } from 'react-dom';
 
 interface PhotoMarqueeProps {
   images: string[];
@@ -36,9 +37,15 @@ export default function PhotoMarquee({
   const mouseXRef = useRef<number | null>(null);
   const [zone, setZone] = useState<Zone>('none');
   const [lightbox, setLightbox] = useState<number | null>(null);
+  const [mounted, setMounted] = useState(false);
 
   // Render twice for seamless infinite loop
   const doubled = [...images, ...images];
+
+  // Track mount so we only render the portal client-side.
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   // Lightbox keyboard nav
   useEffect(() => {
@@ -184,9 +191,10 @@ export default function PhotoMarquee({
         </div>
       </div>
 
-      {lightbox !== null && (
+      {mounted && lightbox !== null && createPortal(
         <div
-          className="fixed inset-0 z-50 bg-black/95 backdrop-blur-sm flex items-center justify-center p-4 md:p-8"
+          className="fixed inset-0 bg-black/95 backdrop-blur-sm flex items-center justify-center p-4 md:p-8"
+          style={{ zIndex: 100 }}
           onClick={() => setLightbox(null)}
         >
           <button
@@ -204,7 +212,6 @@ export default function PhotoMarquee({
             src={images[lightbox]}
             alt=""
             className="max-w-[92vw] max-h-[88vh] w-auto h-auto object-contain rounded-xl"
-            style={{ minWidth: '60vw', minHeight: '50vh' }}
             onClick={(e) => e.stopPropagation()}
           />
           <button
@@ -232,7 +239,8 @@ export default function PhotoMarquee({
           <div className="absolute bottom-6 left-1/2 -translate-x-1/2 text-xs text-muted">
             {lightbox + 1} / {images.length}
           </div>
-        </div>
+        </div>,
+        document.body
       )}
     </>
   );

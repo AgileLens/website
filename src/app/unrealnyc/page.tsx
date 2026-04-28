@@ -90,7 +90,7 @@ const PAST_EVENTS = [
 ];
 
 // Event photos from Meetup, May 2025 onward — chronological (May → July → October).
-const EVENT_PHOTOS = Array.from({ length: 35 }, (_, i) => `/unrealnyc/photos/photo-${String(i + 1).padStart(2, '0')}.webp`);
+const EVENT_PHOTOS = Array.from({ length: 35 }, (_, i) => `/unrealnyc/photos/photo-${String(i + 1).padStart(2, '0')}.jpeg`);
 
 const FOLLOW_LINKS = [
   {
