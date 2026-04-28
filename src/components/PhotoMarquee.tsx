@@ -106,7 +106,8 @@ export default function PhotoMarquee({
           <img
             src={images[lightbox]}
             alt=""
-            className="max-w-full max-h-full object-contain rounded-xl"
+            className="max-w-[92vw] max-h-[88vh] w-auto h-auto object-contain rounded-xl"
+            style={{ minWidth: '60vw', minHeight: '50vh' }}
             onClick={(e) => e.stopPropagation()}
           />
           <button

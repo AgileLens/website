@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import Link from 'next/link';
 import RevealBox from '@/components/RevealBox';
 import PhotoMarquee from '@/components/PhotoMarquee';
+import PastEventsGrid from '@/components/PastEventsGrid';
 
 export const metadata: Metadata = {
   title: 'Unreal NYC | Agile Lens',
@@ -57,18 +58,42 @@ const PAST_EVENTS = [
   {
     title: 'October Event',
     date: 'October 22, 2025',
-    image: '',
-    sponsors: '',
+    image: '/unrealnyc/06.jpg',
+    sponsors: 'Sponsored by Epic Games (21+)',
     speakers: 'Matt Workman, Woody Devs',
     recording: 'https://youtu.be/_XBF9MzW7MA',
   },
   {
     title: 'School of Visual Arts Showcase',
-    date: '',
+    date: '2025',
     image: '',
     sponsors: 'Hosted at School of Visual Arts · Sponsored by Epic Games',
     speakers: 'ICRAVE, Zero Density, Agile Lens',
     recording: 'https://youtu.be/skftiacxR2E',
+  },
+  {
+    title: 'August Meet-Up',
+    date: 'August 28, 2025',
+    image: '/unrealnyc/07.jpg',
+    sponsors: 'Sponsored by ZeroSpace, Agile Lens, Epic Games, 4Wall Entertainment, HP',
+    speakers: '',
+    recording: '',
+  },
+  {
+    title: 'July Event',
+    date: 'July 24, 2025',
+    image: '/unrealnyc/08.jpg',
+    sponsors: 'Hosted by Jeremy Siracusa · Jett Sets Studio C / AMV Studio',
+    speakers: '',
+    recording: '',
+  },
+  {
+    title: 'Pre-Unreal Fest Hangout',
+    date: 'May 28, 2025',
+    image: '/unrealnyc/09.jpg',
+    sponsors: 'Sponsored by Epic Games · Hosted at Epic Games NYC',
+    speakers: 'Alex Coulombe, Ferris Webby',
+    recording: '',
   },
 ];
 
@@ -165,6 +190,26 @@ export default function UnrealNYCPage() {
         </div>
       </section>
 
+      {/* PHOTO MARQUEE */}
+      <section className="py-12 md:py-16">
+        <div className="max-w-7xl mx-auto px-6 mb-8">
+          <RevealBox>
+            <div className="flex items-end justify-between gap-6 flex-wrap">
+              <div>
+                <div className="text-xs uppercase tracking-wider text-pink font-semibold mb-2">In the room</div>
+                <h2 className="text-2xl md:text-3xl font-black">Since May 2025</h2>
+              </div>
+              <p className="text-sm text-muted max-w-md">
+                A peek at recent meetups across NYC — talks, demos, and the people who show up. Hover to pause, click any photo to enlarge.
+              </p>
+            </div>
+          </RevealBox>
+        </div>
+        <RevealBox>
+          <PhotoMarquee images={EVENT_PHOTOS} duration={120} />
+        </RevealBox>
+      </section>
+
       {/* ABOUT */}
       <section className="max-w-7xl mx-auto px-6 py-16">
         <RevealBox className="grid md:grid-cols-[1fr_2fr] gap-10 items-start">
@@ -184,26 +229,6 @@ export default function UnrealNYCPage() {
               The Meetup archive remains live as a record of past gatherings.
             </p>
           </div>
-        </RevealBox>
-      </section>
-
-      {/* PHOTO MARQUEE */}
-      <section className="py-12 md:py-16">
-        <div className="max-w-7xl mx-auto px-6 mb-8">
-          <RevealBox>
-            <div className="flex items-end justify-between gap-6 flex-wrap">
-              <div>
-                <div className="text-xs uppercase tracking-wider text-pink font-semibold mb-2">In the room</div>
-                <h2 className="text-2xl md:text-3xl font-black">Since May 2025</h2>
-              </div>
-              <p className="text-sm text-muted max-w-md">
-                A peek at recent meetups across NYC — talks, demos, and the people who show up. Hover to pause, click any photo to enlarge.
-              </p>
-            </div>
-          </RevealBox>
-        </div>
-        <RevealBox>
-          <PhotoMarquee images={EVENT_PHOTOS} duration={120} />
         </RevealBox>
       </section>
 
@@ -307,7 +332,7 @@ export default function UnrealNYCPage() {
       <section className="max-w-7xl mx-auto px-6 py-16">
         <RevealBox>
           <h2 className="text-3xl md:text-4xl font-black mb-3">Past events</h2>
-          <p className="text-muted mb-10 max-w-2xl">
+          <p className="text-muted mb-10">
             A snapshot of recent meetups. Recordings of select talks live on the{' '}
             <a
               className="text-pink hover:underline"
@@ -320,50 +345,7 @@ export default function UnrealNYCPage() {
             .
           </p>
         </RevealBox>
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {PAST_EVENTS.map((ev, i) => (
-            <RevealBox key={`${ev.title}-${ev.date}`} delay={(i % 3) * 80}>
-              <article className="h-full rounded-xl overflow-hidden border border-border bg-surface flex flex-col">
-                <div className="aspect-video bg-bg flex items-center justify-center overflow-hidden">
-                  {ev.image ? (
-                    <img
-                      src={ev.image}
-                      alt={ev.title}
-                      className="w-full h-full object-cover"
-                      loading="lazy"
-                    />
-                  ) : (
-                    <span className="text-xs uppercase tracking-wider text-muted">No flyer</span>
-                  )}
-                </div>
-                <div className="p-5 flex flex-col flex-1">
-                  <h3 className="text-lg font-bold mb-1">{ev.title}</h3>
-                  {ev.date && <div className="text-xs text-muted mb-3">{ev.date}</div>}
-                  {ev.sponsors && (
-                    <p className="text-xs text-muted mb-2 leading-relaxed">{ev.sponsors}</p>
-                  )}
-                  {ev.speakers && (
-                    <p className="text-sm text-text leading-relaxed mb-3">{ev.speakers}</p>
-                  )}
-                  <div className="mt-auto pt-3">
-                    {ev.recording ? (
-                      <a
-                        href={ev.recording}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="text-sm text-pink hover:underline font-semibold"
-                      >
-                        Watch recording &rarr;
-                      </a>
-                    ) : (
-                      <span className="text-xs text-muted">Recording not available</span>
-                    )}
-                  </div>
-                </div>
-              </article>
-            </RevealBox>
-          ))}
-        </div>
+        <PastEventsGrid events={PAST_EVENTS} initialCount={6} />
       </section>
 
       {/* CLOSING CTA */}
