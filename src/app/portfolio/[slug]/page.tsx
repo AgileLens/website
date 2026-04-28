@@ -4,7 +4,7 @@ import ImageGallery from '@/components/ImageGallery';
 import type { Metadata } from 'next';
 
 export function generateStaticParams() {
-  return projects.map(p => ({ slug: p.slug }));
+  return projects.filter(p => !p.href).map(p => ({ slug: p.slug }));
 }
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {

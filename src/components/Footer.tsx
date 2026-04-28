@@ -74,6 +74,7 @@ export default function Footer() {
               {[
                 { href: '/', label: 'Home' },
                 { href: '/portfolio', label: 'Portfolio' },
+                { href: '/unrealnyc', label: 'Unreal NYC' },
                 { href: '/team', label: 'Team' },
                 { href: '/contact', label: 'Contact' },
               ].map((l) => (

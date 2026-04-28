@@ -4,7 +4,7 @@ import { useState } from 'react';
 import Link from 'next/link';
 import { projects } from '@/data/projects';
 
-const categories = ['All', 'Architecture', 'Entertainment', 'Immersive Marketing', 'Real Estate', 'Social Impact'];
+const categories = ['All', 'Architecture', 'Entertainment', 'Immersive Marketing', 'Real Estate', 'Social Impact', 'Community'];
 
 // Only show Completed and Ongoing projects, sorted: featured first, then by yearCompleted desc
 const visibleProjects = projects
@@ -55,7 +55,7 @@ export default function PortfolioPage() {
           const yearLabel = p.yearCompleted ? `Released: ${p.yearCompleted}` : '';
 
           return (
-            <Link key={p.slug} href={`/portfolio/${p.slug}`} className="group block p-6 rounded-xl border border-border bg-surface hover:border-pink/40 transition-all">
+            <Link key={p.slug} href={p.href || `/portfolio/${p.slug}`} className="group block p-6 rounded-xl border border-border bg-surface hover:border-pink/40 transition-all">
               <div className="w-full h-40 rounded-lg bg-gradient-to-br from-pink/5 to-purple/5 border border-border mb-4 flex items-center justify-center overflow-hidden">
                 {p.image ? (
                   <img src={p.image} alt={p.name} className="w-full h-full object-cover" loading="lazy" />

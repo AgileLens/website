@@ -23,6 +23,9 @@ export type Project = {
   images: string[];
   featured?: boolean;
   hidden?: boolean;
+  // When set, the portfolio card links here instead of /portfolio/[slug],
+  // and no static detail page is generated for this entry.
+  href?: string;
 };
 
 function slugify(name: string): string {
@@ -50,6 +53,32 @@ const imageMap: Record<string, string> = {
 };
 
 export const projects: Project[] = [
+  {
+    slug: 'unreal-nyc',
+    name: 'Unreal NYC',
+    status: 'Ongoing',
+    featured: true,
+    href: '/unrealnyc',
+    yearStarted: '2025',
+    yearCompleted: '',
+    platform: '',
+    awards: '',
+    press: '',
+    clients: 'Epic Games (sponsor / venue partner)',
+    overview: 'Lead organizer of Unreal NYC — the New York City community for Unreal Engine creators across games, animation, film, broadcast, and live events. Over 1,400 members and growing, with monthly meetups featuring talks, demos, and networking.',
+    video: 'https://www.youtube.com/playlist?list=PLpC5Swh5jFZK-EafIStqWIu5SEOcj5d0i',
+    imageCarousel: '',
+    description: '',
+    papers: '',
+    tech: '',
+    credits: '',
+    additionalContributors: '',
+    links: 'https://communities.unrealengine.com/new-york/\nhttps://discord.gg/9A9NdW6DDA',
+    category1: 'Community',
+    category2: '',
+    image: '/unrealnyc/05.webp',
+    images: ['/unrealnyc/01.jpg', '/unrealnyc/02.jpg', '/unrealnyc/04.jpg', '/unrealnyc/03.jpg'],
+  },
   {
     slug: 'frederic-church-ombra-exhibition',
     name: 'Frederic Church Ombra Exhibition',

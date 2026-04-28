@@ -12,6 +12,7 @@ const navLinks = [
 
 const pageLinks = [
   { href: '/portfolio', label: 'Portfolio' },
+  { href: '/unrealnyc', label: 'Unreal NYC' },
   { href: '/team', label: 'Team' },
 ];
 
