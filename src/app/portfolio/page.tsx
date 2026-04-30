@@ -1,6 +1,7 @@
 'use client';
 
-import { useState } from 'react';
+import { Suspense, useEffect, useState } from 'react';
+import { useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import { projects } from '@/data/projects';
 
@@ -18,7 +19,22 @@ const visibleProjects = projects
   });
 
 export default function PortfolioPage() {
+  return (
+    <Suspense fallback={<div className="max-w-7xl mx-auto px-6 py-24" />}>
+      <PortfolioInner />
+    </Suspense>
+  );
+}
+
+function PortfolioInner() {
+  const searchParams = useSearchParams();
   const [activeCategory, setActiveCategory] = useState('All');
+
+  useEffect(() => {
+    const c = searchParams.get('category');
+    if (c && categories.includes(c)) setActiveCategory(c);
+  }, [searchParams]);
+
   const filtered = activeCategory === 'All'
     ? visibleProjects
     : visibleProjects.filter(p => [p.category1, p.category2].filter(Boolean).includes(activeCategory));
@@ -77,6 +93,12 @@ export default function PortfolioPage() {
           );
         })}
       </div>
+
+      {filtered.length === 0 && (
+        <div className="text-center py-20 text-muted">
+          No projects in <span className="text-pink">{activeCategory}</span> yet.
+        </div>
+      )}
     </div>
   );
 }

@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
+import SearchBar from './SearchBar';
 
 const navLinks = [
   { href: '#products', label: 'Products' },
@@ -18,6 +19,7 @@ const pageLinks = [
 export default function Navigation() {
   const [open, setOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  const [searchOpen, setSearchOpen] = useState(false);
   const pathname = usePathname();
   const isHome = pathname === '/';
 
@@ -26,6 +28,23 @@ export default function Navigation() {
     window.addEventListener('scroll', onScroll, { passive: true });
     return () => window.removeEventListener('scroll', onScroll);
   }, []);
+
+  // Close search on route change
+  useEffect(() => { setSearchOpen(false); }, [pathname]);
+
+  // Global "/" shortcut to open search
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      const target = e.target as HTMLElement | null;
+      const inField = target && /^(input|textarea|select)$/i.test(target.tagName);
+      if (e.key === '/' && !inField && !searchOpen) {
+        e.preventDefault();
+        setSearchOpen(true);
+      }
+    };
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, [searchOpen]);
 
   const allLinks = isHome
     ? [...navLinks, ...pageLinks]
@@ -38,9 +57,25 @@ export default function Navigation() {
       }`}
     >
       <div className="max-w-[1400px] mx-auto px-6 md:px-12 h-20 flex items-center justify-between">
-        <Link href="/" className="flex items-center">
-          <img src="/logos/Icon.svg" alt="Agile Lens" className="h-9 w-9" />
-        </Link>
+        <button
+          onClick={() => setSearchOpen(true)}
+          aria-label="Search"
+          title="Search (press /)"
+          className="flex items-center group relative"
+        >
+          <img
+            src="/logos/Icon.svg"
+            alt="Agile Lens"
+            className="h-9 w-9 transition-transform group-hover:scale-110"
+          />
+          <span className="absolute -bottom-1 -right-1 w-3.5 h-3.5 rounded-full bg-pink/0 group-hover:bg-pink/90 flex items-center justify-center transition-all">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" className="w-2 h-2 text-black opacity-0 group-hover:opacity-100">
+              <circle cx="11" cy="11" r="7" />
+              <line x1="21" y1="21" x2="16.65" y2="16.65" />
+            </svg>
+          </span>
+        </button>
+        <SearchBar open={searchOpen} onClose={() => setSearchOpen(false)} />
 
         <div className="hidden md:flex items-center gap-8">
           {allLinks.map((l) => (
