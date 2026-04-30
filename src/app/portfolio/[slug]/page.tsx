@@ -26,6 +26,16 @@ function extractVimeoId(url: string): string | null {
   return match ? match[1] : null;
 }
 
+type Embed = { host: 'youtube' | 'vimeo'; id: string };
+
+function toEmbed(url: string): Embed | null {
+  const yt = extractYouTubeId(url);
+  if (yt) return { host: 'youtube', id: yt };
+  const vm = extractVimeoId(url);
+  if (vm) return { host: 'vimeo', id: vm };
+  return null;
+}
+
 export default async function ProjectPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
   const project = getProjectBySlug(slug);
@@ -45,8 +55,10 @@ export default async function ProjectPage({ params }: { params: Promise<{ slug: 
       ? `${project.yearStarted} - Present`
       : '';
 
-  const youtubeId = project.video ? extractYouTubeId(project.video) : null;
-  const vimeoId = project.video ? extractVimeoId(project.video) : null;
+  const videoUrls = project.videos && project.videos.length > 0
+    ? project.videos
+    : project.video ? [project.video] : [];
+  const embeds = videoUrls.map(toEmbed).filter((e): e is Embed => e !== null);
 
   const linksList = project.links
     ? project.links.split('\n').map(l => l.trim()).filter(Boolean)
@@ -111,31 +123,29 @@ export default async function ProjectPage({ params }: { params: Promise<{ slug: 
             </div>
           )}
 
-          {youtubeId && (
+          {embeds.length > 0 && (
             <div>
-              <h2 className="text-xl font-bold mb-4">Video</h2>
-              <div className="aspect-video rounded-xl overflow-hidden border border-border">
-                <iframe
-                  src={`https://www.youtube.com/embed/${youtubeId}`}
-                  title={`${project.name} video`}
-                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                  allowFullScreen
-                  className="w-full h-full"
-                />
-              </div>
-            </div>
-          )}
-          {vimeoId && !youtubeId && (
-            <div>
-              <h2 className="text-xl font-bold mb-4">Video</h2>
-              <div className="aspect-video rounded-xl overflow-hidden border border-border">
-                <iframe
-                  src={`https://player.vimeo.com/video/${vimeoId}`}
-                  title={`${project.name} video`}
-                  allow="autoplay; fullscreen; picture-in-picture"
-                  allowFullScreen
-                  className="w-full h-full"
-                />
+              <h2 className="text-xl font-bold mb-4">{embeds.length > 1 ? 'Videos' : 'Video'}</h2>
+              <div className="space-y-4">
+                {embeds.map((e, i) => (
+                  <div key={`${e.host}-${e.id}`} className="aspect-video rounded-xl overflow-hidden border border-border">
+                    <iframe
+                      src={
+                        e.host === 'youtube'
+                          ? `https://www.youtube.com/embed/${e.id}`
+                          : `https://player.vimeo.com/video/${e.id}`
+                      }
+                      title={`${project.name} video ${i + 1}`}
+                      allow={
+                        e.host === 'youtube'
+                          ? 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture'
+                          : 'autoplay; fullscreen; picture-in-picture'
+                      }
+                      allowFullScreen
+                      className="w-full h-full"
+                    />
+                  </div>
+                ))}
               </div>
             </div>
           )}

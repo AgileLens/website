@@ -21,6 +21,7 @@ export type Project = {
   category2: string;
   image: string;
   images: string[];
+  videos?: string[];
   featured?: boolean;
   hidden?: boolean;
 };
@@ -312,7 +313,7 @@ export const projects: Project[] = [
     press: 'https://www.broadwayworld.com/off-off-broadway/article/JETTISON-a-New-Play-Produced-Rehearsed-and-Performed-in-Virtual-Reality-Closes-Out-Here-Online-Oasis-Weekend-20201001',
     clients: 'Brendan Bradley, On Board XR Festival',
     overview: 'In July 2020, a group of theater and XR creators joined forces to experiment with live theater in open source, browser-based VR (on Mozilla Hubs). Two months later they presented the one act play, Jettison, for live virtual audiences at The Here Festival.',
-    video: '',
+    video: 'https://www.youtube.com/watch?v=9AH6nmpYSkE',
     imageCarousel: '',
     description: 'For Jettison and its revival in the first On Board XR Festival, our producing team handled general management tasks for the production as well as heading up design, house management and stage management, in both systems and operation.',
     papers: `Coulombe, A., Gochfeld, D., Bradley, B., Laibson, K., Long, R., Miletitch, R. "Virtual Reality Live theatre on No Budget: A Model for Independent Theatrical Productions using Open-Source Social VR" SIGGRAPH '21: ACM SIGGRAPH 2021 Educators Forum Aug 2021 Article No.: 2 https://doi.org/10.1145/3450549.3464413`,
@@ -871,6 +872,10 @@ https://www.broadwayworld.com/off-off-broadway/article/THE-HARMNF-LiveVR-Hybrid-
     clients: 'Royal Shakespeare Company, XRNetwork+, Royal Central School',
     overview: 'A grant-funded VR rehearsal tool for the Royal Shakespeare Company — allowing cast members rehearsing in London and Stratford-upon-Avon to work in real time with actors in New York and Los Angeles, inside a virtual recreation of the Swan Theatre.',
     video: '',
+    videos: [
+      'https://www.youtube.com/watch?v=KMK2ZEc5WjA',
+      'https://www.youtube.com/watch?v=0ZZHFcO8m-Q',
+    ],
     imageCarousel: '',
     description: 'The Royal Shakespeare Company stars the most in-demand actors globally. Their actors might be rehearsing on two continents at once — and the cost and logistics of gathering the full company in one place before production dates are set is prohibitive. Funded by XR Network+, Agile Lens built a solution: a virtual Swan Theatre where remote performers appear as avatars while performers sharing a physical room see each other through mixed reality passthrough. In-headset actors can call up their scripts, see exactly where they should be standing at any given line, and hear locality-filtered microphones to join voices in the room with voices remotely without digital echoes. A separate laptop application gives directors, designers, and stage managers the ability to ingest full scripts, place blocking notes, and monitor all performer positions in real time — with all state persisted across sessions via a custom backend server.',
     papers: '',
@@ -946,6 +951,10 @@ https://www.broadwayworld.com/off-off-broadway/article/THE-HARMNF-LiveVR-Hybrid-
     clients: 'Hope Hutman, Sony, Columbia',
     overview: 'A 20-minute mixed reality theater performance with a full live audience in Quest 3 headsets — one physical actor performs alongside digital characters only visible in-headset, with Sony Mocopi motion capture bringing them to life.',
     video: '',
+    videos: [
+      'https://vimeo.com/1109541317',
+      'https://www.youtube.com/watch?v=Mlc7fFERjWA',
+    ],
     imageCarousel: '',
     description: 'Your Mind, Girls... places an entire theater audience in Quest 3 headsets to watch a performance that unfolds across two realities simultaneously. A physical actor moves and speaks on stage while their scene partners — digital MetaHumans, created and motion-captured by Agile Lens using Sony Mocopi — exist only inside the headsets. The audience experiences the performance as if looking in on the actor\'s memories, watching digital figures from their past appear and recede. Agile Lens took Hope Hutman\'s script and design requirements and built everything in the digital scope using their deep theater acumen: MetaHuman characters modeled from Hutman\'s script and creative brief, motion capture integrated into rehearsals which translated into real-time animated performances with MR interpersonal-chemistry, virtual sets and lighting matched precisely to the physical stage, and a theatrical control panel for traditional stage managers managing 100+ live Unreal Engine show cues. The technical infrastructure handles 30+ simultaneous headsets in a dark room via shared spatial anchors and infrared-illuminated tracking — with device management designed for multiple performances per day.',
     papers: '',
