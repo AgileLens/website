@@ -773,7 +773,7 @@ https://www.broadwayworld.com/off-off-broadway/article/THE-HARMNF-LiveVR-Hybrid-
     overview: 'An Agile Lens platform for performers to rehearse and perform virtual reality plays — live, in headsets, or streaming — featuring avatar switching, script playback, and scene control built for theatrical production.',
     video: '',
     imageCarousel: '',
-    description: 'Stage Presence grew out of years of live VR theater work — beginning with A Christmas Carol VR and refined through projects like the Royal Shakespeare Company\'s Virtual Rehearsal Tool and The Harmnf. The platform allows a single performer to embody multiple characters through avatar switching, play back scripted scene elements in sequence, and give audiences — whether seated in headsets or watching via a cast — a coherent theatrical experience. It has become the backbone of Agile Lens\'s theatrical product line, forked as the starting point for The Poly Awards 2026, The Harmnf, and the Star Wars Halcyon VR project. It continues to be developed as a standalone product available for theatrical productions.',
+    description: 'Stage Presence grew out of years of live VR theater work — beginning with A Christmas Carol VR and refined through projects like the Royal Shakespeare Company\'s VR Rehearsal Tool and The Harmnf. The platform allows a single performer to embody multiple characters through avatar switching, play back scripted scene elements in sequence, and give audiences — whether seated in headsets or watching via a cast — a coherent theatrical experience. It has become the backbone of Agile Lens\'s theatrical product line, forked as the starting point for The Poly Awards 2026, The Harmnf, and the Star Wars Halcyon VR project. It continues to be developed as a standalone product available for theatrical productions.',
     papers: '',
     tech: 'Meta Quest 3, Avatar Systems, Multiplayer Networking, OSC Integration',
     credits: '',
@@ -861,7 +861,7 @@ https://www.broadwayworld.com/off-off-broadway/article/THE-HARMNF-LiveVR-Hybrid-
   },
   {
     slug: 'virtual-rehearsal-room',
-    name: 'Royal Shakespeare Company Virtual Rehearsal Tool',
+    name: 'Royal Shakespeare Company VR Rehearsal Tool',
     status: 'Completed',
     featured: true,
     yearStarted: '2024',
