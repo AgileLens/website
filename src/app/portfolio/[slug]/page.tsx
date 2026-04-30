@@ -107,22 +107,6 @@ export default async function ProjectPage({ params }: { params: Promise<{ slug: 
         <div className="lg:col-span-2 space-y-10">
           <ImageGallery images={project.images} projectName={project.name} />
 
-          {project.overview && (
-            <div>
-              <h2 className="text-xl font-bold mb-4">Overview</h2>
-              <p className="text-muted leading-relaxed text-base">{project.overview}</p>
-            </div>
-          )}
-
-          {project.description && (
-            <div>
-              <h2 className="text-xl font-bold mb-4">About the Project</h2>
-              {project.description.split('\n\n').map((para, i) => (
-                <p key={i} className="text-muted leading-relaxed text-base mb-4">{para}</p>
-              ))}
-            </div>
-          )}
-
           {embeds.length > 0 && (
             <div>
               <h2 className="text-xl font-bold mb-4">{embeds.length > 1 ? 'Videos' : 'Video'}</h2>
@@ -147,6 +131,22 @@ export default async function ProjectPage({ params }: { params: Promise<{ slug: 
                   </div>
                 ))}
               </div>
+            </div>
+          )}
+
+          {project.overview && (
+            <div>
+              <h2 className="text-xl font-bold mb-4">Overview</h2>
+              <p className="text-muted leading-relaxed text-base">{project.overview}</p>
+            </div>
+          )}
+
+          {project.description && (
+            <div>
+              <h2 className="text-xl font-bold mb-4">About the Project</h2>
+              {project.description.split('\n\n').map((para, i) => (
+                <p key={i} className="text-muted leading-relaxed text-base mb-4">{para}</p>
+              ))}
             </div>
           )}
 
