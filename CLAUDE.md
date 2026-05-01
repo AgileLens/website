@@ -214,12 +214,12 @@ When anyone says "add a portfolio page for [project name]":
 - **Never invent product descriptions** — use the verified descriptions above
 - **No hype language** — avoid "revolutionary", "disruptive", "game-changing"
 - **Portfolio pages must match existing layout** — same card style, same metadata sidebar, same gallery
-- **Use Tailwind theme tokens** — never `text-[var(--color-*)]`, always `text-muted`, `text-pink`, etc.
+- **Use Tailwind theme tokens** — never arbitrary `var(--color-…)` values inside Tailwind brackets; always `text-muted`, `text-pink`, etc.
 
 ## Technical Gotchas
 
 - **Deploy via git push only** — `vercel deploy` CLI fails on this project. Always `git push origin main`.
-- **Turbopack CSS bug** — never use arbitrary CSS var() values in Tailwind classes. Use `@theme` tokens defined in `globals.css`.
+- **Turbopack CSS bug** — never use arbitrary `var()` values inside Tailwind brackets (Tailwind v4's content scanner will pick the example up out of markdown files like this one and crash the build with an "Unexpected token Delim" parse error). Use `@theme` tokens defined in `globals.css`.
 - **Static export** — `output: 'export'` is required in next.config.ts. Don't remove it.
 - **Homepage images from Webflow CDN** — will break when Webflow subscription ends. Self-host migration is TODO.
 

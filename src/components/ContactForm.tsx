@@ -24,7 +24,7 @@ export default function ContactForm() {
       <div className="py-12 text-center">
         <div className="text-4xl mb-4">✓</div>
         <h3 className="text-xl font-bold mb-2">Message sent!</h3>
-        <p className="text-muted">We'll be in touch within 5 working days.</p>
+        <p className="text-muted">We'll be in touch within 3 working days.</p>
       </div>
     );
   }

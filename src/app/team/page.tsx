@@ -11,7 +11,7 @@ const team = [
     name: 'Alex Coulombe',
     role: 'CEO',
     photo: '/team/alex.jpg',
-    bio: 'Alex is a renown thought leader and technologist at the intersection of Unreal Engine and XR design. Since 2014, he has championed XR as a storytelling medium, led dozens of world-class executions of XR for architecture and performance, and developed a reputation for ROI-positive implementations of XR for enterprise.',
+    bio: 'Alex is a renowned thought leader and technologist at the intersection of Unreal Engine and XR design. Since 2014, he has championed XR as a storytelling medium, led dozens of world-class executions of XR for architecture and performance, and developed a reputation for ROI-positive implementations of XR for enterprise.',
     row: 0,
   },
   {
@@ -40,7 +40,7 @@ const team = [
     name: 'Henry Keyser',
     role: 'Managing Director',
     photo: '/team/henry.jpg',
-    bio: 'Henry is an decorated XR division leader. With backgrounds in Newsrooms, Game Dev, Photogrammetry, Product Management, Playwriting, and TV Producing, he has been managing technical, software and creative direction for more than 20 years and 500 productions and releases.',
+    bio: 'Henry is a decorated XR division leader. With backgrounds in Newsrooms, Game Dev, Photogrammetry, Product Management, Playwriting, and TV Producing, he has been managing technical, software and creative direction for more than 20 years and 500 productions and releases.',
     row: 1,
   },
   // Row 2
@@ -70,7 +70,7 @@ const team = [
     name: 'Zander Leff',
     role: 'Technical Artist',
     photo: '/team/zander.jpg',
-    bio: "Zander is quick generalist focused on architecture and game dev. He has led Agile Lens' approach to ingesting CAD/Datasmith files from other softwares into Unreal Engine for upgrade into high-end photoreal VR architectural visualizations.",
+    bio: "Zander is a quick generalist focused on architecture and game dev. He has led Agile Lens' approach to ingesting CAD/Datasmith files from other softwares into Unreal Engine for upgrade into high-end photoreal VR architectural visualizations.",
     row: 3,
   },
   {
@@ -92,7 +92,7 @@ const team = [
     name: 'Saurabh Saxena',
     role: 'Engineering Consultant',
     photo: '/team/saurabh.jpg',
-    bio: 'Saurabh is a seasoned software developer with deep expertise in Unreal Engine, XR, robotics and hardware-integrated systems. At Agile, he has taken point on software refactoring for enterprise applications transitioning from 1.x to 2.0, upgrading and prepare software for market release.',
+    bio: 'Saurabh is a seasoned software developer with deep expertise in Unreal Engine, XR, robotics and hardware-integrated systems. At Agile, he has taken point on software refactoring for enterprise applications transitioning from 1.x to 2.0, upgrading and preparing software for market release.',
     row: 4,
   },
   {

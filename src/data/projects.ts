@@ -21,6 +21,8 @@ export type Project = {
   category2: string;
   image: string;
   images: string[];
+  videos?: string[];
+  tagline?: string;
   featured?: boolean;
   hidden?: boolean;
   // When set, the portfolio card links here instead of /portfolio/[slug],
@@ -89,7 +91,7 @@ export const projects: Project[] = [
     platform: 'iOS',
     awards: '',
     press: '',
-    clients: 'Sage and Coome Architects',
+    clients: 'Sage and Coombe Architects',
     overview: '"Frederic Church\'s Ombra: Architecture in Conversation with Nature" showcases multimedia design concepts and installations, developed by leading architects and select artists. As Guest Curator, Barry Bergdoll (of Columbia University and the Museum of Modern Art) invited a group of today\'s most exploratory architects to respond to the transitional outdoor rooms at Olana that are so essential to the original 19th century design of Olana\'s Main House. Agile Lens was brought on by Sage & Coome for the digital side of their contribution.',
     video: '',
     imageCarousel: '',
@@ -341,7 +343,7 @@ export const projects: Project[] = [
     press: 'https://www.broadwayworld.com/off-off-broadway/article/JETTISON-a-New-Play-Produced-Rehearsed-and-Performed-in-Virtual-Reality-Closes-Out-Here-Online-Oasis-Weekend-20201001',
     clients: 'Brendan Bradley, On Board XR Festival',
     overview: 'In July 2020, a group of theater and XR creators joined forces to experiment with live theater in open source, browser-based VR (on Mozilla Hubs). Two months later they presented the one act play, Jettison, for live virtual audiences at The Here Festival.',
-    video: '',
+    video: 'https://www.youtube.com/watch?v=9AH6nmpYSkE',
     imageCarousel: '',
     description: 'For Jettison and its revival in the first On Board XR Festival, our producing team handled general management tasks for the production as well as heading up design, house management and stage management, in both systems and operation.',
     papers: `Coulombe, A., Gochfeld, D., Bradley, B., Laibson, K., Long, R., Miletitch, R. "Virtual Reality Live theatre on No Budget: A Model for Independent Theatrical Productions using Open-Source Social VR" SIGGRAPH '21: ACM SIGGRAPH 2021 Educators Forum Aug 2021 Article No.: 2 https://doi.org/10.1145/3450549.3464413`,
@@ -390,7 +392,7 @@ export const projects: Project[] = [
     awards: '',
     press: `https://playbill.com/article/the-orchard-starring-mikhail-baryshnikov-and-jessica-hecht-opens-off-broadway-june-16
 https://www.bostonglobe.com/2022/11/03/arts/mikhail-baryshnikov-explores-orchard-anew-with-robot-tow/
-https://www.theguardian.com/artanddesign/2022/jul/16/on-my-radar-marina-abramovic-cultural-highlights's Cultural Highlights for The Globe UK`,
+https://www.theguardian.com/artanddesign/2022/jul/16/on-my-radar-marina-abramovic-cultural-highlights`,
     clients: 'Baryshnikov Arts Center, Arlekin Players & zero-G Virtual Theater Lab / Groundswell Theatre, Inc.',
     overview: 'Agile Lens created and implemented the virtual side of this groundbreaking hybrid performance starring Mikhael Baryshnikov and Jessica Hecht in an adaptation of Anton Chekhov\'s The Cherry Orchard',
     video: 'https://youtu.be/vAE3DQ4rnHw',
@@ -443,11 +445,13 @@ The Wie Suite - Lincoln Center's Chief Artistic Officer, Shanta Thake, Is Sharin
     platform: '',
     awards: '',
     press: '',
-    clients: 'Waldorf Astoria',
-    overview: '',
+    clients: 'Waldorf Astoria, Yupix',
+    tagline: 'Meet Your Concierge. Before the Hotel Exists.',
+    overview: 'A photorealistic digital host. A 100-story tower still under construction. A VR experience that made buyers feel at home — before a single room was finished.',
     video: '',
+    videos: ['https://drive.google.com/file/d/1QbHhqQo-jefn76Cy0VvqUTH1i15v_37D/view?usp=sharing'],
     imageCarousel: '',
-    description: '',
+    description: 'When the Waldorf Astoria Miami needed to sell a landmark before it was built, they needed more than renders. Agile Lens created an immersive VR experience anchored by a MetaHuman concierge played by Ari Tarr — a real-time digital human who welcomes guests, guides them through the property, and delivers the warmth of five-star hospitality in a building that didn\'t yet exist.\n\nThe result: prospective buyers could walk through the tallest tower in Miami\'s skyline, meet the staff, and feel the space — all before construction crews reached the upper floors.',
     papers: '',
     tech: '',
     credits: '',
@@ -455,8 +459,8 @@ The Wie Suite - Lincoln Center's Chief Artistic Officer, Shanta Thake, Is Sharin
     links: '',
     category1: 'Immersive Marketing',
     category2: '',
-    image: '/portfolio/waldorf-astoria-miami/01.jpg',
-    images: ['/portfolio/waldorf-astoria-miami/01.jpg', '/portfolio/waldorf-astoria-miami/02.jpg'],
+    image: '/portfolio/waldorf-astoria-miami/concierge.png',
+    images: ['/portfolio/waldorf-astoria-miami/concierge.png', '/portfolio/waldorf-astoria-miami/01.jpg', '/portfolio/waldorf-astoria-miami/02.jpg'],
   },
   {
     slug: 'four-seasons-lake-austin',
@@ -587,7 +591,7 @@ https://www.businesswire.com/news/home/20230719281018/en/Infinite-Reality-and-Vo
   },
   {
     slug: 'the-poly-awards-2026',
-    name: 'The Poly Awards 2025',
+    name: 'The Poly Awards 2026',
     status: 'Completed',
     featured: false,
     yearStarted: '2026',
@@ -801,7 +805,7 @@ https://www.broadwayworld.com/off-off-broadway/article/THE-HARMNF-LiveVR-Hybrid-
     overview: 'An Agile Lens platform for performers to rehearse and perform virtual reality plays — live, in headsets, or streaming — featuring avatar switching, script playback, and scene control built for theatrical production.',
     video: '',
     imageCarousel: '',
-    description: 'Stage Presence grew out of years of live VR theater work — beginning with A Christmas Carol VR and refined through projects like the Royal Shakespeare Company\'s Virtual Rehearsal Room and The Harms. The platform allows a single performer to embody multiple characters through avatar switching, play back scripted scene elements in sequence, and give audiences — whether seated in headsets or watching via a cast — a coherent theatrical experience. It has become the backbone of Agile Lens\'s theatrical product line, forked as the starting point for The Poly Awards 2026, The Harms, and the Star Wars Halcyon VR project. It continues to be developed as a standalone product available for theatrical productions.',
+    description: 'Stage Presence grew out of years of live VR theater work — beginning with A Christmas Carol VR and refined through projects like the Royal Shakespeare Company\'s VR Rehearsal Tool and The Harmnf. The platform allows a single performer to embody multiple characters through avatar switching, play back scripted scene elements in sequence, and give audiences — whether seated in headsets or watching via a cast — a coherent theatrical experience. It has become the backbone of Agile Lens\'s theatrical product line, forked as the starting point for The Poly Awards 2026, The Harmnf, and the Star Wars Halcyon VR project. It continues to be developed as a standalone product available for theatrical productions.',
     papers: '',
     tech: 'Meta Quest 3, Avatar Systems, Multiplayer Networking, OSC Integration',
     credits: '',
@@ -842,8 +846,8 @@ https://www.broadwayworld.com/off-off-broadway/article/THE-HARMNF-LiveVR-Hybrid-
     name: 'Blueprint Immersive',
     status: 'Ongoing',
     featured: false,
-    yearStarted: '2024',
-    yearCompleted: '2023',
+    yearStarted: '2023',
+    yearCompleted: '',
     platform: 'Meta Quest, PC',
     awards: '',
     press: '',
@@ -851,7 +855,7 @@ https://www.broadwayworld.com/off-off-broadway/article/THE-HARMNF-LiveVR-Hybrid-
     overview: 'An enterprise VR application for theater architects — loading Revit files to analyze sightlines, compare venue configurations, and generate design review screenshots for spaces that are pre-construction or undergoing renovation.',
     video: '',
     imageCarousel: '',
-    description: 'Blueprint Immersive was built for Fisher Dax Associates, one of the foremost theater and live event venue architecture firms in the world. Their designers needed a way to stand inside their Revit models — to see a seat\'s view of the stage before the concrete was poured, to compare sightlines across different configuration options, and to capture design review screenshots without staging a physical site visit. Agile Lens built v1 in 2024. A full v2.0 UX overhaul is now in progress, expanding the platform to other design firms and bringing a cleaner enterprise interface to the existing Revit loading, 2D/3D repainting, and VR walkthrough capabilities. Targeted for completion in 2026.',
+    description: 'Blueprint Immersive was built for Fisher Dachs Associates, one of the foremost theater and live event venue architecture firms in the world. Their designers needed a way to stand inside their Revit models — to see a seat\'s view of the stage before the concrete was poured, to compare sightlines across different configuration options, and to capture design review screenshots without staging a physical site visit. Agile Lens built v1 in 2024. A full v2.0 UX overhaul is now in progress, expanding the platform to other design firms and bringing a cleaner enterprise interface to the existing Revit loading, 2D/3D repainting, and VR walkthrough capabilities. Targeted for completion in 2026.',
     papers: '',
     tech: 'Meta Quest, PC, Revit Integration, Unreal Engine',
     credits: '',
@@ -889,7 +893,7 @@ https://www.broadwayworld.com/off-off-broadway/article/THE-HARMNF-LiveVR-Hybrid-
   },
   {
     slug: 'virtual-rehearsal-room',
-    name: 'Virtual Rehearsal Room',
+    name: 'Royal Shakespeare Company VR Rehearsal Tool',
     status: 'Completed',
     featured: true,
     yearStarted: '2024',
@@ -900,6 +904,10 @@ https://www.broadwayworld.com/off-off-broadway/article/THE-HARMNF-LiveVR-Hybrid-
     clients: 'Royal Shakespeare Company, XRNetwork+, Royal Central School',
     overview: 'A grant-funded VR rehearsal tool for the Royal Shakespeare Company — allowing cast members rehearsing in London and Stratford-upon-Avon to work in real time with actors in New York and Los Angeles, inside a virtual recreation of the Swan Theatre.',
     video: '',
+    videos: [
+      'https://www.youtube.com/watch?v=KMK2ZEc5WjA',
+      'https://www.youtube.com/watch?v=0ZZHFcO8m-Q',
+    ],
     imageCarousel: '',
     description: 'The Royal Shakespeare Company stars the most in-demand actors globally. Their actors might be rehearsing on two continents at once — and the cost and logistics of gathering the full company in one place before production dates are set is prohibitive. Funded by XR Network+, Agile Lens built a solution: a virtual Swan Theatre where remote performers appear as avatars while performers sharing a physical room see each other through mixed reality passthrough. In-headset actors can call up their scripts, see exactly where they should be standing at any given line, and hear locality-filtered microphones to join voices in the room with voices remotely without digital echoes. A separate laptop application gives directors, designers, and stage managers the ability to ingest full scripts, place blocking notes, and monitor all performer positions in real time — with all state persisted across sessions via a custom backend server.',
     papers: '',
@@ -917,8 +925,8 @@ https://www.broadwayworld.com/off-off-broadway/article/THE-HARMNF-LiveVR-Hybrid-
     name: 'BuildFinal_FINAL @ WLab',
     status: 'Completed',
     featured: false,
-    yearStarted: '2025',
-    yearCompleted: '2024',
+    yearStarted: '2024',
+    yearCompleted: '2025',
     platform: 'LED Volume, Unreal Engine, YouTube Livestream',
     awards: '',
     press: '',
@@ -975,6 +983,10 @@ https://www.broadwayworld.com/off-off-broadway/article/THE-HARMNF-LiveVR-Hybrid-
     clients: 'Hope Hutman, Sony, Columbia',
     overview: 'A 20-minute mixed reality theater performance with a full live audience in Quest 3 headsets — one physical actor performs alongside digital characters only visible in-headset, with Sony Mocopi motion capture bringing them to life.',
     video: '',
+    videos: [
+      'https://vimeo.com/1109541317',
+      'https://www.youtube.com/watch?v=Mlc7fFERjWA',
+    ],
     imageCarousel: '',
     description: 'Your Mind, Girls... places an entire theater audience in Quest 3 headsets to watch a performance that unfolds across two realities simultaneously. A physical actor moves and speaks on stage while their scene partners — digital MetaHumans, created and motion-captured by Agile Lens using Sony Mocopi — exist only inside the headsets. The audience experiences the performance as if looking in on the actor\'s memories, watching digital figures from their past appear and recede. Agile Lens took Hope Hutman\'s script and design requirements and built everything in the digital scope using their deep theater acumen: MetaHuman characters modeled from Hutman\'s script and creative brief, motion capture integrated into rehearsals which translated into real-time animated performances with MR interpersonal-chemistry, virtual sets and lighting matched precisely to the physical stage, and a theatrical control panel for traditional stage managers managing 100+ live Unreal Engine show cues. The technical infrastructure handles 30+ simultaneous headsets in a dark room via shared spatial anchors and infrared-illuminated tracking — with device management designed for multiple performances per day.',
     papers: '',

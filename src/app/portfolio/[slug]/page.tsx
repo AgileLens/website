@@ -26,6 +26,35 @@ function extractVimeoId(url: string): string | null {
   return match ? match[1] : null;
 }
 
+function extractDriveId(url: string): string | null {
+  const match = url.match(/drive\.google\.com\/file\/d\/([A-Za-z0-9_-]+)/);
+  return match ? match[1] : null;
+}
+
+type Embed = { host: 'youtube' | 'vimeo' | 'drive'; id: string };
+
+function toEmbed(url: string): Embed | null {
+  const yt = extractYouTubeId(url);
+  if (yt) return { host: 'youtube', id: yt };
+  const vm = extractVimeoId(url);
+  if (vm) return { host: 'vimeo', id: vm };
+  const dr = extractDriveId(url);
+  if (dr) return { host: 'drive', id: dr };
+  return null;
+}
+
+function embedSrc(e: Embed): string {
+  if (e.host === 'youtube') return `https://www.youtube.com/embed/${e.id}`;
+  if (e.host === 'vimeo') return `https://player.vimeo.com/video/${e.id}`;
+  return `https://drive.google.com/file/d/${e.id}/preview`;
+}
+
+function embedAllow(e: Embed): string {
+  if (e.host === 'youtube') return 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture';
+  if (e.host === 'vimeo') return 'autoplay; fullscreen; picture-in-picture';
+  return 'autoplay';
+}
+
 export default async function ProjectPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
   const project = getProjectBySlug(slug);
@@ -45,8 +74,10 @@ export default async function ProjectPage({ params }: { params: Promise<{ slug: 
       ? `${project.yearStarted} - Present`
       : '';
 
-  const youtubeId = project.video ? extractYouTubeId(project.video) : null;
-  const vimeoId = project.video ? extractVimeoId(project.video) : null;
+  const videoUrls = project.videos && project.videos.length > 0
+    ? project.videos
+    : project.video ? [project.video] : [];
+  const embeds = videoUrls.map(toEmbed).filter((e): e is Embed => e !== null);
 
   const linksList = project.links
     ? project.links.split('\n').map(l => l.trim()).filter(Boolean)
@@ -89,11 +120,35 @@ export default async function ProjectPage({ params }: { params: Promise<{ slug: 
           )}
         </div>
         <h1 className="text-4xl md:text-6xl font-black mb-6">{project.name}</h1>
+        {project.tagline && (
+          <p className="text-2xl md:text-3xl font-bold leading-tight max-w-3xl gradient-text mb-2">
+            {project.tagline}
+          </p>
+        )}
       </div>
 
       <div className="grid lg:grid-cols-3 gap-12">
         <div className="lg:col-span-2 space-y-10">
           <ImageGallery images={project.images} projectName={project.name} />
+
+          {embeds.length > 0 && (
+            <div>
+              <h2 className="text-xl font-bold mb-4">{embeds.length > 1 ? 'Videos' : 'Video'}</h2>
+              <div className="space-y-4">
+                {embeds.map((e, i) => (
+                  <div key={`${e.host}-${e.id}`} className="aspect-video rounded-xl overflow-hidden border border-border">
+                    <iframe
+                      src={embedSrc(e)}
+                      title={`${project.name} video ${i + 1}`}
+                      allow={embedAllow(e)}
+                      allowFullScreen
+                      className="w-full h-full"
+                    />
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
 
           {project.overview && (
             <div>
@@ -108,35 +163,6 @@ export default async function ProjectPage({ params }: { params: Promise<{ slug: 
               {project.description.split('\n\n').map((para, i) => (
                 <p key={i} className="text-muted leading-relaxed text-base mb-4">{para}</p>
               ))}
-            </div>
-          )}
-
-          {youtubeId && (
-            <div>
-              <h2 className="text-xl font-bold mb-4">Video</h2>
-              <div className="aspect-video rounded-xl overflow-hidden border border-border">
-                <iframe
-                  src={`https://www.youtube.com/embed/${youtubeId}`}
-                  title={`${project.name} video`}
-                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                  allowFullScreen
-                  className="w-full h-full"
-                />
-              </div>
-            </div>
-          )}
-          {vimeoId && !youtubeId && (
-            <div>
-              <h2 className="text-xl font-bold mb-4">Video</h2>
-              <div className="aspect-video rounded-xl overflow-hidden border border-border">
-                <iframe
-                  src={`https://player.vimeo.com/video/${vimeoId}`}
-                  title={`${project.name} video`}
-                  allow="autoplay; fullscreen; picture-in-picture"
-                  allowFullScreen
-                  className="w-full h-full"
-                />
-              </div>
             </div>
           )}
 
