@@ -22,6 +22,7 @@ export type Project = {
   image: string;
   images: string[];
   videos?: string[];
+  tagline?: string;
   featured?: boolean;
   hidden?: boolean;
 };
@@ -415,11 +416,13 @@ The Wie Suite - Lincoln Center's Chief Artistic Officer, Shanta Thake, Is Sharin
     platform: '',
     awards: '',
     press: '',
-    clients: 'Waldorf Astoria',
-    overview: '',
+    clients: 'Waldorf Astoria, Yupix',
+    tagline: 'Meet Your Concierge. Before the Hotel Exists.',
+    overview: 'A photorealistic digital host. A 100-story tower still under construction. A VR experience that made buyers feel at home — before a single room was finished.',
     video: '',
+    videos: ['https://drive.google.com/file/d/1QbHhqQo-jefn76Cy0VvqUTH1i15v_37D/view?usp=sharing'],
     imageCarousel: '',
-    description: '',
+    description: 'When the Waldorf Astoria Miami needed to sell a landmark before it was built, they needed more than renders. Agile Lens created an immersive VR experience anchored by a MetaHuman concierge played by Ari Tarr — a real-time digital human who welcomes guests, guides them through the property, and delivers the warmth of five-star hospitality in a building that didn\'t yet exist.\n\nThe result: prospective buyers could walk through the tallest tower in Miami\'s skyline, meet the staff, and feel the space — all before construction crews reached the upper floors.',
     papers: '',
     tech: '',
     credits: '',
@@ -427,8 +430,8 @@ The Wie Suite - Lincoln Center's Chief Artistic Officer, Shanta Thake, Is Sharin
     links: '',
     category1: 'Immersive Marketing',
     category2: '',
-    image: '/portfolio/waldorf-astoria-miami/01.jpg',
-    images: ['/portfolio/waldorf-astoria-miami/01.jpg', '/portfolio/waldorf-astoria-miami/02.jpg'],
+    image: '/portfolio/waldorf-astoria-miami/concierge.png',
+    images: ['/portfolio/waldorf-astoria-miami/concierge.png', '/portfolio/waldorf-astoria-miami/01.jpg', '/portfolio/waldorf-astoria-miami/02.jpg'],
   },
   {
     slug: 'four-seasons-lake-austin',

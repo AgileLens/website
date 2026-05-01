@@ -26,14 +26,33 @@ function extractVimeoId(url: string): string | null {
   return match ? match[1] : null;
 }
 
-type Embed = { host: 'youtube' | 'vimeo'; id: string };
+function extractDriveId(url: string): string | null {
+  const match = url.match(/drive\.google\.com\/file\/d\/([A-Za-z0-9_-]+)/);
+  return match ? match[1] : null;
+}
+
+type Embed = { host: 'youtube' | 'vimeo' | 'drive'; id: string };
 
 function toEmbed(url: string): Embed | null {
   const yt = extractYouTubeId(url);
   if (yt) return { host: 'youtube', id: yt };
   const vm = extractVimeoId(url);
   if (vm) return { host: 'vimeo', id: vm };
+  const dr = extractDriveId(url);
+  if (dr) return { host: 'drive', id: dr };
   return null;
+}
+
+function embedSrc(e: Embed): string {
+  if (e.host === 'youtube') return `https://www.youtube.com/embed/${e.id}`;
+  if (e.host === 'vimeo') return `https://player.vimeo.com/video/${e.id}`;
+  return `https://drive.google.com/file/d/${e.id}/preview`;
+}
+
+function embedAllow(e: Embed): string {
+  if (e.host === 'youtube') return 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture';
+  if (e.host === 'vimeo') return 'autoplay; fullscreen; picture-in-picture';
+  return 'autoplay';
 }
 
 export default async function ProjectPage({ params }: { params: Promise<{ slug: string }> }) {
@@ -101,6 +120,11 @@ export default async function ProjectPage({ params }: { params: Promise<{ slug: 
           )}
         </div>
         <h1 className="text-4xl md:text-6xl font-black mb-6">{project.name}</h1>
+        {project.tagline && (
+          <p className="text-2xl md:text-3xl font-bold leading-tight max-w-3xl gradient-text mb-2">
+            {project.tagline}
+          </p>
+        )}
       </div>
 
       <div className="grid lg:grid-cols-3 gap-12">
@@ -114,17 +138,9 @@ export default async function ProjectPage({ params }: { params: Promise<{ slug: 
                 {embeds.map((e, i) => (
                   <div key={`${e.host}-${e.id}`} className="aspect-video rounded-xl overflow-hidden border border-border">
                     <iframe
-                      src={
-                        e.host === 'youtube'
-                          ? `https://www.youtube.com/embed/${e.id}`
-                          : `https://player.vimeo.com/video/${e.id}`
-                      }
+                      src={embedSrc(e)}
                       title={`${project.name} video ${i + 1}`}
-                      allow={
-                        e.host === 'youtube'
-                          ? 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture'
-                          : 'autoplay; fullscreen; picture-in-picture'
-                      }
+                      allow={embedAllow(e)}
                       allowFullScreen
                       className="w-full h-full"
                     />
