@@ -34,17 +34,18 @@ const team = [
 ];
 
 const products = [
-  { name: 'Hyperreal Estate', group: 'Pre-construction' },
-  { name: 'Blueprint Immersive', group: 'Pre-construction' },
-  { name: 'Floor Tour', group: 'Pre-construction' },
-  { name: 'Holodeck Anywhere', group: 'Entertainment' },
-  { name: 'Stage Presence', group: 'Entertainment' },
-  { name: 'PerforMR', group: 'Entertainment' },
+  { name: 'Hyperreal Estate', group: 'Pre-construction', slug: 'hyperreal-estate' },
+  { name: 'Blueprint Immersive', group: 'Pre-construction', slug: 'blueprint-immersive' },
+  { name: 'Floor Tour', group: 'Pre-construction', slug: 'floor-tour' },
+  { name: 'Holodeck Anywhere', group: 'Entertainment', slug: 'holodeck-anywhere' },
+  { name: 'Stage Presence', group: 'Entertainment', slug: 'stage-presence' },
+  { name: 'PerforMR', group: 'Entertainment', slug: 'performr' },
 ];
 
 const pages = [
   { title: 'Home', href: '/' },
   { title: 'Portfolio', href: '/portfolio' },
+  { title: 'Unreal NYC', href: '/unrealnyc' },
   { title: 'Team', href: '/team' },
   { title: 'Contact', href: '/contact' },
 ];
@@ -79,7 +80,7 @@ function search(q: string): Hit[] {
     );
     if (s > 0) {
       hits.push({
-        href: `/portfolio/${p.slug}`,
+        href: p.href || `/portfolio/${p.slug}`,
         title: p.name,
         group: 'Project',
         subtitle: [p.category1, p.yearCompleted || p.yearStarted].filter(Boolean).join(' • '),
@@ -95,7 +96,7 @@ function search(q: string): Hit[] {
 
   for (const pr of products) {
     const s = Math.max(score(pr.name, trimmed), score(pr.group, trimmed) * 0.6);
-    if (s > 0) hits.push({ href: '/#products', title: pr.name, group: 'Product', subtitle: pr.group, score: s });
+    if (s > 0) hits.push({ href: `/products/${pr.slug}`, title: pr.name, group: 'Product', subtitle: pr.group, score: s });
   }
 
   for (const pg of pages) {
