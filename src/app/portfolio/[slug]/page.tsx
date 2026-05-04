@@ -166,7 +166,45 @@ export default async function ProjectPage({ params }: { params: Promise<{ slug: 
             </div>
           )}
 
-          {creditLines.length > 0 && (
+          {project.creditsBlocks && project.creditsBlocks.length > 0 ? (
+            <div>
+              <h2 className="text-xl font-bold mb-6">Credits and Collaborators</h2>
+              {(() => {
+                // Group blocks into sections: each section{label} starts a new group.
+                type Section = { label: string; roles: { role: string; names: string[] }[] };
+                const sections: Section[] = [{ label: '', roles: [] }];
+                for (const b of project.creditsBlocks!) {
+                  if (b.kind === 'section') sections.push({ label: b.label, roles: [] });
+                  else sections[sections.length - 1].roles.push({ role: b.role, names: b.names });
+                }
+                return (
+                  <div className="space-y-10">
+                    {sections.filter(s => s.roles.length > 0).map((section, si) => (
+                      <div key={si}>
+                        {section.label && (
+                          <h3 className="text-xs uppercase tracking-[0.18em] text-pink font-semibold mb-5 pb-3 border-b border-border">
+                            {section.label}
+                          </h3>
+                        )}
+                        <div className="columns-1 sm:columns-2 lg:columns-3 gap-x-8">
+                          {section.roles.map((r, ri) => (
+                            <div key={ri} className="break-inside-avoid mb-5">
+                              <div className="text-[10px] uppercase tracking-[0.15em] text-muted mb-1.5 font-semibold">{r.role}</div>
+                              <div className="text-sm leading-relaxed">
+                                {r.names.map((n, ni) => (
+                                  <div key={ni}>{n}</div>
+                                ))}
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                );
+              })()}
+            </div>
+          ) : creditLines.length > 0 && (
             <div>
               <h2 className="text-xl font-bold mb-4">Credits and Collaborators</h2>
               <div className="space-y-1">

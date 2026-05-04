@@ -1,3 +1,7 @@
+export type CreditBlock =
+  | { kind: 'section'; label: string }
+  | { kind: 'role'; role: string; names: string[] };
+
 export type Project = {
   slug: string;
   name: string;
@@ -23,6 +27,11 @@ export type Project = {
   images: string[];
   videos?: string[];
   tagline?: string;
+  // Structured credits. When present, rendered as a multi-column layout in
+  // place of the flat `credits` string. Use { kind: 'section', label } for
+  // section headers (empty label = silent visual break) and
+  // { kind: 'role', role, names } for each role -> people grouping.
+  creditsBlocks?: CreditBlock[];
   featured?: boolean;
   hidden?: boolean;
   // When set, the portfolio card links here instead of /portfolio/[slug],
@@ -556,7 +565,60 @@ https://www.businesswire.com/news/home/20230719281018/en/Infinite-Reality-and-Vo
     description: '',
     papers: '',
     tech: '',
-    credits: 'https://docs.google.com/document/d/1ArXL2V1sFqGfab-Lfm8YE_GhqnwXYgE9pSNs6zN1nZY/edit?usp=sharing',
+    credits: '',
+    creditsBlocks: [
+      { kind: 'role', role: 'Executive Producer', names: ['Alex Coulombe'] },
+      { kind: 'role', role: 'Director', names: ['Jackie Roman', 'Kevin Laibson'] },
+      { kind: 'role', role: 'Lead Unity Developer', names: ['Whitt Sellers'] },
+      { kind: 'role', role: 'Developer', names: ['Alex Coulombe'] },
+      { kind: 'role', role: 'XR Designer', names: ['Whitt Sellers'] },
+      { kind: 'role', role: 'Cinematographer', names: ['Jackie Roman'] },
+      { kind: 'role', role: 'Camera Operator', names: ['Alex Coulombe', 'Kevin Laibson'] },
+      { kind: 'role', role: '3D / Volumetric Scanning', names: ['Alex Coulombe', 'Whitt Sellers', 'Kevin Laibson'] },
+      { kind: 'role', role: '3D / VFX Artist', names: ['Whitt Sellers'] },
+      { kind: 'role', role: 'Lead 360 Video Editor', names: ['Adrian Vásquez de Velasco'] },
+      { kind: 'role', role: '360 Video Editor', names: ['Dante Cameron'] },
+      { kind: 'role', role: 'Creative Director', names: ['Alex Coulombe'] },
+      { kind: 'role', role: 'Art Director', names: ['Whitt Sellers'] },
+      { kind: 'role', role: 'Spanish Translations', names: ['Adrian Miranda'] },
+      { kind: 'role', role: 'Audio Producer', names: ['John Hill', 'Gregory Wolynec'] },
+
+      { kind: 'section', label: 'Featuring' },
+      { kind: 'role', role: 'Afro-Cuban singer / dancer', names: ['Reynaldo González Fernández'] },
+      { kind: 'role', role: 'Mezzo-soprano', names: ['Luisana Rivas'] },
+      { kind: 'role', role: 'Soprano', names: ['Penelope Shumate'] },
+      { kind: 'role', role: 'Capoeira dancer and berimbau', names: ['Paciência'] },
+
+      { kind: 'section', label: 'Gateway Chamber Orchestra & Chorale' },
+      { kind: 'role', role: 'Conductor', names: ['Gregory Wolynec'] },
+      { kind: 'role', role: 'Tenor', names: ['Wayne Crary', 'Giulio Garner', 'Benjamin A. Hickson', 'Jackson Howard', 'Thomas Lawrence', 'Cedric Puentes Torres', 'Tim Sharp', 'Benjamin Torres', 'Zachary Tucker', 'Channing Wright'] },
+      { kind: 'role', role: 'Bass [Bajo]', names: ['Curtis Bell', 'Michael Chandler', 'Perignon Espinoza', 'Daniel Hall Carlos Martinez', 'Emmanuel Méjeun', 'Ariel G.S. Méndez', 'Christoper S. Powell', 'Zachary Richards', 'Tony Serrano', 'Tyler Spuzzillo', 'Antonio Witter'] },
+      { kind: 'role', role: 'Trumpet [Trompeta]', names: ['Rob Waugh', 'Michael Mann'] },
+      { kind: 'role', role: 'Trombone [Trombón]', names: ['Desmond Ng', 'Bill Huber'] },
+      { kind: 'role', role: 'Tres & Guitar [Guitarra]', names: ['Chip Henderson'] },
+      { kind: 'role', role: 'Accordion [Acordeón]', names: ['Anthony Saddic'] },
+      { kind: 'role', role: 'Piano', names: ['Stephen Kummer'] },
+      { kind: 'role', role: 'Percussion [Percusión]', names: ['Mikael Ringquist (leader)', 'Marcus Santos', 'David Steinquest', 'Joshua Hermantin', 'Joshua Graham'] },
+      { kind: 'role', role: 'Violin [Violin]', names: ['Jessica Blackwell', 'Nathan Lowry', 'Kimberly Hain', 'Deidre Bacco', 'Wooram Kwon', 'Melissa Bull'] },
+      { kind: 'role', role: 'Cello [Violonchelo]', names: ['Meghan Berindean', 'Andrew Dunn', 'Alex Krew', 'Sarah Berry', 'Jessica Lee', 'Holden Bitner'] },
+      { kind: 'role', role: 'Double Bass [Contrabajo]', names: ['Jacob Jezioro'] },
+      { kind: 'role', role: 'Soprano', names: ['Charlsie DeLoach', 'Kallina Dunkle', 'Evelin Garay', 'Ninfa Yanez Garcia', 'Elizabeth Gaskill', 'Martha Guevara', 'Christy Marie Heinbockel', 'Zoe Shalome Inez Johnson', 'Caitlyn Wollett', 'Oliva Zerkle'] },
+      { kind: 'role', role: 'Alto', names: ['Maria Caldwell', 'Sandra Ceparo Alvarez', 'Jan Corrothers', 'Valerie Denney', 'Anne-Carine Exumé', 'Katie George', 'Briana Larsen', 'Julia Lefurge', 'Marian Towe', 'Kaleigh Wills', 'Amalia Wills', 'Lisa Read Wolynec'] },
+
+      { kind: 'section', label: 'Production' },
+      { kind: 'role', role: 'Interim Executive Director', names: ['Summer Fuchs'] },
+      { kind: 'role', role: 'Stage Support', names: ['Nathan Robertson'] },
+      { kind: 'role', role: 'Audio Produced by', names: ['John Hill', 'Gregory Wolynec'] },
+      { kind: 'role', role: 'Audio Recording, Editing, and Mixing', names: ['John Hill'] },
+      { kind: 'role', role: 'Audio Recording and Live Sound', names: ['Greg Hopkins'] },
+      { kind: 'role', role: 'Stage Hands', names: ['Stephanie Elder', 'Chloe McKenzie'] },
+      { kind: 'role', role: 'Lighting', names: ['Rhett Timons', 'Luke Anderson'] },
+      { kind: 'role', role: 'Technical Director', names: ['Nathan Robertson'] },
+      { kind: 'role', role: 'Assistant Technical Director', names: ['Mackenzie Kelly'] },
+      { kind: 'role', role: 'Lighting Design', names: ['Rhett Timmons, Timmons Productions'] },
+      { kind: 'role', role: 'Lighting Engineer', names: ['Luke Anderson'] },
+      { kind: 'role', role: 'Supertitles', names: ['Stephanie Elder'] },
+    ],
     additionalContributors: '',
     links: '',
     category1: 'Entertainment',
