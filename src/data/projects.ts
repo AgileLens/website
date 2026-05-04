@@ -32,6 +32,9 @@ export type Project = {
   // section headers (empty label = silent visual break) and
   // { kind: 'role', role, names } for each role -> people grouping.
   creditsBlocks?: CreditBlock[];
+  // External store / availability link. When set, renders a sidebar badge
+  // on the detail page. Currently supports Steam.
+  steamUrl?: string;
   featured?: boolean;
   hidden?: boolean;
   // When set, the portfolio card links here instead of /portfolio/[slug],
@@ -592,7 +595,7 @@ https://www.businesswire.com/news/home/20230719281018/en/Infinite-Reality-and-Vo
       { kind: 'section', label: 'Gateway Chamber Orchestra & Chorale' },
       { kind: 'role', role: 'Conductor', names: ['Gregory Wolynec'] },
       { kind: 'role', role: 'Tenor', names: ['Wayne Crary', 'Giulio Garner', 'Benjamin A. Hickson', 'Jackson Howard', 'Thomas Lawrence', 'Cedric Puentes Torres', 'Tim Sharp', 'Benjamin Torres', 'Zachary Tucker', 'Channing Wright'] },
-      { kind: 'role', role: 'Bass [Bajo]', names: ['Curtis Bell', 'Michael Chandler', 'Perignon Espinoza', 'Daniel Hall Carlos Martinez', 'Emmanuel Méjeun', 'Ariel G.S. Méndez', 'Christoper S. Powell', 'Zachary Richards', 'Tony Serrano', 'Tyler Spuzzillo', 'Antonio Witter'] },
+      { kind: 'role', role: 'Bass [Bajo]', names: ['Curtis Bell', 'Michael Chandler', 'Perignon Espinoza', 'Daniel Hall', 'Carlos Martinez', 'Emmanuel Méjeun', 'Ariel G.S. Méndez', 'Christopher S. Powell', 'Zachary Richards', 'Tony Serrano', 'Tyler Spuzzillo', 'Antonio Witter'] },
       { kind: 'role', role: 'Trumpet [Trompeta]', names: ['Rob Waugh', 'Michael Mann'] },
       { kind: 'role', role: 'Trombone [Trombón]', names: ['Desmond Ng', 'Bill Huber'] },
       { kind: 'role', role: 'Tres & Guitar [Guitarra]', names: ['Chip Henderson'] },
@@ -602,7 +605,7 @@ https://www.businesswire.com/news/home/20230719281018/en/Infinite-Reality-and-Vo
       { kind: 'role', role: 'Violin [Violin]', names: ['Jessica Blackwell', 'Nathan Lowry', 'Kimberly Hain', 'Deidre Bacco', 'Wooram Kwon', 'Melissa Bull'] },
       { kind: 'role', role: 'Cello [Violonchelo]', names: ['Meghan Berindean', 'Andrew Dunn', 'Alex Krew', 'Sarah Berry', 'Jessica Lee', 'Holden Bitner'] },
       { kind: 'role', role: 'Double Bass [Contrabajo]', names: ['Jacob Jezioro'] },
-      { kind: 'role', role: 'Soprano', names: ['Charlsie DeLoach', 'Kallina Dunkle', 'Evelin Garay', 'Ninfa Yanez Garcia', 'Elizabeth Gaskill', 'Martha Guevara', 'Christy Marie Heinbockel', 'Zoe Shalome Inez Johnson', 'Caitlyn Wollett', 'Oliva Zerkle'] },
+      { kind: 'role', role: 'Soprano', names: ['Charlsie DeLoach', 'Kallina Dunkle', 'Evelin Garay', 'Ninfa Yanez Garcia', 'Elizabeth Gaskill', 'Martha Guevara', 'Christy Marie Heinbockel', 'Zoe Shalome Inez Johnson', 'Caitlyn Wollett', 'Olivia Zerkle'] },
       { kind: 'role', role: 'Alto', names: ['Maria Caldwell', 'Sandra Ceparo Alvarez', 'Jan Corrothers', 'Valerie Denney', 'Anne-Carine Exumé', 'Katie George', 'Briana Larsen', 'Julia Lefurge', 'Marian Towe', 'Kaleigh Wills', 'Amalia Wills', 'Lisa Read Wolynec'] },
 
       { kind: 'section', label: 'Production' },
@@ -612,7 +615,7 @@ https://www.businesswire.com/news/home/20230719281018/en/Infinite-Reality-and-Vo
       { kind: 'role', role: 'Audio Recording, Editing, and Mixing', names: ['John Hill'] },
       { kind: 'role', role: 'Audio Recording and Live Sound', names: ['Greg Hopkins'] },
       { kind: 'role', role: 'Stage Hands', names: ['Stephanie Elder', 'Chloe McKenzie'] },
-      { kind: 'role', role: 'Lighting', names: ['Rhett Timons', 'Luke Anderson'] },
+      { kind: 'role', role: 'Lighting', names: ['Rhett Timmons', 'Luke Anderson'] },
       { kind: 'role', role: 'Technical Director', names: ['Nathan Robertson'] },
       { kind: 'role', role: 'Assistant Technical Director', names: ['Mackenzie Kelly'] },
       { kind: 'role', role: 'Lighting Design', names: ['Rhett Timmons, Timmons Productions'] },
@@ -625,6 +628,7 @@ https://www.businesswire.com/news/home/20230719281018/en/Infinite-Reality-and-Vo
     category2: '',
     image: '/portfolio/la-pasion-xr/01.jpg',
     images: ['/portfolio/la-pasion-xr/01.jpg', '/portfolio/la-pasion-xr/02.jpg', '/portfolio/la-pasion-xr/03.jpg'],
+    steamUrl: 'https://store.steampowered.com/app/3615440/La_Pasion_XR/',
   },
   {
     slug: 'ny-57th-street-holodeck-popup',
