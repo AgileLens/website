@@ -1,6 +1,6 @@
 'use client';
 
-import { useCallback, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import dynamic from 'next/dynamic';
 import Link from 'next/link';
 
@@ -14,14 +14,24 @@ export default function HolodeckExperience() {
   const [ready, setReady] = useState(false);
   const [error, setError] = useState(false);
   const [hover, setHover] = useState<string | null>(null);
+  const [entering, setEntering] = useState<string | null>(null);
+  const [fade, setFade] = useState(false);
 
   const onReady = useCallback(() => setReady(true), []);
   const onError = useCallback(() => setError(true), []);
   const onHover = useCallback((name: string | null) => setHover(name), []);
+  const onEnter = useCallback((_slug: string, name: string) => setEntering(name), []);
+
+  // Fade the overlay in on the next frame so the CSS transition runs.
+  useEffect(() => {
+    if (!entering) return;
+    const id = requestAnimationFrame(() => setFade(true));
+    return () => cancelAnimationFrame(id);
+  }, [entering]);
 
   return (
     <div className="fixed inset-0 bg-[#0c0c0e] overflow-hidden">
-      {!error && <HolodeckScene onReady={onReady} onError={onError} onHover={onHover} />}
+      {!error && <HolodeckScene onReady={onReady} onError={onError} onHover={onHover} onEnter={onEnter} />}
 
       {/* Loader */}
       {!ready && !error && (
@@ -73,6 +83,22 @@ export default function HolodeckExperience() {
             <Link href="/" className="text-sm text-muted hover:text-text transition-colors">
               Back to home
             </Link>
+          </div>
+        </div>
+      )}
+
+      {/* Enter transition — masks the dive into the case study */}
+      {entering && (
+        <div
+          className="absolute inset-0 z-50 pointer-events-none flex items-center justify-center transition-opacity duration-[1100ms] ease-in"
+          style={{
+            opacity: fade ? 1 : 0,
+            background: 'radial-gradient(circle at center, rgba(254,0,181,0.28), #0c0c0e 70%)',
+          }}
+        >
+          <div className="text-center">
+            <div className="text-xs uppercase tracking-[0.3em] text-pink mb-3">Entering</div>
+            <div className="text-2xl md:text-4xl font-black">{entering}</div>
           </div>
         </div>
       )}

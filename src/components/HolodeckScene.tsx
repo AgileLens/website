@@ -31,9 +31,10 @@ interface Props {
   onReady?: () => void;
   onError?: () => void;
   onHover?: (name: string | null) => void;
+  onEnter?: (slug: string, name: string) => void;
 }
 
-export default function HolodeckScene({ onReady, onError, onHover }: Props) {
+export default function HolodeckScene({ onReady, onError, onHover, onEnter }: Props) {
   const mountRef = useRef<HTMLDivElement>(null);
   const router = useRouter();
 
@@ -167,7 +168,20 @@ export default function HolodeckScene({ onReady, onError, onHover }: Props) {
     let moved = 0;
     const targetCam = new THREE.Vector2(0, 1.6);
 
+    // Fly-into ("enter the Oasis") state
+    let flying = false;
+    let flyElapsed = 0;
+    let navigated = false;
+    let flySlug = '';
+    const FLY_DURATION = 1.35;
+    const flyFrom = new THREE.Vector3();
+    const flyTo = new THREE.Vector3();
+    const flyLook = new THREE.Vector3();
+    const flyLookFrom = new THREE.Vector3();
+    const flyLookTo = new THREE.Vector3();
+
     const onPointerDown = (e: PointerEvent) => {
+      if (flying) return;
       dragging = true;
       lastX = e.clientX;
       downX = e.clientX;
@@ -187,12 +201,30 @@ export default function HolodeckScene({ onReady, onError, onHover }: Props) {
         moved += Math.abs(dx);
       }
     };
+    const startFly = (panel: THREE.Mesh) => {
+      flying = true;
+      flyElapsed = 0;
+      navigated = false;
+      flySlug = (panel.userData as { slug: string }).slug;
+      const worldPos = new THREE.Vector3();
+      panel.getWorldPosition(worldPos);
+      const outward = new THREE.Vector3(worldPos.x, 0, worldPos.z).normalize();
+      flyFrom.copy(camera.position);
+      flyLookFrom.set(0, 0.2, 0);
+      flyLookTo.copy(worldPos);
+      // End just in front of the panel so the image fills the frame
+      flyTo.copy(worldPos).addScaledVector(outward, 0.9);
+      flyTo.y = worldPos.y + 0.1;
+      el.style.cursor = 'default';
+      onEnter?.(flySlug, (panel.userData as { name: string }).name);
+    };
+
     const onPointerUp = (e: PointerEvent) => {
       dragging = false;
+      if (flying) return;
       const dist = Math.hypot(e.clientX - downX, e.clientY - downY);
       if (dist < 6 && hovered) {
-        const slug = (hovered.userData as { slug: string }).slug;
-        router.push(`/portfolio/${slug}`);
+        startFly(hovered);
       }
     };
     const onPointerLeave = () => {
@@ -221,10 +253,30 @@ export default function HolodeckScene({ onReady, onError, onHover }: Props) {
     let raf = 0;
     let signalledReady = false;
     const autoSpeed = reduceMotion ? 0 : 0.0008;
+    let lastT = 0;
+    const easeInOut = (x: number) => (x < 0.5 ? 4 * x * x * x : 1 - Math.pow(-2 * x + 2, 3) / 2);
 
     const tick = () => {
       raf = requestAnimationFrame(tick);
       const t = clock.getElapsedTime();
+      const dt = Math.min(t - lastT, 0.05);
+      lastT = t;
+
+      // Fly-into ("enter the Oasis") — dive the camera into the chosen panel
+      if (flying) {
+        flyElapsed += dt;
+        const p = Math.min(flyElapsed / FLY_DURATION, 1);
+        const e = easeInOut(p);
+        camera.position.lerpVectors(flyFrom, flyTo, e);
+        flyLook.lerpVectors(flyLookFrom, flyLookTo, e);
+        camera.lookAt(flyLook);
+        renderer.render(scene, camera);
+        if (p >= 1 && !navigated) {
+          navigated = true;
+          router.push(`/portfolio/${flySlug}`);
+        }
+        return;
+      }
 
       ringRot += autoSpeed + ringVel;
       ringVel *= 0.92;
@@ -306,7 +358,7 @@ export default function HolodeckScene({ onReady, onError, onHover }: Props) {
       if (el.parentNode === mount) mount.removeChild(el);
       document.body.style.cursor = '';
     };
-  }, [router, onReady, onError, onHover]);
+  }, [router, onReady, onError, onHover, onEnter]);
 
   return <div ref={mountRef} className="absolute inset-0" />;
 }
