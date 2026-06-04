@@ -5,11 +5,11 @@ import RevealBox from '@/components/RevealBox';
 export const metadata: Metadata = {
   title: 'How We Work | Agile Lens',
   description:
-    'How Agile Lens runs an immersive engagement — from discovery and scoping through previs, production, and deployment. What to expect when you work with us.',
+    'How Agile Lens runs an immersive engagement, from discovery and scoping through previs, production, and deployment. What to expect when you work with us.',
   openGraph: {
     title: 'How We Work | Agile Lens',
     description:
-      'How Agile Lens runs an immersive engagement — from discovery through deployment. What to expect when you work with us.',
+      'How Agile Lens runs an immersive engagement, from discovery through deployment. What to expect when you work with us.',
   },
 };
 
@@ -17,19 +17,19 @@ const phases = [
   {
     num: '01',
     title: 'Discovery & Scoping',
-    body: 'We start with the outcome, not the technology. In a short discovery phase we pin down the decision your project needs to support — a design sign-off, a pre-sales target, a rehearsal workflow — and translate it into a concrete scope, timeline, and the right hardware for the job.',
+    body: 'We start with the outcome, not the technology. In a short discovery phase we pin down the decision your project needs to support (a design sign-off, a pre-sales target, a rehearsal workflow) and translate it into a concrete scope, timeline, and the right hardware for the job.',
     deliverables: ['Goals & success metrics', 'Technical approach', 'Scope, timeline & budget'],
   },
   {
     num: '02',
     title: 'Previs & Prototyping',
-    body: 'Before committing to a full build, we put a working prototype in front of you fast. You experience the core interaction in headset early, while it is still cheap to change direction — so the expensive production phase starts from something you have already validated.',
+    body: 'Before committing to a full build, we put a working prototype in front of you fast. You experience the core interaction in headset early, while it is still cheap to change direction, so the expensive production phase starts from something you have already validated.',
     deliverables: ['Interactive prototype', 'Early in-headset review', 'Design direction locked'],
   },
   {
     num: '03',
     title: 'Production',
-    body: 'This is where the experience gets built to ship. Photoreal environments, performance capture, multiuser networking, real-time optimization — engineered to run reliably on the devices your audience will actually use, not just on a demo machine.',
+    body: 'This is where the experience gets built to ship: photoreal environments, performance capture, multiuser networking, and real-time optimization, engineered to run reliably on the devices your audience will actually use, not just on a demo machine.',
     deliverables: ['Production-grade build', 'Performance optimization', 'QA across target devices'],
   },
   {
@@ -43,7 +43,7 @@ const phases = [
 const models = [
   {
     title: 'Project engagement',
-    body: 'A defined deliverable with a fixed scope and timeline — an activation, a previs deliverable, a product build. Best when you know the outcome you need.',
+    body: 'A defined deliverable with a fixed scope and timeline: an activation, a previs deliverable, a product build. Best when you know the outcome you need.',
   },
   {
     title: 'Ongoing partnership',
@@ -51,7 +51,7 @@ const models = [
   },
   {
     title: 'R&D & prototyping',
-    body: 'Short, focused sprints to prove out a hard technical idea — new hardware, a novel interaction, a pipeline that does not exist yet — before you commit to it.',
+    body: 'Short, focused sprints to prove out a hard technical idea (new hardware, a novel interaction, a pipeline that does not exist yet) before you commit to it.',
   },
 ];
 
@@ -123,7 +123,7 @@ export default function ProcessPage() {
           <div className="rounded-2xl border border-border bg-gradient-to-br from-purple/10 via-surface to-pink/10 p-10 md:p-14 text-center">
             <h2 className="text-3xl md:text-4xl font-black mb-4">Have a project in mind?</h2>
             <p className="text-muted max-w-2xl mx-auto mb-8 leading-relaxed">
-              Bring us the outcome you are trying to reach. We will tell you honestly whether immersive is the right tool — and if it is, how we would get you there.
+              Bring us the outcome you are trying to reach. We will tell you honestly whether immersive is the right tool, and if it is, how we would get you there.
             </p>
             <div className="flex flex-wrap justify-center gap-3">
               <Link href="/contact" className="btn-gradient px-8 py-3.5 rounded-full text-sm font-semibold text-white">

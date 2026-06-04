@@ -5,7 +5,7 @@ import { products } from '@/data/products';
 export const metadata: Metadata = {
   title: 'Products | Agile Lens',
   description:
-    'Agile Lens products for pre-construction visualization and live entertainment — Hyperreal Estate, Blueprint Immersive, Floor Tour, Holodeck Anywhere, Stage Presence, and PerforMR.',
+    'Agile Lens products for pre-construction visualization and live entertainment: Hyperreal Estate, Blueprint Immersive, Floor Tour, Holodeck Anywhere, Stage Presence, and PerforMR.',
   openGraph: {
     title: 'Products | Agile Lens',
     description:
@@ -84,7 +84,7 @@ export default function ProductsPage() {
       <div className="mt-8 rounded-2xl border border-border bg-gradient-to-br from-purple/10 via-surface to-pink/10 p-10 md:p-14 text-center">
         <h2 className="text-2xl md:text-3xl font-black mb-4">Not sure which fits your project?</h2>
         <p className="text-muted max-w-2xl mx-auto mb-8 leading-relaxed">
-          Tell us what you are trying to build and we will point you to the right tool — or build something bespoke.
+          Tell us what you are trying to build and we will point you to the right tool, or build something bespoke.
         </p>
         <div className="flex flex-wrap justify-center gap-3">
           <Link href="/contact" className="btn-gradient px-8 py-3.5 rounded-full text-sm font-semibold text-white">

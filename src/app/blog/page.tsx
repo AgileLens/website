@@ -5,7 +5,7 @@ import { sortedPosts } from '@/data/posts';
 export const metadata: Metadata = {
   title: 'Insights | Agile Lens',
   description:
-    'Field notes on enterprise XR, immersive design, virtual production, and building creator communities — from the Agile Lens team.',
+    'Field notes on enterprise XR, immersive design, virtual production, and building creator communities, from the Agile Lens team.',
   openGraph: {
     title: 'Insights | Agile Lens',
     description:

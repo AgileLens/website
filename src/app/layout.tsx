@@ -18,7 +18,7 @@ export const metadata: Metadata = {
     url: 'https://agilelens.com',
     title: 'Agile Lens | Immersive Design',
     description: SITE_DESCRIPTION,
-    images: [{ url: OG_IMAGE, width: 1200, height: 630, alt: 'Agile Lens — immersive design' }],
+    images: [{ url: OG_IMAGE, width: 1200, height: 630, alt: 'Agile Lens immersive design' }],
   },
   twitter: {
     card: 'summary_large_image',

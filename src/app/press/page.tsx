@@ -5,11 +5,11 @@ import { projects } from '@/data/projects';
 export const metadata: Metadata = {
   title: 'Press & Awards | Agile Lens',
   description:
-    'Awards, recognition, and press coverage of Agile Lens immersive work — from SXSW and Venice to The New York Times, Playbill, and UploadVR.',
+    'Awards, recognition, and press coverage of Agile Lens immersive work, from SXSW and Venice to The New York Times, Playbill, and UploadVR.',
   openGraph: {
     title: 'Press & Awards | Agile Lens',
     description:
-      'Awards, recognition, and press coverage of Agile Lens immersive work — from SXSW and Venice to The New York Times and beyond.',
+      'Awards, recognition, and press coverage of Agile Lens immersive work, from SXSW and Venice to The New York Times and beyond.',
   },
 };
 

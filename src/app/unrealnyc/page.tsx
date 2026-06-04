@@ -348,7 +348,7 @@ export default function UnrealNYCPage() {
               <div className="text-xs uppercase tracking-wider text-pink font-semibold mb-3">The team behind the community</div>
               <h2 className="text-3xl md:text-4xl font-black mb-4">Unreal NYC is organized by Agile Lens</h2>
               <p className="text-muted leading-relaxed mb-4">
-                We are an immersive design studio that has been building with Unreal Engine since 2014 — photoreal pre-construction visualization, live XR performance, and colocated VR for clients like Disney, the Kennedy Center, and Four Seasons. Organizing Unreal NYC is how we give back to the community we build in.
+                We are an immersive design studio that has been building with Unreal Engine since 2014: photoreal pre-construction visualization, live XR performance, and colocated VR for clients like Disney, the Kennedy Center, and Four Seasons. Organizing Unreal NYC is how we give back to the community we build in.
               </p>
               <p className="text-muted leading-relaxed">
                 If you are working on something Unreal-powered and need a partner, we would love to talk.
