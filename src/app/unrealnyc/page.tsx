@@ -15,7 +15,7 @@ const NEXT_EVENT = {
   hostedBy: 'Hosted by Epic Games',
   date: 'Thursday, June 4, 2026',
   time: '5:00 – 9:00 PM EDT',
-  venue: 'Epic Games NY Office, 420 Ninth Ave, New York, NY',
+  venue: 'Epic Games NY Office (address provided after NDA)',
   blurb:
     'A networking and demo evening for Unreal Engine creators across games, animation, film, broadcast, and live events. Approval required — final address shared with confirmed attendees.',
   rsvpUe: 'https://communities.unrealengine.com/events/details/epic-games-new-york-presents-unreal-nyc-june-4th-ny-tech-week-demo-day-hosted-by-epic-games-approval-reqd/',
