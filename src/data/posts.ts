@@ -460,6 +460,254 @@ export const posts: Post[] = [
       },
     ],
   },
+  {
+    slug: 'where-ai-earns-its-place',
+    title: 'Where AI actually earns its place in our work',
+    excerpt:
+      "Everyone wants to put AI in everything right now. We've shipped it in real projects, and the honest lesson is that it only works where it's doing a job a human couldn't, or shouldn't.",
+    date: '2026-03-28',
+    author: 'Alex Coulombe',
+    readMinutes: 5,
+    tag: 'AI',
+    image: '/portfolio/dell-cybersecurity.jpg',
+    body: [
+      {
+        type: 'p',
+        text: "I run an immersive studio in 2026, so you can imagine how many conversations start with someone wanting to \"add AI\" to a project. I'm genuinely excited about this stuff — we've shipped it in real work — but I've learned to ask the same annoying question I ask about VR: what's the job? AI earns its place when it does something a human couldn't, or shouldn't have to. Everywhere else it's a party trick that ages badly.",
+      },
+      { type: 'h2', text: 'When it actually worked' },
+      {
+        type: 'p',
+        text: "For Vodafone at London Tech Week, we built a virtual car showroom with an AI salesman (powered by inworld.ai) that could actually hold a conversation about the vehicle you were standing next to. That's a real job: a knowledgeable guide, available to every visitor at once, never tired at hour six of a trade show. And for Song of the Ambassadors at Lincoln Center, AI was woven into an experimental opera alongside human artists — not replacing them, but as another instrument in the room. In both cases the AI scaled human attention instead of faking it.",
+      },
+      { type: 'h2', text: 'Where we keep it on a short leash' },
+      {
+        type: 'p',
+        text: "Internally, AI has quietly become part of how we work: assisting with UI code, smoothing asset pipelines, drafting the boring stuff. (Half my team has \"AI\" somewhere in their unofficial job description now.) But I'm careful about the line. The moment AI starts generating the thing the audience is supposed to feel — the performance, the presence, the gasp — I get nervous, because audiences can smell hollow. Our north star is still a human in the loop where it counts.",
+      },
+      {
+        type: 'p',
+        text: "I've also been burned by a slick AI demo that fell apart the second a real person asked it something off-script. So my rule now is simple: prototype the AI feature against a hostile user before you ever promise it to a client. If it only works when you ask it nicely, it doesn't work. Point it at a real job, test it against real people, and keep a human's hand on the part that has to move someone. AI is the best new instrument we've been handed in years, but it's an instrument, not the band.",
+      },
+    ],
+  },
+  {
+    slug: 'what-theater-taught-me-about-shipping',
+    title: 'What live theater taught me about shipping software',
+    excerpt:
+      "In theater, the show opens whether you're ready or not. That single brutal fact made me better at shipping than any engineering blog ever did.",
+    date: '2026-02-04',
+    author: 'Alex Coulombe',
+    readMinutes: 4,
+    tag: 'Craft',
+    image: '/portfolio/la-pasion-xr.jpg',
+    body: [
+      {
+        type: 'p',
+        text: "Before I wrote software for a living, I worked in theater, and theater has a feature the software world mostly lacks: an immovable opening night. The curtain goes up at 8pm on the date printed on the ticket. Nobody cares that your lighting cue isn't perfect or that the set piece is held together with gaff tape. The audience is in their seats. You go.",
+      },
+      { type: 'h2', text: 'The deadline is the design constraint' },
+      {
+        type: 'p',
+        text: "That fact rewires how you work. In theater you spend the final week in tech rehearsals — running the whole thing, finding what breaks, fixing it, running it again — because you know there's no slipping the date. I've watched software teams (mine included) treat deadlines as suggestions and then act surprised when \"we'll polish it later\" quietly becomes \"we never shipped it.\" Theater taught me that a real deadline isn't a threat to quality. It's the thing that forces you to decide what quality actually means by Friday.",
+      },
+      { type: 'h2', text: 'Tech rehearsal is just QA with stakes' },
+      {
+        type: 'p',
+        text: "When we run live XR shows now, we tech them like theater: full runs, in the real space, on the real hardware, with the actual humans, hunting for the thing that will embarrass us in front of an audience. It's the same instinct as a good QA pass, but with a 200-person crowd as the bug report. I've shipped things that worked flawlessly on my machine and fell over the instant a real audience touched them. The fix was never more code. It was more dress rehearsal.",
+      },
+      {
+        type: 'p',
+        text: "If your project has no opening night, invent one. Put a real date in front of real people on the calendar and let it do to your team what it does to a theater company: turn endless polishing into actual shipping.",
+      },
+    ],
+  },
+  {
+    slug: 'our-best-sales-tool-is-a-headset',
+    title: 'Our best sales tool is twenty minutes and a headset',
+    excerpt:
+      "I've stopped trying to sell presence with a slide deck. You can't describe what it feels like to stand inside a space that doesn't exist, so I just hand people a headset.",
+    date: '2025-12-18',
+    author: 'Alex Coulombe',
+    readMinutes: 4,
+    tag: 'Business',
+    image: '/portfolio/ghosted.jpg',
+    body: [
+      {
+        type: 'p',
+        text: "I give a lot of demos. An absurd number of demos — if you've ever emailed me about working together, there's a good chance my reply included some version of \"are you ever in NYC? come by and I'll put a headset on you.\" It took me years to realize this isn't me being generous with my time. It's the most effective sales tool we have, by a mile.",
+      },
+      { type: 'h2', text: 'You cannot deck your way to presence' },
+      {
+        type: 'p',
+        text: "The whole value of what we make is a feeling: that involuntary moment where your body believes it's somewhere it isn't. There's no slide, no render, no sizzle reel that delivers that. I've tried. You can show a gorgeous video of someone in our holodeck and the reaction is \"neat.\" Put that same person in the holodeck for ten minutes and the reaction is them pulling the headset off and immediately asking how soon they can do this for their own project. The gap between those two reactions is our entire business.",
+      },
+      { type: 'h2', text: 'The demo qualifies the room, too' },
+      {
+        type: 'p',
+        text: "There's a second thing a demo does: it tells me fast who actually gets it. The people who matter — the ones who'll be great partners — light up and start riffing on what else is possible before they've even handed the headset back. Some of our best projects started with someone making a beeline across a room after a demo, already three ideas deep. You don't get that from a follow-up email.",
+      },
+      {
+        type: 'p',
+        text: "If what you sell is a feeling, stop describing it. Let people feel it. The deck can come afterward, as a souvenir.",
+      },
+    ],
+  },
+  {
+    slug: 'why-i-still-teach-unreal',
+    title: 'Why I still teach Unreal Engine',
+    excerpt:
+      "Running the only authorized Unreal training center in Manhattan eats hours I could bill elsewhere. I keep doing it because teaching is the fastest way I know to stay sharp.",
+    date: '2025-11-02',
+    author: 'Alex Coulombe',
+    readMinutes: 4,
+    tag: 'Craft',
+    image: '/unrealnyc/04.jpg',
+    body: [
+      {
+        type: 'p',
+        text: "Between Agile Lens, organizing Unreal NYC, and everything else, the math on teaching Unreal Engine classes does not obviously add up. It's hours I could bill on client work. And yet through Alex Coulombe Presents we run what is, as far as I know, the only authorized Unreal Engine training center in Manhattan, with members of my own team teaching as gold authorized instructors. I keep doing it on purpose, and here's the honest reason.",
+      },
+      { type: 'h2', text: 'Teaching exposes what you only think you know' },
+      {
+        type: 'p',
+        text: "Nothing reveals the holes in your own understanding like a room of smart people asking \"but why?\" You can get away with a fuzzy mental model for years in production — it works, ship it, move on. Stand in front of a class and try to explain that same thing, and the fuzziness has nowhere to hide. Teaching Unreal has sharpened my own craft more reliably than any single project, because students ask the questions I'd quietly learned to stop asking myself.",
+      },
+      { type: 'h2', text: 'The long game of community' },
+      {
+        type: 'p',
+        text: "There's also a slower payoff I've come to trust. The people we teach, the meetups we run, the questions we answer — that's not charity, and it's not marketing exactly. It's the soil. Some of those students become collaborators, some become clients, some just become people who send the right opportunity our way years later. Community is a moat you build one genuinely helpful interaction at a time, and teaching is the most concentrated form of it I've found.",
+      },
+      {
+        type: 'p',
+        text: "If you're deep enough in a craft to be useful, teach some of it. You'll tell yourself it's generous. Mostly it's selfish in the best way: it keeps you honest, and it builds the kind of room you'll want to be standing in ten years from now.",
+      },
+    ],
+  },
+  {
+    slug: 'putting-a-real-person-inside-vr',
+    title: 'Putting a real person inside VR',
+    excerpt:
+      'A render of a human is uncanny. A captured human is something else. Getting a real person, their body and their presence, into a headset is harder and stranger than it sounds.',
+    date: '2026-01-08',
+    author: 'Alex Coulombe',
+    readMinutes: 5,
+    tag: 'Behind the Scenes',
+    image: '/portfolio/body-of-mine/01.jpg',
+    body: [
+      {
+        type: 'p',
+        text: `There's a particular kind of magic, and a particular kind of difficulty, in putting an actual person inside VR. Not a character a modeler built, not a stylized avatar, but a real human being, captured, that someone else can stand in front of and believe. We've chased this across projects, and it never stops being both wonderful and weirdly hard.`,
+      },
+      { type: 'h2', text: 'Capture is where the uncanny lives or dies' },
+      {
+        type: 'p',
+        text: `There's a cliff in human representation: get it 80% right and it's charming, 95% right and it's deeply unsettling, 99% and it's moving again. Crossing that valley is mostly a capture problem, the unglamorous craft of volumetric video, photogrammetry, and motion capture, of recording a real body faithfully enough that your brain stops filing it under "wrong." People on our team have spent years standing up exactly those pipelines for recording and playing back captured humans in real time.`,
+      },
+      { type: 'h2', text: 'The strangeness of wearing another body' },
+      {
+        type: 'p',
+        text: `Some of our most affecting work has been about literally giving someone a different body in VR, letting a person look down and see, and move, a body that isn't theirs. When the capture and tracking are good enough, something profound happens: people don't just see the other body, they briefly feel it as their own. That isn't a graphics achievement. It's an empathy machine, and it only works because the capture underneath respects how a real human actually moves.`,
+      },
+      {
+        type: 'p',
+        text: `Every time we've cut a corner on capture to save time, the audience felt it before they could name it: a stiffness, a deadness around the eyes, a motion that's a hair off. So we stopped cutting those corners. Getting a real person into a headset is some of the hardest work we do, and some of the only work I've seen reduce a room to silence. Worth every painstaking frame.`,
+      },
+    ],
+  },
+  {
+    slug: 'why-i-say-yes-to-every-conference',
+    title: 'Why I say yes to almost every conference',
+    excerpt:
+      "Conferences are exhausting, expensive, and rarely close a deal on the spot. I keep going to all of them anyway, because the real return shows up six months later.",
+    date: '2025-10-06',
+    author: 'Alex Coulombe',
+    readMinutes: 4,
+    tag: 'Business',
+    image: '/unrealnyc/07.jpg',
+    body: [
+      {
+        type: 'p',
+        text: `If you follow what I'm up to, it can look like I'm perpetually at some conference: FMX in Stuttgart, SXSW, HarvardXR, an Unreal Fest, a Tech Week reception. People ask if it's worth it, usually with a slightly skeptical face, because conferences are expensive and exhausting and almost never close a deal in the room. My honest answer is yes, and the reason has almost nothing to do with the talks.`,
+      },
+      { type: 'h2', text: 'The serendipity is the product' },
+      {
+        type: 'p',
+        text: `The value of showing up is the conversation you couldn't have planned. Someone makes a beeline for me after a talk because one specific slide hit a problem they've been stuck on. A hallway chat becomes a project a season later. I've lost count of the collaborations that trace back to "we met at that thing." You cannot schedule serendipity, but you can absolutely increase your surface area for it, and showing up in person is how you do that.`,
+      },
+      { type: 'h2', text: 'Give the talk, then stay for the happy hour' },
+      {
+        type: 'p',
+        text: `I give a lot of talks, and I've stopped treating the talk as the deliverable. The talk is the cost of admission to the part that matters: the dinner after, the demo I give someone at the bar, the introduction a friend makes because they saw me present and remembered what we do. The people in this industry are genuinely my favorite part of it, and you can't build that over email.`,
+      },
+      {
+        type: 'p',
+        text: `If you're weighing whether a conference is "worth it" by deals closed that week, you're measuring the wrong thing. Measure it in relationships started, and check back in six months. The pile compounds.`,
+      },
+    ],
+  },
+  {
+    slug: 'xr-that-talks-to-the-lighting-board',
+    title: 'Building XR that talks to the lighting board',
+    excerpt:
+      'The fastest way to get an XR tool rejected by a live-events crew is to make them abandon the gear they already trust. So we build the opposite.',
+    date: '2025-09-02',
+    author: 'Alex Coulombe',
+    readMinutes: 5,
+    tag: 'Live Performance',
+    image: '/portfolio/stage-presence/01.jpg',
+    body: [
+      {
+        type: 'p',
+        text: `Here's a quick way to get a beautiful piece of XR technology thrown out of a live production: ask the crew to abandon the lighting console, the timecode, and the operator workflows they've trusted for decades, and learn your new thing instead, the week of the show. It won't matter how good your software is. The answer will be no, and they'll be right.`,
+      },
+      { type: 'h2', text: 'Meet the room where it is' },
+      {
+        type: 'p',
+        text: `Live events run on a deep stack of legacy technology and hard-won operator habits, and that stack works. So the principle we hold for tools like Stage Presence is almost humble: integrate, don't replace. Talk to the gear that's already there. Fit the way operators already think. The goal is for a lighting designer or stage manager to adopt what we built without feeling like they've thrown out their toolkit, because the moment they feel that, you've lost them.`,
+      },
+      { type: 'h2', text: 'It helps to come from that world' },
+      {
+        type: 'p',
+        text: `It's not an accident that this is in our DNA. Agile Lens grew up alongside Fisher Dachs Associates and Fisher Marantz Stone, theater planning and architectural lighting, so we've sat at enough tech tables to respect what the people running the room actually need. Early on we built things that were technically impressive and operationally useless, because we designed for the demo instead of the operator. The fix was spending more time in the back of the house, shutting up, and watching how a show really gets run.`,
+      },
+      {
+        type: 'p',
+        text: `If you want your immersive tool to survive contact with a real production, design it for the person at the console, not the person in the press release. Plug into what they trust. Earn the right to add something new by first not taking anything away.`,
+      },
+    ],
+  },
+  {
+    slug: 'a-christmas-carol-in-vr-live',
+    title: 'A Christmas Carol, in VR, performed live',
+    excerpt:
+      "Dickens, but you're inside it, and the ghosts are played by live actors driving their own avatars in real time. Here's what it took to pull that off in front of an audience.",
+    date: '2025-06-12',
+    author: 'Alex Coulombe',
+    readMinutes: 5,
+    tag: 'Behind the Scenes',
+    image: '/portfolio/a-christmas-carol-vr/01.jpg',
+    body: [
+      {
+        type: 'p',
+        text: `Adapting A Christmas Carol into VR sounds like a content problem and is actually a nerve problem. The story is 180 years old and everyone knows it, which is freeing. The hard part was that we wanted it performed live: real actors driving their characters in real time, with the audience inside the scene rather than watching it. Recorded would have been safe. Live is the whole point.`,
+      },
+      { type: 'h2', text: 'Ghosts with a pulse' },
+      {
+        type: 'p',
+        text: `We gave the performers live control of their avatars, so the Ghost of Christmas Future wasn't an animation playing back on a timer. It was an actor, in the moment, reading the room and dragging Scrooge (and the audience) toward that future. When you stand inside a scene and the figure in front of you is driven by a living performer who can react to you, it stops being a ride and becomes theater. That's a presence you can't pre-render.`,
+      },
+      { type: 'h2', text: 'The tightrope, every night' },
+      {
+        type: 'p',
+        text: `"Live" means there's no undo, and we ran this for real audiences with all the beautiful risk that implies. Real headsets, real actors, real crowd, a hundred small things that could go sideways on any given night. Not every show was flawless, and the ones that landed weren't the nights nothing went wrong, they were the nights the performers and the tech held the spell together through whatever did. The work was recognized at Raindance Immersive, which meant a lot, but the real reward was watching a first-time VR user forget the headset entirely and just be in the story.`,
+      },
+      {
+        type: 'p',
+        text: `A Christmas Carol has been told a thousand ways for a reason. Telling it live, from the inside, reminded me why we keep dragging the oldest stories into the newest mediums: not for novelty, but because presence makes a familiar thing land like you're hearing it for the first time.`,
+      },
+    ],
+  },
 ];
 
 export function getPostBySlug(slug: string): Post | undefined {
