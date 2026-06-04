@@ -305,6 +305,18 @@ export default function HomePage() {
             </Link>
           </div>
 
+          {/* Interactive 3D experience CTA */}
+          <div className="flex justify-center mt-6 hero-subtitle" style={{ animationDelay: '0.8s' }}>
+            <Link
+              href="/experience"
+              className="group inline-flex items-center gap-3 px-6 py-3 rounded-full border border-pink/40 bg-pink/5 hover:bg-pink/10 hover:border-pink transition-all"
+            >
+              <span className="text-[10px] uppercase tracking-wider font-bold text-black bg-pink rounded-full px-2 py-0.5">New</span>
+              <span className="text-sm font-semibold">Step inside our work in 3D</span>
+              <span className="text-pink transition-transform group-hover:translate-x-1">&rarr;</span>
+            </Link>
+          </div>
+
           {/* ── NY Tech Week 2026 — temporary CTA, remove after first week of June ── */}
           <div className="flex flex-wrap gap-4 justify-center mt-6 hero-subtitle" style={{ animationDelay: '0.9s' }}>
             <a

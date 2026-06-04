@@ -336,6 +336,130 @@ export const posts: Post[] = [
       },
     ],
   },
+  {
+    slug: 'designing-for-the-gasp',
+    title: 'Designing for the gasp',
+    excerpt:
+      "Presence doesn't live in your render quality. It lives in the tiny moments where the virtual and the physical agree, and when they do, people gasp.",
+    date: '2025-10-20',
+    author: 'Alex Coulombe',
+    readMinutes: 4,
+    tag: 'Craft',
+    image: '/portfolio/the-shed.jpg',
+    body: [
+      {
+        type: 'p',
+        text: "There's a sound I chase on every project, and it isn't applause. It's the gasp — that involuntary little intake of breath when someone's brain briefly forgets it's in a simulation. After years of this, I'm convinced you can't buy the gasp with graphics. You earn it in the details almost nobody thinks to design.",
+      },
+      { type: 'h2', text: 'The seat that’s actually there' },
+      {
+        type: 'p',
+        text: "On the Four Seasons Holodeck, the experience ends with guests walking into a virtual 96-seat theater and sitting down in four real chairs we'd placed in the physical room. Virtual theater, real seat, lined up to the inch. The visuals matter, but the gasp comes from the instant your body expects a chair and the chair is there. That handshake between the virtual and the physical is where presence actually lives.",
+      },
+      { type: 'h2', text: 'Fidelity is table stakes; agreement is the craft' },
+      {
+        type: 'p',
+        text: "A gorgeous render that floats a beat off from where your hand expects it breaks the spell faster than a humble one that lands exactly right. So we obsess over the stuff that never photographs well: latency, scale, the weight of a footstep, whether the wireless freedom holds when someone spins around fast. None of it shows up in a screenshot. All of it is the difference between \"nice demo\" and a gasp.",
+      },
+      {
+        type: 'p',
+        text: "If you're designing immersive work, stop polishing the thing people will screenshot and start polishing the thing they'll feel. The screenshot gets you the meeting. The gasp gets you the next project.",
+      },
+    ],
+  },
+  {
+    slug: 'when-the-actor-drives-the-avatar',
+    title: 'When the actor drives the avatar',
+    excerpt:
+      "Most digital characters are animated in advance by an artist. Ours are animated live, by a performer, in the moment — and that changes what's possible on a stage.",
+    date: '2025-09-15',
+    author: 'Alex Coulombe',
+    readMinutes: 5,
+    tag: 'Live Performance',
+    image: '/portfolio/song-of-ambassadors.jpg',
+    body: [
+      {
+        type: 'p',
+        text: "There's a quiet assumption baked into most of computer graphics: that a character is something you animate ahead of time. An artist keyframes it, a render farm chews on it, and what the audience sees is a recording. A lot of our work starts by throwing that assumption out. What if the digital character is driven live, by a human performer, in the same instant the audience is watching?",
+      },
+      { type: 'h2', text: 'A MetaHuman with a pulse' },
+      {
+        type: 'p',
+        text: "That's the whole idea behind our live-actor animation pipeline. A performer steps into multi-source motion capture and drives a MetaHuman in real time — one actor playing one character, or one actor playing many. We built it so a performer could play Scrooge being dragged into a terrifying future and have that fear land live, in the room, instead of being baked in last Tuesday by an animator who's since gone home.",
+      },
+      { type: 'h2', text: 'Why live is so much harder, and worth it' },
+      {
+        type: 'p',
+        text: "Pre-rendered is safe. Live is terrifying, and I mean that as the highest compliment. When the avatar is driven by a person in the moment, the performance can breathe — it answers the room, the other actors, the particular energy of that night. It also means there's no undo. We've poured enormous engineering into making that reliable, because the payoff is a presence you simply can't fake with a recording: somehow, the audience always knows there's a person in there.",
+      },
+      {
+        type: 'p',
+        text: "Theater has always traded on the fact that anything can happen because it's happening right now, in front of you. Handing performers live control of digital characters is just us dragging that ancient, beautiful risk into a new medium. I wouldn't want it any safer.",
+      },
+    ],
+  },
+  {
+    slug: 'what-architects-know-about-vr',
+    title: "What architects understand about VR that gamers don't",
+    excerpt:
+      'Game engines made all of this possible. But the instinct that makes an immersive space feel real comes from a different discipline entirely.',
+    date: '2025-08-12',
+    author: 'Alex Coulombe',
+    readMinutes: 5,
+    tag: 'Enterprise XR',
+    image: '/portfolio/rice-opera.jpg',
+    body: [
+      {
+        type: 'p',
+        text: "We build almost everything in Unreal Engine, so people assume our DNA is games. And we genuinely love games. But the instinct that makes a virtual space feel like an actual place, I learned somewhere else: architecture. There are things architects know in their bones that never make it into a game design doc.",
+      },
+      { type: 'h2', text: 'Scale is sacred' },
+      {
+        type: 'p',
+        text: "A game will happily give you a doorway that's eight feet wide because it plays well. An architect physically cannot do that. When you've spent years thinking about how a body moves through a corridor, how a ceiling height changes your mood, how a sightline pulls you across a lobby, you carry a ruthless respect for real-world scale into VR. That respect is exactly what separates a space that feels right from one that feels like a level.",
+      },
+      { type: 'h2', text: 'Restraint, and the buildable' },
+      {
+        type: 'p',
+        text: "Architecture is the discipline of what can actually be built, and that constraint is a gift. When a developer walks our previs of a $300 million property, every dimension has to be true, because a contractor is going to pour concrete based on decisions made in that headset. You can't fudge it for vibes. Every measurement honest, every detail accountable — that's the difference between a pretty visualization and a tool someone bets millions on.",
+      },
+      {
+        type: 'p',
+        text: "I'm not knocking the games world; it gave us the engine and half our techniques. But if you want immersive work that holds up under a designer's eye, hire someone who's argued about a stair railing. They'll feel the half-inch you got wrong before they can tell you why.",
+      },
+    ],
+  },
+  {
+    slug: 'colocated-vr-is-the-hardest-thing-we-do',
+    title: 'Colocated VR is the hardest thing we do, and the best',
+    excerpt:
+      "Putting one person in VR is easy now. Putting a group in the same virtual space, in the same physical room, walking around freely? That's where it gets gloriously hard.",
+    date: '2025-07-08',
+    author: 'Alex Coulombe',
+    readMinutes: 5,
+    tag: 'Behind the Scenes',
+    image: '/portfolio/intel-project-arena.jpg',
+    body: [
+      {
+        type: 'p',
+        text: "Single-user VR is basically a solved problem. You put on a headset, you're somewhere else, it's wonderful. The thing that still keeps me up at night — in the good way — is colocated VR: a whole group sharing one virtual space while they share one physical room, walking around freely, seeing each other in the right place at the right time.",
+      },
+      { type: 'h2', text: 'Everything has to agree' },
+      {
+        type: 'p',
+        text: "The reason it's so hard is that every headset in the room has to agree, to the centimeter, about where everyone and everything is. We lean on tracking systems like OptiTrack and Antilatency, real-time networking, and a lot of hard-won optimization to keep a dozen people's realities locked together. When it drifts even slightly, someone reaches for a virtual object and misses, and the whole illusion wobbles. When it holds, it's a kind of magic no single-user experience can touch.",
+      },
+      { type: 'h2', text: 'Why we keep choosing the hard version' },
+      {
+        type: 'p',
+        text: "We could make our lives so much easier by seating everyone in separate pods. We don't, because the moment that makes colocated worth all the pain is watching two people in headsets turn to each other and react to the same thing at the same time. That shared \"did you see that?!\" is the oldest pleasure there is — it's why we still go to theaters and stadiums instead of staying home. Colocated VR is just us refusing to give that up.",
+      },
+      {
+        type: 'p',
+        text: "Yes, it's the hardest thing we build. It's also the thing that reliably makes a room full of skeptics take the headset off grinning. I'll take that trade every time.",
+      },
+    ],
+  },
 ];
 
 export function getPostBySlug(slug: string): Post | undefined {
