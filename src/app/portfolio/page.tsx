@@ -43,9 +43,12 @@ function PortfolioInner() {
     <div className="max-w-7xl mx-auto px-6 py-24">
       <div className="text-center mb-16">
         <h1 className="text-4xl md:text-6xl font-black mb-4">Portfolio</h1>
-        <p className="text-lg text-muted max-w-2xl mx-auto">
+        <p className="text-lg text-muted max-w-2xl mx-auto mb-5">
           Over a decade of pushing boundaries in immersive technology across architecture, entertainment, and beyond.
         </p>
+        <Link href="/press" className="text-sm font-semibold text-pink hover:underline">
+          See our press &amp; awards &rarr;
+        </Link>
       </div>
 
       {/* Category filters */}

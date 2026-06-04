@@ -57,7 +57,7 @@ const pillars = [
     icon: 'https://cdn.prod.website-files.com/68d9482320210cfdb85c1d57/68f5d847c6a552d1f3bee96d_PinkBrush.svg',
     href: '/portfolio?category=Entertainment',
     description:
-      'For media, brands, and performing artists, we lead in blending experimental and experiential for large, live audiences, complex production facilitation, and high-flow rate activations. Our solutions streamline performance capture and virtual production management to get the most out of legacy event techs and operators.',
+      'For media, brands, and performing artists, we lead in blending experimental and experiential for large, live audiences, complex production facilitation, and high-flow rate activations. Our solutions streamline performance capture and virtual production management to get the most out of legacy event techs and operators. Our work has earned a SXSW XR award and premiered at Lincoln Center, the Royal Shakespeare Company, and Raindance.',
   },
 ];
 
@@ -366,9 +366,15 @@ export default function HomePage() {
       <Section id="products" className="max-w-[1100px] mx-auto px-6 md:px-12 pt-32 pb-24">
         <div className="mb-16">
           <h2 className="text-[clamp(2rem,4vw,4rem)] font-bold mb-4">Our Core Products</h2>
-          <p className="text-muted max-w-[42ch] text-lg">
+          <p className="text-muted max-w-[42ch] text-lg mb-6">
             Explore our key products designed for pre-construction and entertainment industries.
           </p>
+          <Link href="/products" className="text-sm font-semibold text-pink flex items-center gap-2 w-fit">
+            View all products
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" className="transition-transform hover:translate-x-1">
+              <path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+            </svg>
+          </Link>
         </div>
         <div className="flex flex-col gap-5">
           {products.map((product, i) => (

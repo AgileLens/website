@@ -340,6 +340,38 @@ export default function UnrealNYCPage() {
         <PastEventsGrid events={PAST_EVENTS} initialCount={6} />
       </section>
 
+      {/* WHO RUNS THIS */}
+      <section className="max-w-7xl mx-auto px-6 py-16">
+        <RevealBox>
+          <div className="rounded-2xl border border-border bg-surface p-10 md:p-14 grid md:grid-cols-[1.6fr_1fr] gap-10 items-center">
+            <div>
+              <div className="text-xs uppercase tracking-wider text-pink font-semibold mb-3">The team behind the community</div>
+              <h2 className="text-3xl md:text-4xl font-black mb-4">Unreal NYC is organized by Agile Lens</h2>
+              <p className="text-muted leading-relaxed mb-4">
+                We are an immersive design studio that has been building with Unreal Engine since 2014 — photoreal pre-construction visualization, live XR performance, and colocated VR for clients like Disney, the Kennedy Center, and Four Seasons. Organizing Unreal NYC is how we give back to the community we build in.
+              </p>
+              <p className="text-muted leading-relaxed">
+                If you are working on something Unreal-powered and need a partner, we would love to talk.
+              </p>
+            </div>
+            <div className="flex flex-col gap-3">
+              <Link
+                href="/portfolio"
+                className="btn-gradient px-6 py-3 rounded-full text-sm font-semibold text-white text-center"
+              >
+                See our work
+              </Link>
+              <Link
+                href="/contact"
+                className="px-6 py-3 rounded-full text-sm font-semibold border border-border text-text hover:border-pink/60 transition-colors text-center"
+              >
+                Work with us
+              </Link>
+            </div>
+          </div>
+        </RevealBox>
+      </section>
+
       {/* CLOSING CTA */}
       <section className="max-w-7xl mx-auto px-6 py-16 pb-24">
         <RevealBox className="text-center">

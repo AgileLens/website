@@ -13,6 +13,8 @@ const navLinks = [
 
 const pageLinks = [
   { href: '/portfolio', label: 'Portfolio' },
+  { href: '/process', label: 'Process' },
+  { href: '/blog', label: 'Insights' },
   { href: '/unrealnyc', label: 'Unreal NYC' },
   { href: '/team', label: 'Team' },
 ];
@@ -78,7 +80,7 @@ export default function Navigation() {
         </button>
         <SearchBar open={searchOpen} onClose={() => setSearchOpen(false)} />
 
-        <div className="hidden md:flex items-center gap-8">
+        <div className="hidden lg:flex items-center gap-6">
           {allLinks.map((l) => (
             <a key={l.href} href={l.href} className="text-sm font-medium text-muted hover:text-text transition-colors">
               {l.label}
@@ -91,7 +93,7 @@ export default function Navigation() {
 
         <button
           onClick={() => setOpen(!open)}
-          className="md:hidden w-10 h-10 flex flex-col items-center justify-center gap-1.5"
+          className="lg:hidden w-10 h-10 flex flex-col items-center justify-center gap-1.5"
           aria-label="Toggle menu"
         >
           <span className={`w-5 h-0.5 bg-white transition-all duration-200 ${open ? 'rotate-45 translate-y-[4px]' : ''}`} />
@@ -101,7 +103,7 @@ export default function Navigation() {
       </div>
 
       {open && (
-        <div className="md:hidden bg-bg border-b border-border px-6 pb-4">
+        <div className="lg:hidden bg-bg border-b border-border px-6 pb-4">
           {allLinks.map((l) => (
             <a key={l.href} href={l.href} onClick={() => setOpen(false)} className="block py-3 text-sm font-medium text-muted">
               {l.label}
