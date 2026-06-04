@@ -44,7 +44,7 @@ function PortfolioInner() {
       <div className="text-center mb-16">
         <h1 className="text-4xl md:text-6xl font-black mb-4">Portfolio</h1>
         <p className="text-lg text-muted max-w-2xl mx-auto">
-          A decade of pushing boundaries in immersive technology across architecture, entertainment, and beyond.
+          Over a decade of pushing boundaries in immersive technology across architecture, entertainment, and beyond.
         </p>
       </div>
 
