@@ -152,7 +152,7 @@ export const posts: Post[] = [
     body: [
       {
         type: 'p',
-        text: "People assume that once you've built an XR experience, putting it on a new headset is a checkbox. Export, sideload, done. I wish. Every device is a different set of compromises wearing a different logo, and the gap between \"runs\" and \"feels right\" is where most of the work actually lives.",
+        text: "The most humbling afternoon of my month is usually the one where an experience that sailed through every test on Quest meets Apple Vision Pro for the first time and quietly falls apart: too hot, too heavy, gorgeous for ninety seconds and then throttled to a crawl. People assume that once you've built an XR experience, putting it on a new headset is a checkbox. Export, sideload, done. I wish. Every device is a different set of compromises wearing a different logo, and the gap between \"runs\" and \"feels right\" is where most of the work actually lives.",
       },
       { type: 'h2', text: 'Different canvases, not different sizes' },
       {
@@ -332,7 +332,7 @@ export const posts: Post[] = [
       },
       {
         type: 'p',
-        text: "So when someone on my team wants to chase a strange idea with no obvious client, my instinct now is yes, as long as we're honest that it's R&D and we protect what we invent. The weird project rarely pays off on the timeline you'd like. But twelve years in, I can't find many that didn't pay off eventually. The pile remembers.",
+        text: "So when someone on my team wants to chase a strange idea with no obvious client, my instinct now is yes, as long as we're honest that the payoff is a technique, not a check. The weird project almost never pays off on the timeline you'd like, and rarely in the currency you expected. But twelve years in, I can't find many that didn't pay off eventually, usually showing up later as the one capability that let us win a job nobody else could touch. The pile remembers.",
       },
     ],
   },
@@ -573,10 +573,10 @@ export const posts: Post[] = [
         type: 'p',
         text: "Nothing reveals the holes in your own understanding like a room of smart people asking \"but why?\" You can get away with a fuzzy mental model for years in production — it works, ship it, move on. Stand in front of a class and try to explain that same thing, and the fuzziness has nowhere to hide. Teaching Unreal has sharpened my own craft more reliably than any single project, because students ask the questions I'd quietly learned to stop asking myself.",
       },
-      { type: 'h2', text: 'The long game of community' },
+      { type: 'h2', text: 'Students drag you into the present' },
       {
         type: 'p',
-        text: "There's also a slower payoff I've come to trust. The people we teach, the meetups we run, the questions we answer — that's not charity, and it's not marketing exactly. It's the soil. Some of those students become collaborators, some become clients, some just become people who send the right opportunity our way years later. Community is a moat you build one genuinely helpful interaction at a time, and teaching is the most concentrated form of it I've found.",
+        text: "Teaching does a second thing production never will: it keeps me current against my own inertia. A class learning Unreal today asks about the features that shipped last month, the workflows I never got around to, the assumptions I formed three engine versions ago and quietly never revisited. Left alone, every expert slowly calcifies around the way things worked when they first learned them. A room of beginners is the best antidote I've found — they don't know what you're supposed to do, so they ask the question that makes you realize the old way stopped being the best way a while ago.",
       },
       {
         type: 'p',
@@ -633,7 +633,7 @@ export const posts: Post[] = [
       { type: 'h2', text: 'The serendipity is the product' },
       {
         type: 'p',
-        text: `The value of showing up is the conversation you couldn't have planned. Someone makes a beeline for me after a talk because one specific slide hit a problem they've been stuck on. A hallway chat becomes a project a season later. I've lost count of the collaborations that trace back to "we met at that thing." You cannot schedule serendipity, but you can absolutely increase your surface area for it, and showing up in person is how you do that.`,
+        text: `The value of showing up is the conversation you couldn't have planned. At one conference I ended up in a hallway next to someone from a global engineering firm who mentioned, almost in passing, that they were kicking off a project that needed exactly our kind of Unreal work — the sort of opening that simply never arrives by email. That's the pattern: someone makes a beeline after a talk because one specific slide hit a problem they're stuck on, a hallway chat becomes a project a season later. You cannot schedule serendipity, but you can absolutely increase your surface area for it, and showing up in person is how you do that.`,
       },
       { type: 'h2', text: 'Give the talk, then stay for the happy hour' },
       {
@@ -659,7 +659,7 @@ export const posts: Post[] = [
     body: [
       {
         type: 'p',
-        text: `Here's a quick way to get a beautiful piece of XR technology thrown out of a live production: ask the crew to abandon the lighting console, the timecode, and the operator workflows they've trusted for decades, and learn your new thing instead, the week of the show. It won't matter how good your software is. The answer will be no, and they'll be right.`,
+        text: `The hardest part of building a tool for professionals usually isn't the tool. It's that you're asking people to change how they already work, and that's where most great technology quietly goes to die. The live-events version is brutally clear: ask a crew to abandon the lighting console, the timecode, and the operator workflows they've trusted for decades, and learn your new thing instead the week of the show. It won't matter how good your software is. The answer will be no, and they'll be right.`,
       },
       { type: 'h2', text: 'Meet the room where it is' },
       {
