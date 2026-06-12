@@ -304,26 +304,6 @@ export default function HomePage() {
               Get in Touch
             </Link>
           </div>
-
-          {/* ── NY Tech Week 2026 — temporary CTA, remove after first week of June ── */}
-          <div className="flex flex-wrap gap-4 justify-center mt-6 hero-subtitle" style={{ animationDelay: '0.9s' }}>
-            <a
-              href="https://partiful.com/e/6bUok8RK79B927TfqX7F"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="bg-pink px-7 py-3.5 rounded-lg font-bold text-white text-sm hover:opacity-90 transition-opacity"
-            >
-              RSVP for our Tech Week events!
-            </a>
-            <a
-              href="https://www.tech-week.com/calendar/nyc"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="px-7 py-3.5 border border-pink text-pink rounded-lg font-medium text-sm hover:bg-pink hover:text-white transition-colors"
-            >
-              More info on NY Tech Week
-            </a>
-          </div>
         </div>
 
         {/* Logo marquee — between hero text and panels */}
