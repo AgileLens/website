@@ -179,7 +179,7 @@ export const projects: Project[] = [
     awards: '',
     press: '',
     clients: 'Lincoln Center Redevelopment, FDA',
-    overview: 'Agile Lens collaborated with Fisher Dachs Associates and Diamond Schmitt Architects on custom VR experiences throughout the redesign of Lincoln Center\'s David Geffen Hall. VR models drove internal design decisions and generated public visualizations, while the project culminated in a landmark mixed-reality stakeholder session pairing virtual environments with physical balcony mockups and real theater seats.',
+    overview: '',
     video: '',
     imageCarousel: '',
     description: 'Agile Lens collaborated with Fisher Dachs Associates and Diamond Schmitt Architects to create custom virtual reality experiences throughout the redesign of Lincoln Center\'s David Geffen Hall. Our VR models drove internal design decisions—such as evaluating seating layouts and sightlines—and generated high-quality visualizations for the public.\n\nThe project culminated in a highly immersive stakeholder meeting where we bridged the physical and virtual worlds: we paired physical mockups of the balconies and swappable railings with real theater seats. This mixed-reality approach allowed stakeholders to tangibly evaluate the space, letting them test the ergonomics, sightlines, and physical comfort of the new design—right down to the feeling of leaning over the edge of the balcony.',
