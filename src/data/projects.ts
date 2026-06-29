@@ -327,7 +327,7 @@ export const projects: Project[] = [
     yearCompleted: '2019',
     platform: 'Magic Leap',
     awards: '',
-    press: "Kent Bye's Podcast Voices of VR Episode #806",
+    press: '[Voices of VR Podcast Episode #806](https://voicesofvr.com/806-interdisciplinary-design-at-the-intersection-of-theater-architecture-volumetric-capture-experiments/)',
     clients: 'Theatre Communications Group National Conference',
     overview: 'A tabletop theater volcap/mocap study for the TCG conference about the kind of guy who, when he walks into a room, everybody notices him.',
     video: 'https://youtu.be/zaiMO-6qD2Y',
@@ -377,7 +377,7 @@ export const projects: Project[] = [
     yearCompleted: '2021',
     platform: 'Mozilla Hubs',
     awards: 'Nominee, Producers Guild of America Innovation Award',
-    press: 'https://www.broadwayworld.com/off-off-broadway/article/JETTISON-a-New-Play-Produced-Rehearsed-and-Performed-in-Virtual-Reality-Closes-Out-Here-Online-Oasis-Weekend-20201001',
+    press: '[BroadwayWorld — Jettison: A New Play Produced, Rehearsed and Performed in Virtual Reality Closes Out Here Online Oasis Weekend](https://www.broadwayworld.com/off-off-broadway/article/JETTISON-a-New-Play-Produced-Rehearsed-and-Performed-in-Virtual-Reality-Closes-Out-Here-Online-Oasis-Weekend-20201001)',
     clients: 'Brendan Bradley, On Board XR Festival',
     overview: 'In July 2020, a group of theater and XR creators joined forces to experiment with live theater in open source, browser-based VR (on Mozilla Hubs). Two months later they presented the one act play, Jettison, for live virtual audiences at The Here Festival.',
     video: 'https://www.youtube.com/watch?v=9AH6nmpYSkE',
@@ -402,7 +402,7 @@ export const projects: Project[] = [
     yearCompleted: '2025',
     platform: 'Unreal Engine',
     awards: '',
-    press: 'https://www.uploadvr.com/a-christmas-carol-vr/',
+    press: '[UploadVR — A Christmas Carol VR](https://www.uploadvr.com/a-christmas-carol-vr/)',
     clients: 'Actors Theatre of Louisville',
     overview: 'A Christmas Carol VR is a live, real-time immersive adaptation of Dickens\' classic, blending immersive theater with cutting-edge technology. Live actors with facial and motion capture perform on the streets of a virtual Victorian London.',
     video: 'https://youtu.be/kLMbr8OJGe4',
@@ -427,9 +427,9 @@ export const projects: Project[] = [
     yearCompleted: '2022',
     platform: 'Baryshnikov Arts Center Off Broadway',
     awards: '',
-    press: `https://playbill.com/article/the-orchard-starring-mikhail-baryshnikov-and-jessica-hecht-opens-off-broadway-june-16
-https://www.bostonglobe.com/2022/11/03/arts/mikhail-baryshnikov-explores-orchard-anew-with-robot-tow/
-https://www.theguardian.com/artanddesign/2022/jul/16/on-my-radar-marina-abramovic-cultural-highlights`,
+    press: `[Playbill — The Orchard Starring Mikhail Baryshnikov and Jessica Hecht Opens Off-Broadway](https://playbill.com/article/the-orchard-starring-mikhail-baryshnikov-and-jessica-hecht-opens-off-broadway-june-16)
+[Boston Globe — Mikhail Baryshnikov Explores 'Orchard' Anew with Robot Tow](https://www.bostonglobe.com/2022/11/03/arts/mikhail-baryshnikov-explores-orchard-anew-with-robot-tow/)
+[The Guardian — On My Radar: Marina Abramović's Cultural Highlights](https://www.theguardian.com/artanddesign/2022/jul/16/on-my-radar-marina-abramovic-cultural-highlights)`,
     clients: 'Baryshnikov Arts Center, Arlekin Players & zero-G Virtual Theater Lab / Groundswell Theatre, Inc.',
     overview: 'Agile Lens created and implemented the virtual side of this groundbreaking hybrid performance starring Mikhael Baryshnikov and Jessica Hecht in an adaptation of Anton Chekhov\'s The Cherry Orchard',
     video: 'https://youtu.be/vAE3DQ4rnHw',
@@ -454,9 +454,9 @@ https://www.theguardian.com/artanddesign/2022/jul/16/on-my-radar-marina-abramovi
     yearCompleted: '2022',
     platform: 'Alice Tully Hall @ Lincoln Center',
     awards: '',
-    press: `The New York Times - Music, Science and Healing Intersect in an A.I. Opera
-BOMB Magazine - Making the Invisible Visible: K Allado-McDowell, Derrick Skye, and Refik Anadol in Conversation
-The Wie Suite - Lincoln Center's Chief Artistic Officer, Shanta Thake, Is Sharing Her Brain (Waves) With the World`,
+    press: `[The New York Times — Music, Science and Healing Intersect in an A.I. Opera](https://www.nytimes.com/2022/10/28/arts/music/artificial-intelligence-opera.html)
+[BOMB Magazine — Making the Invisible Visible: K Allado-McDowell, Derrick Skye, and Refik Anadol in Conversation](https://bombmagazine.org/articles/2022/10/25/k-allado-mcdowell-derrick-skye-and-refik-anadol-in-conversation/)
+[The Wie Suite — Lincoln Center's Chief Artistic Officer, Shanta Thake, Is Sharing Her Brain (Waves) With the World](https://www.thewiesuite.com/post/lincoln-center-s-chief-artistic-officer-shanta-thake-is-sharing-her-brain-waves-with-the-world)`,
     clients: 'Lincoln Center, K Allado-McDowell',
     overview: 'Agile Lens provided previz for this experimental piece at Alice Tully Hall featured lighting design by Refik Anadol, now doing the Las Vegas Sphere.',
     video: 'https://youtu.be/gY5GA_L9NXM',
@@ -508,8 +508,10 @@ The Wie Suite - Lincoln Center's Chief Artistic Officer, Shanta Thake, Is Sharin
     yearCompleted: '',
     platform: '',
     awards: '',
-    press: `https://www.papercitymag.com/real-estate/four-seasons-private-residences-lake-austin-creates-2-million-holodeck-real-estate-amenities/#465572
-https://www.uploadvr.com/four-seasons-private-residences-austin-vr-holodeck/`,
+    press: `[PaperCity — Four Seasons Private Residences Lake Austin Creates $2 Million Holodeck](https://www.papercitymag.com/real-estate/four-seasons-private-residences-lake-austin-creates-2-million-holodeck-real-estate-amenities/#465572)
+[UploadVR — Inside The Walkable VR Holodeck That Sells Real Estate](https://www.uploadvr.com/four-seasons-private-residences-austin-vr-holodeck/)
+[AR Insider — Lake Austin Luxury: How a Developer Presold $500M in Real Estate with VR](https://arinsider.co/2026/06/10/lake-austin-luxury-how-a-developer-presold-500m-in-real-estate-with-vr/)
+[Austin American-Statesman — Loop 360 Overlook: Four Seasons Lake Austin](https://www.statesman.com/business/real-estate/article/loop-360-overlook-four-seasons-lake-austin-22305600.php)`,
     clients: 'Four Seasons, Impossible Ventures, DBOX, Pureblink',
     overview: 'This 5,300 square foot space allows guests to virtually experience what $300 million worth of amenities and shared facilities will feel like at Four Seasons Private Residences. Guests can walk freely and wirelessly around an 82 x 65-foot space and feel like they are walking around a finished residence, the lake clubhouse, indoor sports club, private restaurant, and theater. The experience ends with guests walking into a virtual 96-seat theater and then sitting in four real theater seats.',
     video: 'https://youtu.be/6la2yieiCG0',
@@ -559,8 +561,8 @@ https://www.uploadvr.com/four-seasons-private-residences-austin-vr-holodeck/`,
     yearCompleted: '2023',
     platform: '',
     awards: '',
-    press: `https://www.globenewswire.com/news-release/2024/02/21/2832816/0/en/Infinite-Reality-and-Vodafone-to-Unveil-Revolutionary-Automotive-Onboarding-Service-Featuring-Generative-AI-and-VR-at-Mobile-World-Congress-Barcelona-2024.html
-https://www.businesswire.com/news/home/20230719281018/en/Infinite-Reality-and-Vodafone-Digital-Asset-Broker-Join-Forces-to-Create-Extraordinary-Metaverse-Showroom-at-London-Tech-Week`,
+    press: `[GlobeNewsWire — Infinite Reality and Vodafone to Unveil Automotive Onboarding Service at Mobile World Congress 2024](https://www.globenewswire.com/news-release/2024/02/21/2832816/0/en/Infinite-Reality-and-Vodafone-to-Unveil-Revolutionary-Automotive-Onboarding-Service-Featuring-Generative-AI-and-VR-at-Mobile-World-Congress-Barcelona-2024.html)
+[BusinessWire — Infinite Reality and Vodafone Join Forces to Create Metaverse Showroom at London Tech Week](https://www.businesswire.com/news/home/20230719281018/en/Infinite-Reality-and-Vodafone-Digital-Asset-Broker-Join-Forces-to-Create-Extraordinary-Metaverse-Showroom-at-London-Tech-Week)`,
     clients: 'Vodafone, Infinite Reality',
     overview: 'Agile Lens developed an immersive VR car showroom experience with an AI car salesman powered by inworld.ai and vehicle customization, showcasing Vodafone\'s DAB platform for London Tech Week.',
     video: '',
@@ -789,8 +791,8 @@ https://www.businesswire.com/news/home/20230719281018/en/Infinite-Reality-and-Vo
     yearCompleted: '2025',
     platform: 'Live Theater, Stage Presence VR',
     awards: '',
-    press: `https://www.brooklynpaper.com/laibson-chekhov-vr-show-the-harmnf/
-https://www.broadwayworld.com/off-off-broadway/article/THE-HARMNF-LiveVR-Hybrid-Returns-to-Caveat-Following-Los-Angeles-Run-20260118`,
+    press: `[Brooklyn Paper — At Caveat, Laibson's tech-heavy Chekhov adaptation The HARMNF examines digital-age alienation](https://www.brooklynpaper.com/laibson-chekhov-vr-show-the-harmnf/)
+[BroadwayWorld — The HARMNF: Live/VR Hybrid Returns to Caveat Following Los Angeles Run](https://www.broadwayworld.com/off-off-broadway/article/THE-HARMNF-LiveVR-Hybrid-Returns-to-Caveat-Following-Los-Angeles-Run-20260118)`,
     clients: 'Kevin Laibson',
     overview: 'A live theater play produced by Agile Lens, written and performed by Senior Experience Director Kevin Laibson — exploring the difficulties of working with AI through the structural lens of Chekhov\'s "On the Harmfulness of Tobacco." Performed across New York and Los Angeles.',
     video: '',
@@ -866,7 +868,7 @@ https://www.broadwayworld.com/off-off-broadway/article/THE-HARMNF-LiveVR-Hybrid-
     yearCompleted: '2025',
     platform: 'Meta Quest 3',
     awards: '',
-    press: 'https://www.digitalartsblog.com/exhibitions/vr-experience-city-of-apparition',
+    press: '[Digital Arts — VR Experience: City of Apparition](https://www.digitalartsblog.com/exhibitions/vr-experience-city-of-apparition)',
     clients: 'Wayne Ashley, Lin Shu-Kai',
     overview: 'A mixed reality art installation exploring displaced and disrupted communities — built around the artwork, sculptures and worlds of Lin Shu-Kai and narratively designed by Wayne Ashley. Presented in museums and galleries across Taiwan and the United States.',
     video: '',
@@ -991,7 +993,7 @@ https://www.broadwayworld.com/off-off-broadway/article/THE-HARMNF-LiveVR-Hybrid-
     yearCompleted: '2025',
     platform: 'Meta Quest 3, Windows PC',
     awards: '',
-    press: 'https://xrnetworkplus.xrstories.co.uk/xr-network-announces-royal-shakespeare-company-rd-challenge-projects/',
+    press: '[XR Network+ — XR Network+ Announces Royal Shakespeare Company R&D Challenge Projects](https://xrnetworkplus.xrstories.co.uk/xr-network-announces-royal-shakespeare-company-rd-challenge-projects/)',
     clients: 'Royal Shakespeare Company, XRNetwork+, Royal Central School',
     overview: 'A grant-funded VR rehearsal tool for the Royal Shakespeare Company — allowing cast members rehearsing in London and Stratford-upon-Avon to work in real time with actors in New York and Los Angeles, inside a virtual recreation of the Swan Theatre.',
     video: '',
