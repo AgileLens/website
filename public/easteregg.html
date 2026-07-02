@@ -273,6 +273,7 @@
     </div>
     <div class="fader-row"><span>Sound</span><button class="chip" id="snd" aria-label="Toggle sound">ON</button><span style="width:auto;letter-spacing:0.1em">synth · no samples</span></div>
     <div class="fader-row"><span>XR Sliders</span><button class="chip" id="xr-sliders-toggle" aria-label="Toggle pinch-drag sliders in headset">ON</button><span style="width:auto;letter-spacing:0.1em">pinch-drag bowl in headset</span></div>
+    <div class="fader-row"><span>Points</span><input type="range" id="f-density" min="1" max="8" step="1" value="4" aria-label="Total point density (reloads the page)"><span id="density-label" style="width:auto;letter-spacing:0.1em">96,000 — tap to reload</span></div>
   </div>
   <div class="bay" id="views-bay">
     <div class="bay-label">Camera</div>
@@ -729,11 +730,17 @@ import * as THREE from 'three';
   const SL_BALCONY_CLEARANCE = 2.4 * 3.28084; // ≈7.87ft — minimum head clearance under a balcony
                                               // overhang, cited from auditorium balcony design
                                               // guidance (industry guideline: 2.4m minimum)
+  const SL_BALCONY_OVERLAP = 18;             // ft — how far the first balcony's front edge
+                                              // pulls back to overhang the orchestra. This one
+                                              // isn't a cited standard, just a reasonable design
+                                              // choice (~6 rows of overhang); easy to retune.
   const SL_SEAT_W = 1.9;                   // seat pitch (ft)
   const SL_Z0 = 25;                        // first row's distance from the setting line (ft)
   let sightlineRows = [];                  // last-built row metadata in FEET, for the seat picker
   let headSeats = [];                      // world-space (scene units) head positions, for click-to-jump
   let headHitMesh = null;                  // invisible InstancedMesh used purely for raycasting against heads
+  let currentSeatRow = null;               // {tier, rowInTier} of wherever you're currently seated — drives proximity density
+  let sightlineStage = null;               // {halfW, zNear, zFar} of the current sightline stage — so the performer knows its bounds
 
   // Deterministic jitter, keyed by stable identity (tier/row/seat/point), not call order.
   // Math.random()-based jitter reshuffles EVERY point on EVERY rebuild, even points that
@@ -775,13 +782,31 @@ import * as THREE from 'three';
     const tierPalette = [C.velvet, C.velvet2, C.steel, C.seafoam];
     const S = SL_SCALE;
 
-    // 1. Lay out every row, main floor then balconies, as one continuous sequence (feet)
+    // 1. Lay out every row, main floor then balconies, as one continuous sequence (feet).
+    //    Two Z values per row: `z` is the true physical position (what renders and where
+    //    the camera goes — balconies legitimately overlap forward over the orchestra here);
+    //    `zSight` is a monotonically-receding bookkeeping Z used ONLY by the clearance math
+    //    below, so pulling a balcony forward can't make the sightline formula see the
+    //    distance-from-stage go backwards, which would break its monotonic assumption.
     const rows = [];
-    let z = SL_Z0;
-    for (let r = 0; r < cfg.rows; r++) { rows.push({ tier: 0, rowInTier: r + 1, z, seats: cfg.seats }); z += SL_ROW_DEPTH; }
+    let z = SL_Z0, zSight = SL_Z0;
+    for (let r = 0; r < cfg.rows; r++) { rows.push({ tier: 0, rowInTier: r + 1, z, zSight, seats: cfg.seats }); z += SL_ROW_DEPTH; zSight += SL_ROW_DEPTH; }
+    // Balconies overhang the rear of the orchestra rather than starting behind it — a
+    // continuous overhang is standard practice (real balcony front edges commonly project
+    // out over the rear rows below), not a fully separate, set-back block. Pull the first
+    // balcony's start back into the orchestra's own depth, capped so it can't reach past
+    // the front of the house even on a very shallow orchestra. (SL_BALCONY_OVERLAP is a
+    // reasonable design choice, not a cited industry figure the way the clearance value is.)
+    const orchLastZ = z - SL_ROW_DEPTH;
+    const orchDepth = orchLastZ - SL_Z0;
+    let bz = orchLastZ - Math.min(SL_BALCONY_OVERLAP, orchDepth * 0.65);
     for (let b = 0; b < cfg.balconies; b++) {
-      z += SL_TIER_GAP;
-      for (let r = 0; r < cfg.balcRows; r++) { rows.push({ tier: b + 1, rowInTier: r + 1, z, seats: cfg.seats }); z += SL_ROW_DEPTH * 0.9; }
+      zSight += SL_TIER_GAP; // physics still gets an honest "further back" step for the clearance math
+      for (let r = 0; r < cfg.balcRows; r++) {
+        rows.push({ tier: b + 1, rowInTier: r + 1, z: bz, zSight, seats: cfg.seats });
+        bz += SL_ROW_DEPTH * 0.9; zSight += SL_ROW_DEPTH * 0.9;
+      }
+      bz += SL_TIER_GAP;
     }
 
     // 2. Recursive C-value sightline solve: E_i = Fy + (D_i/D_(i-1)) * (E_(i-1) + clr - Fy)
@@ -790,10 +815,10 @@ import * as THREE from 'three';
     //    At a tier break (a new balcony beginning), the pure sightline formula alone only
     //    produces a modest step — nowhere near enough to walk under, since it optimizes for
     //    sightline clearance only. A real balcony also needs the walkway clearance below it.
-    let prevD = Math.abs(rows[0].z - SL_FOCAL.z), prevE = SL_EYE0;
+    let prevD = Math.abs(rows[0].zSight - SL_FOCAL.z), prevE = SL_EYE0;
     rows[0].eye = prevE; rows[0].floor = prevE - SL_EYE_OFFSET;
     for (let i = 1; i < rows.length; i++) {
-      const D = Math.abs(rows[i].z - SL_FOCAL.z);
+      const D = Math.abs(rows[i].zSight - SL_FOCAL.z);
       let E = SL_FOCAL.y + (D / prevD) * (prevE + clr - SL_FOCAL.y);
       let floor = Math.max(rows[i - 1].floor + 0.1, E - SL_EYE_OFFSET); // monotonic guard
       if (rows[i].tier !== rows[i - 1].tier) {
@@ -810,11 +835,30 @@ import * as THREE from 'three';
     //    + a front breast-wall rail per tier
     const headFrac = cfg.showHeads ? 0.35 : 0;
     headSeats = []; // world-space (scene units) head positions, for click-to-jump picking
+
+    // Proximity weighting: rows near wherever you're currently seated get denser point
+    // clouds (so the seat you're in, and the row right in front of you, actually resolve),
+    // while distant rows thin out. The budget is conserved exactly — this redistributes
+    // the existing seat-point total, it doesn't add points on top of it.
+    const baseBudget = rows.map(row => Math.max(3, Math.floor((420 * K) / row.seats)) * row.seats);
+    const targetTotal = baseBudget.reduce((a, b) => a + b, 0);
+    let weights;
+    if (currentSeatRow) {
+      weights = rows.map(row => {
+        const rowDist = Math.abs(row.rowInTier - currentSeatRow.rowInTier) + (row.tier !== currentSeatRow.tier ? 9 : 0);
+        return Math.max(0.22, 3.4 - rowDist * 0.11);
+      });
+    } else {
+      weights = rows.map(() => 1);
+    }
+    const weightTotal = rows.reduce((sum, row, i) => sum + weights[i] * row.seats, 0);
+
     let curTier = -1;
-    for (const row of rows) {
+    for (let ri = 0; ri < rows.length; ri++) {
+      const row = rows[ri];
       const half = seatHalfWidth(row);
       row.half = half;
-      const perSeatPts = Math.max(3, Math.floor((420 * K) / row.seats));
+      const perSeatPts = Math.max(3, Math.round((targetTotal * weights[ri]) / weightTotal));
       const cushionPts = cfg.showHeads ? Math.max(2, Math.round(perSeatPts * (1 - headFrac))) : perSeatPts;
       const headPts = perSeatPts - cushionPts;
       const tierColor = tierPalette[row.tier % tierPalette.length];
@@ -822,12 +866,24 @@ import * as THREE from 'three';
       const headY = rf + (SL_EYE_OFFSET + 0.15) * S; // head center sits a touch above eye level
       for (let s = 0; s < row.seats; s++) {
         const rx = seatX(row, s) * S;
-        for (let k = 0; k < cushionPts; k++) {
+        // Seat pan (dense, ~17in real height) + a proper seatback rising toward eye level —
+        // the old version was a squat ~11in blob, leaving a ~33in gap of nothing before the
+        // eye position. A real chair back closes most of that gap.
+        const panPts = Math.max(1, Math.round(cushionPts * 0.62));
+        const backPts = cushionPts - panPts;
+        for (let k = 0; k < panPts; k++) {
           push(p, col,
-            rx + srandRange(skey(row.tier, row.rowInTier, s, k * 3), -0.16, 0.16),
-            rf + srandRange(skey(row.tier, row.rowInTier, s, k * 3 + 1), 0, 0.38),
-            rz + srandRange(skey(row.tier, row.rowInTier, s, k * 3 + 2), -0.14, 0.14),
+            rx + srandRange(skey(row.tier, row.rowInTier, s, k * 3), -0.17, 0.17),
+            rf + srandRange(skey(row.tier, row.rowInTier, s, k * 3 + 1), 0, 0.60),
+            rz + srandRange(skey(row.tier, row.rowInTier, s, k * 3 + 2), -0.15, 0.15),
             jitterColor(tierColor, 0.14));
+        }
+        for (let k = 0; k < backPts; k++) {
+          push(p, col,
+            rx + srandRange(skey(row.tier, row.rowInTier, s, 5000 + k * 3), -0.14, 0.14),
+            rf + srandRange(skey(row.tier, row.rowInTier, s, 5000 + k * 3 + 1), 0.45, 1.42),
+            rz + srandRange(skey(row.tier, row.rowInTier, s, 5000 + k * 3 + 2), 0.12, 0.30),
+            jitterColor(tierColor, 0.18));
         }
         if (cfg.showHeads) {
           for (let k = 0; k < headPts; k++) {
@@ -855,17 +911,30 @@ import * as THREE from 'three';
 
     // 4. Stage deck sized to the bowl's width + a focal-point marker, so the sightline
     //    target reads visually; proscenium-ish back wall for scale reference
-    const stageHalfW = Math.max(12, (cfg.seats * SL_SEAT_W * S) / 2 + 2);
+    // 4. Stage deck sized proportionally to the house (real proscenium openings run
+    //    roughly 28-65ft: ~32ft at a small regional house, ~40ft at a mid-size Broadway
+    //    house, up to ~65ft at the largest — cited from published venue tech specs). The
+    //    old fixed 12-unit (~57ft) minimum made even a modest house get an oversized stage.
+    const stageWidthFt = Math.min(65, Math.max(28, cfg.seats * SL_SEAT_W * 0.65));
+    const stageHalfW = (stageWidthFt / 2) * S;
+    // Depth was 62ft (SL_Z0 to SL_FOCAL.z spans that far) — cited typical range is ~20-30ft,
+    // so the deck itself only occupies a proper-sized slice of that gap, apron-side of the
+    // focal point, with orchestra-pit-scaled empty space between the deck and the first row.
+    const stageDepthFt = 25;
+    const stageDownstageZ = SL_FOCAL.z + 10;
+    const stageUpstageZ = stageDownstageZ - stageDepthFt;
+    const stageNearSc = stageDownstageZ * S, stageFarSc = stageUpstageZ * S;
+    sightlineStage = { halfW: stageHalfW, zNear: stageNearSc, zFar: stageFarSc }; // for the performer's walk path
     for (let i = 0; i < 2600 * K; i++) {
       push(p, col,
         srandRange(skey(901, 0, i, 0), -stageHalfW, stageHalfW), 0.06,
-        srandRange(skey(901, 0, i, 1), SL_FOCAL.z * S - 6, SL_Z0 * S - 3),
+        srandRange(skey(901, 0, i, 1), stageFarSc, stageNearSc),
         jitterColor(C.stage, 0.1));
     }
     for (let i = 0; i < 900 * K; i++) { // back wall behind the focal point, for depth cues
       push(p, col,
         srandRange(skey(902, 0, i, 0), -stageHalfW * 1.15, stageHalfW * 1.15),
-        srandRange(skey(902, 0, i, 1), 0, 13), SL_FOCAL.z * S - 6.5,
+        srandRange(skey(902, 0, i, 1), 0, 13), stageFarSc - 0.5,
         jitterColor(C.plaster, 0.12));
     }
     for (let i = 0; i < 140 * K; i++) { // focal-point marker
@@ -1363,7 +1432,10 @@ import * as THREE from 'three';
   /* ---- Sightline Studio: dynamic, non-cached formation driven by the panel inputs ---- */
   let sightlineCfg = { rows: 13, seats: 22, balconies: 1, balcRows: 5, cVal: 4, showHeads: false };
   function applySightline(scatterFirst) {
-    if (currentForm !== 'theater') setPerformer(false);
+    // Only disable the performer when actually LEAVING to some other formation — not on
+    // every in-place sightline rebuild (parameter tweak or seat jump), which was resetting
+    // it every time and made the actors stop moving the moment you jumped seats.
+    if (currentForm !== 'theater' && currentForm !== 'sightline') setPerformer(false);
     seatLocked = false;
     seatFirstPerson = false;
     currentForm = 'sightline';
@@ -1577,7 +1649,10 @@ import * as THREE from 'three';
   let perfOn = false, perfStart = 0;
   function setPerformer(on) {
     if (on === perfOn) return;
-    if (on && currentForm !== 'theater') setFormation('theater', true);
+    // The performer also works inside Sightline Studio (checking a sightline against a
+    // moving reference point is the whole idea) — only force-switch formation when we're
+    // somewhere that has no stage to stand on at all.
+    if (on && currentForm !== 'theater' && currentForm !== 'sightline') setFormation('theater', true);
     perfOn = on;
     perfPoints.visible = on;
     spotGroup.visible = on;
@@ -1798,6 +1873,22 @@ import * as THREE from 'three';
     if (xrPanelGroup) xrPanelGroup.visible = xrSlidersEnabled && renderer.xr.isPresenting;
   });
 
+  /* ---- Point density: N is fixed at load (every formation's buffers are sized to it),
+     so this can't resize live — it previews the new total, then reloads with ?k=N to
+     rebuild everything at that density. Honest tradeoff rather than a silent limitation. */
+  const densitySlider = document.getElementById('f-density');
+  const densityLabel = document.getElementById('density-label');
+  densitySlider.value = K;
+  densityLabel.textContent = N.toLocaleString('en-US') + ' — tap to reload';
+  densitySlider.addEventListener('input', () => {
+    densityLabel.textContent = (24000 * Number(densitySlider.value)).toLocaleString('en-US') + ' — release to reload';
+  });
+  densitySlider.addEventListener('change', () => {
+    const url = new URL(location.href);
+    url.searchParams.set('k', densitySlider.value);
+    location.href = url.toString();
+  });
+
   function applyBoard() {
     const xrBoost = renderer.xr.isPresenting ? XR_BOOST * BRIGHT[brightIdx] : 1;
     const inten = (0.12 + (fInt.value / 100) * 1.15) * xrBoost;
@@ -1943,7 +2034,10 @@ import * as THREE from 'three';
     sightBay.style.display = open ? 'flex' : 'none';
     otherBays.forEach(b => { b.style.display = open ? 'none' : 'flex'; });
     fxSight.classList.toggle('on', open);
-    if (open) applySightline(true); // entering the studio: scatter-rebuild, camera untouched
+    if (open) {
+      applySightline(true); // entering the studio: scatter-rebuild, camera untouched
+      if (!perfOn) setPerformer(true); // sightline-checking wants a moving reference on stage by default
+    }
   }
   fxSight.addEventListener('click', () => openSightBay(sightBay.style.display !== 'flex'));
   document.getElementById('sl-back').addEventListener('click', () => openSightBay(false));
@@ -1990,7 +2084,12 @@ import * as THREE from 'three';
   syncSeatBounds(); // set correct bounds for the default config on load
 
   function jumpToSeat(tier, rowN, seatN) {
-    if (currentForm !== 'sightline' || !sightlineRows.length) applySightline(true); // camera about to be set by the jump itself
+    currentSeatRow = { tier, rowInTier: rowN }; // drives proximity density on the rebuild below
+    // Always rebuild so points redistribute around the new seat; scatter only on a fresh
+    // entry into sightline mode. Mid-session seat jumps reflow smoothly in place — the
+    // stage, backwall, rails, and any performer don't depend on currentSeatRow, so those
+    // hold completely still while only the seat/head density redistributes around you.
+    applySightline(currentForm !== 'sightline');
     const tierRows = sightlineRows.filter(r => r.tier === tier);
     if (!tierRows.length) { document.getElementById('sl-readout').textContent = 'No such tier — check Balconies above.'; return; }
     const row = tierRows[Math.min(rowN, tierRows.length) - 1];
@@ -2084,24 +2183,37 @@ import * as THREE from 'three';
       posAttr.needsUpdate = true;
     }
 
-    // The performer — enters from the wing, then wanders the apron
+    // The performer — enters from the wing, then wanders the apron. Body geometry and the
+    // walk path below were both originally tuned for the 'theater' formation's own arbitrary
+    // scale. Sightline Studio is real-feet-based (SL_SCALE), so displaying the performer
+    // there unscaled would render roughly 9ft tall and walk off the edge of the (correctly
+    // sized, per the citation above) stage — both are corrected here when in that formation.
     if (perfOn) {
+      const inSightline = currentForm === 'sightline' && sightlineStage;
+      // Target a realistic ~5.8ft standing height (consistent with SL_FOCAL.y = 5.4ft eye
+      // height); the performer's raw geometry spans about 3.84 units tall.
+      const bodyScale = inSightline ? (5.8 * SL_SCALE) / 3.84 : 1;
+      const stageScaleX = inSightline ? sightlineStage.halfW / 13 : 1;
+      const stageScaleZ = inSightline ? (sightlineStage.zNear - sightlineStage.zFar) / 7.5 : 1;
+      const zCenter = inSightline ? (sightlineStage.zNear + sightlineStage.zFar) / 2 : -10.25;
+
       const pt = t - perfStart;
       const entry = Math.min(1, pt / 6);
       const ease = entry * entry * (3 - 2 * entry);
       const wf = Math.max(0, Math.min(1, (pt - 6) / 5));
-      const px = -14 + ease * 14 + wf * Math.sin((pt - 6) * 0.22) * 4.5;
-      const pz = -11.5 + ease * 2.5 + wf * Math.sin((pt - 6) * 0.15) * 2.0;
-      const bob = REDUCED ? 0 : Math.sin(pt * 2.1) * 0.07;
+      const px = (-14 + ease * 14 + wf * Math.sin((pt - 6) * 0.22) * 4.5) * stageScaleX;
+      const zPattern = -11.5 + ease * 2.5 + wf * Math.sin((pt - 6) * 0.15) * 2.0;
+      const pz = zCenter + (zPattern + 10.25) * stageScaleZ;
+      const bob = REDUCED ? 0 : Math.sin(pt * 2.1) * 0.07 * bodyScale;
       const sway = REDUCED ? 0 : Math.sin(pt * 0.31) * 0.5;
       const cs = Math.cos(sway), sn = Math.sin(sway);
       const arr = perfPosAttr.array;
       for (let i = 0; i < PERF_N; i++) {
         const j = i * 3;
-        const bx = perfBase[j], by = perfBase[j+1], bz = perfBase[j+2];
-        const wob = REDUCED ? 0 : 0.05 * Math.sin(pt * 3 + i * 1.7);
+        const bx = perfBase[j] * bodyScale, by = perfBase[j+1] * bodyScale, bz = perfBase[j+2] * bodyScale;
+        const wob = REDUCED ? 0 : 0.05 * bodyScale * Math.sin(pt * 3 + i * 1.7);
         arr[j]   = px + bx * cs - bz * sn + wob;
-        arr[j+1] = by + bob + (REDUCED ? 0 : 0.04 * Math.sin(pt * 2.4 + i));
+        arr[j+1] = by + bob + (REDUCED ? 0 : 0.04 * bodyScale * Math.sin(pt * 2.4 + i));
         arr[j+2] = pz + bx * sn + bz * cs + wob * 0.6;
       }
       perfPosAttr.needsUpdate = true;
