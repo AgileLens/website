@@ -735,7 +735,10 @@ import * as THREE from 'three';
                                               // isn't a cited standard, just a reasonable design
                                               // choice (~6 rows of overhang); easy to retune.
   const SL_SEAT_W = 1.9;                   // seat pitch (ft)
-  const SL_Z0 = 25;                        // first row's distance from the setting line (ft)
+  const SL_Z0 = -5;                        // first row's distance from the setting line (ft) —
+                                            // ~15ft from the apron edge, a realistic pit+walkway
+                                            // gap (verified this doesn't reintroduce the runaway-
+                                            // rake behavior a too-close first row caused earlier)
   let sightlineRows = [];                  // last-built row metadata in FEET, for the seat picker
   let headSeats = [];                      // world-space (scene units) head positions, for click-to-jump
   let headHitMesh = null;                  // invisible InstancedMesh used purely for raycasting against heads
@@ -840,7 +843,7 @@ import * as THREE from 'three';
     // clouds (so the seat you're in, and the row right in front of you, actually resolve),
     // while distant rows thin out. The budget is conserved exactly — this redistributes
     // the existing seat-point total, it doesn't add points on top of it.
-    const baseBudget = rows.map(row => Math.max(3, Math.floor((420 * K) / row.seats)) * row.seats);
+    const baseBudget = rows.map(row => Math.max(3, Math.floor((610 * K) / row.seats)) * row.seats); // 420->610: part of the ambient-sparkle reallocation below
     const targetTotal = baseBudget.reduce((a, b) => a + b, 0);
     let weights;
     if (currentSeatRow) {
@@ -909,53 +912,95 @@ import * as THREE from 'three';
     }
     sightlineRows = rows;
 
-    // 4. Stage deck sized to the bowl's width + a focal-point marker, so the sightline
-    //    target reads visually; proscenium-ish back wall for scale reference
-    // 4. Stage deck sized proportionally to the house (real proscenium openings run
-    //    roughly 28-65ft: ~32ft at a small regional house, ~40ft at a mid-size Broadway
-    //    house, up to ~65ft at the largest — cited from published venue tech specs). The
-    //    old fixed 12-unit (~57ft) minimum made even a modest house get an oversized stage.
+    // 4. Stage, proscenium, set, and room enclosure — replacing the old bare deck + generic
+    //    "proscenium-ish" back wall. Everything here gets a visually distinct color so the
+    //    elements read apart from each other at a glance, and the point budget freed by
+    //    removing the ambient sparkle field (see below) is spent here and on the seats
+    //    themselves, rather than on floating background dust.
     const stageWidthFt = Math.min(65, Math.max(28, cfg.seats * SL_SEAT_W * 0.65));
     const stageHalfW = (stageWidthFt / 2) * S;
-    // Depth was 62ft (SL_Z0 to SL_FOCAL.z spans that far) — cited typical range is ~20-30ft,
-    // so the deck itself only occupies a proper-sized slice of that gap, apron-side of the
-    // focal point, with orchestra-pit-scaled empty space between the deck and the first row.
     const stageDepthFt = 25;
     const stageDownstageZ = SL_FOCAL.z + 10;
     const stageUpstageZ = stageDownstageZ - stageDepthFt;
     const stageNearSc = stageDownstageZ * S, stageFarSc = stageUpstageZ * S;
     sightlineStage = { halfW: stageHalfW, zNear: stageNearSc, zFar: stageFarSc }; // for the performer's walk path
-    for (let i = 0; i < 2600 * K; i++) {
+
+    // Stage deck
+    for (let i = 0; i < 3000 * K; i++) {
       push(p, col,
         srandRange(skey(901, 0, i, 0), -stageHalfW, stageHalfW), 0.06,
         srandRange(skey(901, 0, i, 1), stageFarSc, stageNearSc),
         jitterColor(C.stage, 0.1));
     }
-    for (let i = 0; i < 900 * K; i++) { // back wall behind the focal point, for depth cues
+    // Proscenium arch — two columns + a header, framing the opening at the downstage edge.
+    // Height scales with width using the ratio implied by real published venues (Marquis
+    // 40w/28.5h, Palace 40.8w/30.5h, Poway 39.5w/24h -> roughly 0.6-0.75), clamped to a
+    // sane range.
+    const prosceniumH = Math.min(35, Math.max(15, stageWidthFt * 0.68)) * S;
+    const prosceniumZ = stageNearSc + 0.3;
+    for (let i = 0; i < 2500 * K; i++) {
+      const side = (i % 2 === 0) ? -1 : 1;
       push(p, col,
-        srandRange(skey(902, 0, i, 0), -stageHalfW * 1.15, stageHalfW * 1.15),
-        srandRange(skey(902, 0, i, 1), 0, 13), stageFarSc - 0.5,
-        jitterColor(C.plaster, 0.12));
+        side * stageHalfW + srandRange(skey(905, side, i, 0), -0.22, 0.22),
+        srandRange(skey(905, side, i, 1), 0, prosceniumH),
+        prosceniumZ + srandRange(skey(905, side, i, 2), -0.22, 0.22),
+        jitterColor(C.gilt, 0.14));
     }
-    for (let i = 0; i < 140 * K; i++) { // focal-point marker
+    for (let i = 0; i < 1000 * K; i++) { // header beam across the top
+      push(p, col,
+        srandRange(skey(906, 0, i, 0), -stageHalfW - 0.3, stageHalfW + 0.3),
+        prosceniumH + srandRange(skey(906, 0, i, 1), -0.22, 0.22),
+        prosceniumZ + srandRange(skey(906, 0, i, 2), -0.22, 0.22),
+        jitterColor(C.gilt, 0.14));
+    }
+    // Backdrop / cyclorama — a colored drop upstage, visible through the arch
+    for (let i = 0; i < 2250 * K; i++) {
+      push(p, col,
+        srandRange(skey(907, 0, i, 0), -stageHalfW * 1.05, stageHalfW * 1.05),
+        srandRange(skey(907, 0, i, 1), 0, prosceniumH * 1.1),
+        stageFarSc - 0.4 + srandRange(skey(907, 0, i, 2), -0.15, 0.15),
+        jitterColor(C.seafoam, 0.16));
+    }
+    // A few simple set pieces (flats/legs) on stage, distinct from both the deck and drop
+    const setPieceCount = 3;
+    for (let sp = 0; sp < setPieceCount; sp++) {
+      const spx = srandRange(skey(908, sp, 0, 0), -stageHalfW * 0.6, stageHalfW * 0.6);
+      const spz = stageFarSc + srandRange(skey(908, sp, 0, 1), 1.5, (stageNearSc - stageFarSc) * 0.6);
+      const spH = srandRange(skey(908, sp, 0, 2), prosceniumH * 0.35, prosceniumH * 0.75);
+      for (let i = 0; i < 1750 * K / setPieceCount; i++) {
+        push(p, col,
+          spx + srandRange(skey(908, sp, i, 3), -1.1, 1.1),
+          srandRange(skey(908, sp, i, 4), 0, spH),
+          spz + srandRange(skey(908, sp, i, 5), -0.18, 0.18),
+          jitterColor(C.steel2, 0.18));
+      }
+    }
+    // Focal-point marker — small, just a faint locator now that the set gives real reference
+    for (let i = 0; i < 75 * K; i++) {
       const th = srandRange(skey(903, 0, i, 0), 0, Math.PI * 2);
       const rr = 0.3 * Math.sqrt(srand(skey(903, 0, i, 1)));
       push(p, col, Math.cos(th) * rr, SL_FOCAL.y * S + Math.sin(th) * rr, SL_FOCAL.z * S,
         jitterColor(C.chand, 0.15));
     }
-    // Ambient background sparkle — genuinely deterministic too, keyed by its own loop
-    // index. (Correction: this field is ~50k of the 96k point budget, not the small
-    // background tail it looked like at first — worth getting right, not waving off.)
-    const zBack = rows[rows.length - 1].z * S, zFront = SL_FOCAL.z * S - 8, yTop = rows[rows.length - 1].floor * S + 4;
-    let ai = 0;
-    while (p.length / 3 < N * 0.99) {
-      const r = srandRange(skey(904, 0, ai, 0), 20, 40);
-      const th = srandRange(skey(904, 0, ai, 1), 0, Math.PI * 2);
-      const ph = Math.acos(srandRange(skey(904, 0, ai, 2), -1, 1));
-      ai++;
-      push(p, col, r * Math.sin(ph) * Math.cos(th), Math.abs(r * Math.cos(ph)) * 0.6 + 1, zFront + r * Math.sin(ph) * Math.sin(th) * 0.5 + (zBack - zFront) * 0.5,
-        jitterColor(C.deepsea, 0.4));
+    // Side walls of the AUDITORIUM (not the stage) — running the full depth of the seating
+    // bowl on both sides, tall enough to pass behind the highest balcony, so orchestra and
+    // balconies read as one enclosed room instead of separate floating platforms.
+    const wallHalfW = Math.max(...rows.map(r => r.half)) + 1.2;
+    const wallZNear = rows[0].z * S - 2;
+    const wallZFar = rows[rows.length - 1].z * S + 2;
+    const wallTop = rows[rows.length - 1].floor * S + 6;
+    for (let i = 0; i < 2000 * K; i++) {
+      const side = (i % 2 === 0) ? -1 : 1;
+      push(p, col,
+        side * wallHalfW * S + srandRange(skey(909, side, i, 0), -0.2, 0.2),
+        srandRange(skey(909, side, i, 1), 0, wallTop),
+        srandRange(skey(909, side, i, 2), wallZFar, wallZNear),
+        jitterColor(C.mist, 0.16));
     }
+    // The green ambient-sparkle field that used to fill the rest of the point budget has
+    // been removed entirely — those ~48,000 points are now spent above (proscenium,
+    // backdrop, set, walls) and on the boosted seat/head density near wherever you're
+    // actually seated, instead of floating background dust in open space.
     return fill(p, col);
   }
 
