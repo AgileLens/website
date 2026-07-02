@@ -54,6 +54,19 @@
   }
   #readout .val { color: var(--seafoam); }
 
+  /* ---------- Hide-UI toggle ---------- */
+  #hide-ui {
+    position: fixed; bottom: 18px; right: 18px; z-index: 30;
+    width: 34px; height: 34px; border-radius: 50%; padding: 0;
+    background: rgba(13,18,26,0.78); border: 1px solid var(--line); backdrop-filter: blur(10px);
+    color: var(--dim); font-size: 15px; cursor: pointer; display: flex; align-items: center; justify-content: center;
+    transition: color 0.15s, border-color 0.15s;
+  }
+  #hide-ui:hover { color: var(--plaster); border-color: rgba(232,221,201,0.4); }
+  #hide-ui:focus-visible { outline: 2px solid var(--seafoam); outline-offset: 2px; }
+  body.ui-hidden #marquee, body.ui-hidden #readout, body.ui-hidden #osc,
+  body.ui-hidden #console, body.ui-hidden #hint { display: none !important; }
+
   /* ---------- Console ---------- */
   #console {
     position: fixed; left: 50%; bottom: 18px; transform: translateX(-50%);
@@ -230,6 +243,7 @@
 </div>
 
 <div id="osc" aria-hidden="true"></div>
+<button id="hide-ui" aria-label="Hide interface" title="Hide interface (H)">◐</button>
 <button id="xr-btn" aria-label="Enter immersive VR">◉ Enter the Theater</button>
 
 <div id="hint">drag to orbit · scroll to dolly</div>
@@ -252,6 +266,7 @@
       <div class="gel-label" id="gel-name">Open White</div>
     </div>
     <div class="fader-row"><span>Sound</span><button class="chip" id="snd" aria-label="Toggle sound">ON</button><span style="width:auto;letter-spacing:0.1em">synth · no samples</span></div>
+    <div class="fader-row"><span>XR Sliders</span><button class="chip" id="xr-sliders-toggle" aria-label="Toggle pinch-drag sliders in headset">ON</button><span style="width:auto;letter-spacing:0.1em">pinch-drag bowl in headset</span></div>
   </div>
   <div class="bay" id="views-bay">
     <div class="bay-label">Camera</div>
@@ -1279,14 +1294,18 @@ import * as THREE from 'three';
     document.querySelectorAll('#forms .chip').forEach(c => c.classList.remove('on'));
     // Auto-frame: the bowl's footprint changes with every parameter, so aim a wide
     // three-quarter view at its actual bounding box rather than a fixed preset.
-    const first = sightlineRows[0], last = sightlineRows[sightlineRows.length - 1];
-    const zSpan = (last.z - first.z) * SL_SCALE;
-    const ySpan = last.floor * SL_SCALE;
-    const centerZ = (SL_FOCAL.z * SL_SCALE * 0.3) + ((first.z + last.z) * SL_SCALE * 0.5) * 0.7;
-    goCamera({ key: 'sl-overview', name: 'SIGHTLINE OVERVIEW',
-      theta: 0.42, phi: 1.02,
-      r: Math.max(26, zSpan * 0.85 + ySpan * 0.4),
-      t: [0, Math.max(2, ySpan * 0.32), centerZ] });
+    // Skipped in XR — the whole point of pinch-dragging the bowl from your seat is
+    // that your head stays put while the theater reshapes around you.
+    if (!renderer.xr.isPresenting) {
+      const first = sightlineRows[0], last = sightlineRows[sightlineRows.length - 1];
+      const zSpan = (last.z - first.z) * SL_SCALE;
+      const ySpan = last.floor * SL_SCALE;
+      const centerZ = (SL_FOCAL.z * SL_SCALE * 0.3) + ((first.z + last.z) * SL_SCALE * 0.5) * 0.7;
+      goCamera({ key: 'sl-overview', name: 'SIGHTLINE OVERVIEW',
+        theta: 0.42, phi: 1.02,
+        r: Math.max(26, zSpan * 0.85 + ySpan * 0.4),
+        t: [0, Math.max(2, ySpan * 0.32), centerZ] });
+    }
   }
 
   /* ============================ OSC MONITOR ============================ */
@@ -1588,6 +1607,33 @@ import * as THREE from 'three';
     osc('/audio/master', soundOn ? 1 : 0);
   });
 
+  /* ---- Hide-UI toggle (flat screen) ---- */
+  const hideUiBtn = document.getElementById('hide-ui');
+  function setUiHidden(hidden) {
+    document.body.classList.toggle('ui-hidden', hidden);
+    hideUiBtn.textContent = hidden ? '◑' : '◐';
+    hideUiBtn.title = hidden ? 'Show interface (H)' : 'Hide interface (H)';
+  }
+  hideUiBtn.addEventListener('click', () => setUiHidden(!document.body.classList.contains('ui-hidden')));
+  window.addEventListener('keydown', e => {
+    if (e.key === 'h' || e.key === 'H') {
+      const tag = (document.activeElement && document.activeElement.tagName) || '';
+      if (tag === 'INPUT' || tag === 'TEXTAREA') return; // don't hijack typing into the sightline fields
+      setUiHidden(!document.body.classList.contains('ui-hidden'));
+    }
+  });
+
+  /* ---- XR sliders enable/disable (decided before entering the headset) ---- */
+  let xrSlidersEnabled = true;
+  const xrSlidersChip = document.getElementById('xr-sliders-toggle');
+  xrSlidersChip.classList.add('on');
+  xrSlidersChip.addEventListener('click', () => {
+    xrSlidersEnabled = !xrSlidersEnabled;
+    xrSlidersChip.textContent = xrSlidersEnabled ? 'ON' : 'OFF';
+    xrSlidersChip.classList.toggle('on', xrSlidersEnabled);
+    if (xrPanelGroup) xrPanelGroup.visible = xrSlidersEnabled && renderer.xr.isPresenting;
+  });
+
   function applyBoard() {
     const xrBoost = renderer.xr.isPresenting ? XR_BOOST * BRIGHT[brightIdx] : 1;
     const inten = (0.12 + (fInt.value / 100) * 1.15) * xrBoost;
@@ -1798,8 +1844,12 @@ import * as THREE from 'three';
   /* ============================ MAIN LOOP ============================ */
   const clock = new THREE.Clock();
   let hintFaded = false, prevT = 0, waveTick = 0;
-  function animate() {
+  function animate(time, frame) {
     const t = clock.getElapsedTime();
+    if (frame && renderer.xr.isPresenting) {
+      const refSpace = renderer.xr.getReferenceSpace();
+      if (refSpace) updateXRPanel(frame, refSpace);
+    }
     const dt = Math.min(0.05, t - prevT); prevT = t;
 
     // Morph positions & colors toward target (time-based: same speed at 60 or 90 Hz)
@@ -1970,6 +2020,155 @@ import * as THREE from 'three';
     dolly.rotation.set(0, Math.atan2(-dx, -dz), 0);
     osc('/xr/teleport', '"' + c.key + '"');
   }
+  /* ============================ XR SPATIAL SLIDERS ============================
+     DOM Overlay (the spec mechanism for showing HTML inside a WebXR session) is
+     defined as AR-only per the W3C module ("This API is an add-on feature for
+     WebXR and the WebXR AR module, and is only available in that context") and
+     visionOS doesn't support immersive-ar sessions at all — so the flat console
+     genuinely cannot be reused in-headset. This builds real 3D controls instead:
+     five pinch-and-drag sliders for the Sightline Studio bowl parameters, mounted
+     near the seat, read via the WebXR Hand Input Module's joint tracking (which
+     Safari on visionOS does support). Untested on real hardware — PINCH_DIST and
+     GRAB_RADIUS below are the two constants most likely to need on-device tuning. */
+  const PINCH_DIST = 0.028;   // meters between thumb-tip and index-tip to count as a pinch
+  const GRAB_RADIUS = 0.055;  // meters from a puck to count as "grabbing" it
+  const SL_SLIDER_DEFS = [
+    { key: 'rows',     label: 'Orch. Rows',  min: 4,  max: 30, step: 1 },
+    { key: 'seats',    label: 'Seats / Row', min: 6,  max: 40, step: 1 },
+    { key: 'balconies',label: 'Balconies',   min: 0,  max: 3,  step: 1 },
+    { key: 'balcRows', label: 'Balc. Rows',  min: 2,  max: 12, step: 1 },
+    { key: 'cVal',     label: 'C-Value (in)',min: 2,  max: 8,  step: 0.5 }
+  ];
+  const SL_TRACK_LEN = 0.30;
+  let xrPanelGroup = null, xrPanelTex = null, xrPanelCtx = null, xrPanelTexObj = null;
+  const xrSliders = []; // { def, puck, t } — t is 0..1 position along the track
+  const gripState = { left: null, right: null };      // slider currently being dragged, per hand
+  const wasPinching = { left: false, right: false };
+  const suppressSelect = { left: false, right: false }; // consumed once by the 'select' handler
+  let xrPanelDirty = false, xrPanelLastRebuild = 0;
+
+  function buildXRPanel() {
+    const g = new THREE.Group();
+    const bg = new THREE.Mesh(
+      new THREE.PlaneGeometry(0.4, 0.34),
+      new THREE.MeshBasicMaterial({ color: 0x0d121a, transparent: true, opacity: 0.82, side: THREE.DoubleSide })
+    );
+    g.add(bg);
+    const cv = document.createElement('canvas'); cv.width = 640; cv.height = 544;
+    xrPanelCtx = cv.getContext('2d');
+    xrPanelTexObj = new THREE.CanvasTexture(cv);
+    const labelPlane = new THREE.Mesh(
+      new THREE.PlaneGeometry(0.4, 0.34),
+      new THREE.MeshBasicMaterial({ map: xrPanelTexObj, transparent: true, depthTest: true })
+    );
+    labelPlane.position.z = 0.001;
+    g.add(labelPlane);
+    const trackMat = new THREE.MeshBasicMaterial({ color: 0x3a4250 });
+    const puckMat = () => new THREE.MeshBasicMaterial({ color: 0x7fd8c9 });
+    SL_SLIDER_DEFS.forEach((def, i) => {
+      const y = 0.115 - i * 0.062;
+      const track = new THREE.Mesh(new THREE.BoxGeometry(SL_TRACK_LEN, 0.006, 0.006), trackMat);
+      track.position.set(0, y, 0.003);
+      g.add(track);
+      const puck = new THREE.Mesh(new THREE.SphereGeometry(0.016, 16, 12), puckMat());
+      const t0 = (sightlineCfg[def.key] - def.min) / (def.max - def.min);
+      puck.position.set(-SL_TRACK_LEN / 2 + t0 * SL_TRACK_LEN, y, 0.01);
+      g.add(puck);
+      xrSliders.push({ def, puck, track, t: t0, baseY: y });
+    });
+    // Mounted to the dolly (room-space, not head-locked): sits like an armrest
+    // console at the user's side, so it stays put as you look around.
+    g.position.set(0.46, 0.30, -0.34);
+    g.rotation.set(-0.12, -0.55, 0);
+    g.visible = false;
+    dolly.add(g);
+    drawXRPanel();
+    return g;
+  }
+  function drawXRPanel() {
+    if (!xrPanelCtx) return;
+    const c = xrPanelCtx;
+    c.clearRect(0, 0, 640, 544);
+    c.textAlign = 'left';
+    c.fillStyle = '#ffb457'; c.font = '600 26px "IBM Plex Mono", monospace';
+    c.fillText('SIGHTLINE STUDIO', 24, 40);
+    c.fillStyle = '#5a6470'; c.font = '16px "IBM Plex Mono", monospace';
+    c.fillText('pinch a puck, slide along the bar', 24, 66);
+    SL_SLIDER_DEFS.forEach((def, i) => {
+      const yPix = 130 + i * 99;
+      c.fillStyle = '#7fd8c9'; c.font = '600 20px "IBM Plex Mono", monospace';
+      c.fillText(def.label, 24, yPix);
+      c.fillStyle = '#e8ddc9'; c.font = '20px "IBM Plex Mono", monospace';
+      c.textAlign = 'right';
+      c.fillText(String(sightlineCfg[def.key]), 616, yPix);
+      c.textAlign = 'left';
+    });
+    xrPanelTexObj.needsUpdate = true;
+  }
+
+  function updateXRPanel(frame, refSpace) {
+    if (!xrPanelGroup || !xrPanelGroup.visible) return;
+    const rightAxis = new THREE.Vector3(1, 0, 0);
+    const panelQuat = new THREE.Quaternion();
+    xrPanelGroup.getWorldQuaternion(panelQuat);
+    rightAxis.applyQuaternion(panelQuat).normalize();
+
+    for (const source of frame.session.inputSources) {
+      if (!source.hand) continue;
+      const handedness = source.handedness; // 'left' | 'right'
+      const idx = source.hand.get('index-finger-tip');
+      const thumb = source.hand.get('thumb-tip');
+      if (!idx || !thumb) continue;
+      const idxPose = frame.getJointPose(idx, refSpace);
+      const thumbPose = frame.getJointPose(thumb, refSpace);
+      if (!idxPose || !thumbPose) continue;
+      const ip = idxPose.transform.position, tp = thumbPose.transform.position;
+      const pinchDist = Math.hypot(ip.x - tp.x, ip.y - tp.y, ip.z - tp.z);
+      const pinching = pinchDist < PINCH_DIST;
+      const indexWorld = new THREE.Vector3(ip.x, ip.y, ip.z);
+
+      if (pinching && !wasPinching[handedness] && !gripState[handedness]) {
+        // pinch just started with an empty hand — check if it started on a puck
+        let nearest = null, nearestD = GRAB_RADIUS;
+        for (const s of xrSliders) {
+          const wp = new THREE.Vector3(); s.puck.getWorldPosition(wp);
+          const d = wp.distanceTo(indexWorld);
+          if (d < nearestD) { nearest = s; nearestD = d; }
+        }
+        if (nearest) { gripState[handedness] = nearest; suppressSelect[handedness] = true; nearest.puck.material.color.setHex(0xff9eb4); }
+      }
+      if (pinching && gripState[handedness]) {
+        const s = gripState[handedness];
+        const trackWorldPos = new THREE.Vector3(); s.track.getWorldPosition(trackWorldPos);
+        const rel = indexWorld.clone().sub(trackWorldPos).dot(rightAxis);
+        let t = Math.min(1, Math.max(0, rel / SL_TRACK_LEN + 0.5));
+        s.t = t;
+        s.puck.position.x = -SL_TRACK_LEN / 2 + t * SL_TRACK_LEN;
+        const raw = s.def.min + t * (s.def.max - s.def.min);
+        const stepped = Math.round(raw / s.def.step) * s.def.step;
+        if (sightlineCfg[s.def.key] !== stepped) {
+          sightlineCfg[s.def.key] = stepped;
+          xrPanelDirty = true;
+          drawXRPanel();
+        }
+      }
+      if (!pinching && gripState[handedness]) {
+        gripState[handedness].puck.material.color.setHex(0x7fd8c9);
+        gripState[handedness] = null;
+      }
+      wasPinching[handedness] = pinching;
+    }
+
+    // Throttled live rebuild while dragging — 96k points every frame would stutter;
+    // once every ~180ms keeps it feeling live without hitching.
+    const now = performance.now();
+    if (xrPanelDirty && now - xrPanelLastRebuild > 180) {
+      xrPanelLastRebuild = now;
+      xrPanelDirty = false;
+      applySightline(false); // no scatter: a smooth continuous reshape while you drag
+    }
+  }
+
   async function enterXR() {
     try {
       const session = await navigator.xr.requestSession('immersive-vr', {
@@ -1982,6 +2181,7 @@ import * as THREE from 'three';
       // Vision Pro transient-pointer: any gaze+pinch fires 'select' -> take the cue
       session.addEventListener('select', (ev) => {
         const hand = ev.inputSource && ev.inputSource.handedness;
+        if (suppressSelect[hand]) { suppressSelect[hand] = false; return; } // that pinch was a slider drag, not a cue
         if (hand === 'left') { // live brightness ladder
           brightIdx = (brightIdx + 1) % BRIGHT.length;
           beep(880 + brightIdx * 140, 0.06, 0.05, 'sine');
@@ -2009,6 +2209,9 @@ import * as THREE from 'three';
     hud.visible = true;
     drawHud();
     xrTeleport(CAMS[1]); // open in Row F — the money seat
+    if (!xrPanelGroup) xrPanelGroup = buildXRPanel();
+    xrPanelGroup.visible = xrSlidersEnabled;
+    if (xrSlidersEnabled) drawXRPanel();
     osc('/xr/session', 'start');
   });
   renderer.xr.addEventListener('sessionend', () => {
@@ -2017,6 +2220,8 @@ import * as THREE from 'three';
     mat.uniforms.uSize.value = 0.22;
     perfMat.uniforms.uSize.value = 0.24;
     if (hud) hud.visible = false;
+    if (xrPanelGroup) xrPanelGroup.visible = false;
+    gripState.left = null; gripState.right = null;
     dolly.position.set(0, 0, 0);
     dolly.rotation.set(0, 0, 0);
     osc('/xr/session', 'end');
