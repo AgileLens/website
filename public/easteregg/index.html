@@ -721,6 +721,23 @@ import * as THREE from 'three';
   const SL_Z0 = 25;                        // first row's distance from the setting line (ft)
   let sightlineRows = [];                  // last-built row metadata in FEET, for the seat picker
 
+  // Deterministic jitter, keyed by stable identity (tier/row/seat/point), not call order.
+  // Math.random()-based jitter reshuffles EVERY point on EVERY rebuild, even points that
+  // represent the same physical seat before and after — so nothing could ever visibly
+  // "hold still." This makes a seat's jitter a pure function of its own identity: an
+  // unaffected seat gets the exact same offset on every rebuild, byte for byte, so the
+  // per-frame morph naturally shows near-zero motion there and reflow only where the
+  // bowl's actual geometry (row count, balcony count, clearance) changed underneath it.
+  function skey(a, b, c, d) {
+    let h = (a * 374761393) ^ (b * 668265263) ^ (c * 2147483647) ^ (d * 2246822519);
+    h = Math.imul(h ^ (h >>> 15), 2246822519);
+    h = Math.imul(h ^ (h >>> 13), 3266489917);
+    h = h ^ (h >>> 16);
+    return h >>> 0;
+  }
+  function srand(key) { return (key % 1000003) / 1000003; }
+  function srandRange(key, lo, hi) { return lo + srand(key) * (hi - lo); }
+
   function buildSightlineTheater(cfg) {
     const p = [], col = [];
     const clr = (cfg.cVal || 4) / 12;      // clearance, inches -> feet
@@ -737,6 +754,8 @@ import * as THREE from 'three';
     }
 
     // 2. Recursive C-value sightline solve: E_i = Fy + (D_i/D_(i-1)) * (E_(i-1) + clr - Fy)
+    //    Purely sequential/local — row k's result depends only on row k-1, never on the
+    //    total row count — so adding a row never moves any existing row's floor height.
     let prevD = Math.abs(rows[0].z - SL_FOCAL.z), prevE = SL_EYE0;
     rows[0].eye = prevE; rows[0].floor = prevE - SL_EYE_OFFSET;
     for (let i = 1; i < rows.length; i++) {
@@ -760,14 +779,20 @@ import * as THREE from 'three';
         if (Math.abs(sx) < 1.4 && row.tier === 0) continue; // center aisle, orchestra only
         const rx = sx * S;
         for (let k = 0; k < perSeatPts; k++) {
-          push(p, col, rx + rand(-0.16, 0.16), rf + rand(0, 0.38), rz + rand(-0.14, 0.14),
+          push(p, col,
+            rx + srandRange(skey(row.tier, row.rowInTier, s, k * 3), -0.16, 0.16),
+            rf + srandRange(skey(row.tier, row.rowInTier, s, k * 3 + 1), 0, 0.38),
+            rz + srandRange(skey(row.tier, row.rowInTier, s, k * 3 + 2), -0.14, 0.14),
             jitterColor(tierColor, 0.14));
         }
       }
       if (row.tier !== curTier) { // gilt rail marking the front edge of a new tier
         curTier = row.tier;
         for (let i = 0; i < 260 * K; i++) {
-          push(p, col, rand(-half * S, half * S), rf - 0.05 + rand(-0.03, 0.28), rz - SL_ROW_DEPTH * S * 0.45,
+          push(p, col,
+            srandRange(skey(900, curTier, i, 0), -half * S, half * S),
+            rf - 0.05 + srandRange(skey(900, curTier, i, 1), -0.03, 0.28),
+            rz - SL_ROW_DEPTH * S * 0.45,
             jitterColor(C.gilt, 0.15));
         }
       }
@@ -778,21 +803,33 @@ import * as THREE from 'three';
     //    target reads visually; proscenium-ish back wall for scale reference
     const stageHalfW = Math.max(12, (cfg.seats * SL_SEAT_W * S) / 2 + 2);
     for (let i = 0; i < 2600 * K; i++) {
-      push(p, col, rand(-stageHalfW, stageHalfW), 0.06, rand(SL_FOCAL.z * S - 6, SL_Z0 * S - 3),
+      push(p, col,
+        srandRange(skey(901, 0, i, 0), -stageHalfW, stageHalfW), 0.06,
+        srandRange(skey(901, 0, i, 1), SL_FOCAL.z * S - 6, SL_Z0 * S - 3),
         jitterColor(C.stage, 0.1));
     }
     for (let i = 0; i < 900 * K; i++) { // back wall behind the focal point, for depth cues
-      push(p, col, rand(-stageHalfW * 1.15, stageHalfW * 1.15), rand(0, 13), SL_FOCAL.z * S - 6.5,
+      push(p, col,
+        srandRange(skey(902, 0, i, 0), -stageHalfW * 1.15, stageHalfW * 1.15),
+        srandRange(skey(902, 0, i, 1), 0, 13), SL_FOCAL.z * S - 6.5,
         jitterColor(C.plaster, 0.12));
     }
     for (let i = 0; i < 140 * K; i++) { // focal-point marker
-      const th = rand(0, Math.PI * 2), rr = 0.3 * Math.sqrt(Math.random());
+      const th = srandRange(skey(903, 0, i, 0), 0, Math.PI * 2);
+      const rr = 0.3 * Math.sqrt(srand(skey(903, 0, i, 1)));
       push(p, col, Math.cos(th) * rr, SL_FOCAL.y * S + Math.sin(th) * rr, SL_FOCAL.z * S,
         jitterColor(C.chand, 0.15));
     }
+    // Ambient background sparkle — genuinely deterministic too, keyed by its own loop
+    // index. (Correction: this field is ~50k of the 96k point budget, not the small
+    // background tail it looked like at first — worth getting right, not waving off.)
     const zBack = rows[rows.length - 1].z * S, zFront = SL_FOCAL.z * S - 8, yTop = rows[rows.length - 1].floor * S + 4;
+    let ai = 0;
     while (p.length / 3 < N * 0.99) {
-      const r = rand(20, 40), th = rand(0, Math.PI * 2), ph = Math.acos(rand(-1, 1));
+      const r = srandRange(skey(904, 0, ai, 0), 20, 40);
+      const th = srandRange(skey(904, 0, ai, 1), 0, Math.PI * 2);
+      const ph = Math.acos(srandRange(skey(904, 0, ai, 2), -1, 1));
+      ai++;
       push(p, col, r * Math.sin(ph) * Math.cos(th), Math.abs(r * Math.cos(ph)) * 0.6 + 1, zFront + r * Math.sin(ph) * Math.sin(th) * 0.5 + (zBack - zFront) * 0.5,
         jitterColor(C.deepsea, 0.4));
     }
@@ -1246,6 +1283,7 @@ import * as THREE from 'three';
     if (!FORMS[key]) return;
     if (key !== 'theater') setPerformer(false);
     seatLocked = false;
+    seatFirstPerson = false;
     currentForm = key;
     osc('/scene/load', '"' + FORMS[key].name.toLowerCase().replace(' ', '_') + '"');
     roForm.textContent = FORMS[key].name;
@@ -1270,9 +1308,10 @@ import * as THREE from 'three';
 
   /* ---- Sightline Studio: dynamic, non-cached formation driven by the panel inputs ---- */
   let sightlineCfg = { rows: 13, seats: 22, balconies: 1, balcRows: 5, cVal: 4 };
-  function applySightline(scatterFirst) {
+  function applySightline(scatterFirst, reframe) {
     if (currentForm !== 'theater') setPerformer(false);
     seatLocked = false;
+    seatFirstPerson = false;
     currentForm = 'sightline';
     const fd = buildSightlineTheater(sightlineCfg); // also (re)populates sightlineRows, in feet
     roForm.textContent = 'SIGHTLINE STUDY';
@@ -1292,11 +1331,12 @@ import * as THREE from 'three';
     }
     morphT = 0;
     document.querySelectorAll('#forms .chip').forEach(c => c.classList.remove('on'));
-    // Auto-frame: the bowl's footprint changes with every parameter, so aim a wide
-    // three-quarter view at its actual bounding box rather than a fixed preset.
-    // Skipped in XR — the whole point of pinch-dragging the bowl from your seat is
-    // that your head stays put while the theater reshapes around you.
-    if (!renderer.xr.isPresenting) {
+    // Auto-frame only when explicitly entering Sightline Studio — not on every parameter
+    // tweak. The whole point of "checking sightlines" is watching the bowl grow, shrink,
+    // and add balconies from a fixed vantage; re-framing on every change defeated that.
+    // Also skipped in XR, where the point is identical: the theater reshapes around a
+    // stationary viewer, not the other way round.
+    if (reframe && !renderer.xr.isPresenting) {
       const first = sightlineRows[0], last = sightlineRows[sightlineRows.length - 1];
       const zSpan = (last.z - first.z) * SL_SCALE;
       const ySpan = last.floor * SL_SCALE;
@@ -1488,6 +1528,12 @@ import * as THREE from 'three';
     // tween targets
     gTheta: null, gPhi: null, gRadius: null, gtx: null, gty: null, gtz: null, tweening: false
   };
+  // Once a seat-jump's fly-in tween settles, the camera switches from "orbit around
+  // a distant target" to "fixed at the eye position, only the look direction turns" —
+  // the actual difference between flying toward a seat and sitting in it.
+  let seatFirstPerson = false;
+  const seatEyePos = new THREE.Vector3();
+  let seatYaw = 0, seatPitch = 0;
   const CAMS = [
     { key: 'booth',    name: 'FOH BOOTH',  theta:  0.03, phi: 1.18, r: 47, t: [0, 5.5, 2] },
     { key: 'orch',     name: 'ORCH ROW F', theta:  0.00, phi: 1.42, r: 22, t: [0, 4.5, -4] },
@@ -1497,7 +1543,7 @@ import * as THREE from 'three';
   ];
   const roCam = document.getElementById('ro-cam');
   function goCamera(c, snap) {
-    if (c.key !== 'seat') seatLocked = false; // leaving the seated view — resume normal camera behavior
+    if (c.key !== 'seat') { seatLocked = false; seatFirstPerson = false; } // leaving the seated view — resume normal camera behavior
     roCam.textContent = c.name;
     osc('/cam/recall', '"' + c.key + '"');
     if (renderer.xr.isPresenting) { xrTeleport(c); return; }
@@ -1523,6 +1569,32 @@ import * as THREE from 'three';
       rig.tz += (rig.gtz - rig.tz) * k;
       if (Math.abs(rig.gTheta - rig.theta) < 0.002 && Math.abs(rig.gRadius - rig.radius) < 0.05) rig.tweening = false;
     }
+
+    // The instant a seat's fly-in tween settles, freeze the eye position and hand off
+    // to first-person look — from here, dragging turns your head, it doesn't orbit the stage.
+    if (seatLocked && !rig.tweening && !seatFirstPerson) {
+      seatEyePos.set(
+        rig.tx + rig.radius * Math.sin(rig.phi) * Math.sin(rig.theta),
+        rig.ty + rig.radius * Math.cos(rig.phi),
+        rig.tz + rig.radius * Math.sin(rig.phi) * Math.cos(rig.theta)
+      );
+      const dir = new THREE.Vector3(rig.tx, rig.ty, rig.tz).sub(seatEyePos).normalize();
+      seatYaw = Math.atan2(dir.x, dir.z);
+      seatPitch = Math.asin(Math.max(-1, Math.min(1, dir.y)));
+      seatFirstPerson = true;
+    }
+
+    if (seatFirstPerson) {
+      const cp = Math.cos(seatPitch);
+      camera.position.copy(seatEyePos);
+      camera.lookAt(
+        seatEyePos.x + Math.sin(seatYaw) * cp,
+        seatEyePos.y + Math.sin(seatPitch),
+        seatEyePos.z + Math.cos(seatYaw) * cp
+      );
+      return;
+    }
+
     rig.phi = Math.max(0.25, Math.min(1.52, rig.phi));
     rig.radius = Math.max(8, Math.min(110, rig.radius));
     camera.position.set(
@@ -1536,9 +1608,17 @@ import * as THREE from 'three';
   // Pointer controls
   let dragging = false, px = 0, py = 0, pinchDist = 0;
   const el = renderer.domElement;
-  el.addEventListener('pointerdown', e => { dragging = true; px = e.clientX; py = e.clientY; rig.tweening = false; seatLocked = false; });
+  el.addEventListener('pointerdown', e => { dragging = true; px = e.clientX; py = e.clientY; rig.tweening = false; });
   window.addEventListener('pointermove', e => {
     if (!dragging) return;
+    if (seatFirstPerson) {
+      // Seated: dragging turns your head in place, it does not leave the seat.
+      seatYaw -= (e.clientX - px) * 0.0045;
+      seatPitch = Math.max(-1.4, Math.min(1.4, seatPitch - (e.clientY - py) * 0.0038));
+      px = e.clientX; py = e.clientY;
+      roCam.textContent = roCam.textContent; // unchanged — still labeled with the seat
+      return;
+    }
     rig.theta -= (e.clientX - px) * 0.0055;
     rig.phi -= (e.clientY - py) * 0.0045;
     px = e.clientX; py = e.clientY;
@@ -1548,6 +1628,7 @@ import * as THREE from 'three';
   window.addEventListener('pointerup', () => dragging = false);
   el.addEventListener('wheel', e => {
     e.preventDefault();
+    if (seatFirstPerson) return; // no dollying while seated — you're in a specific numbered seat, not floating
     rig.tweening = false;
     rig.radius *= 1 + Math.sign(e.deltaY) * 0.07;
   }, { passive: false });
@@ -1766,7 +1847,7 @@ import * as THREE from 'three';
     sightBay.style.display = open ? 'flex' : 'none';
     otherBays.forEach(b => { b.style.display = open ? 'none' : 'flex'; });
     fxSight.classList.toggle('on', open);
-    if (open) applySightline(true);
+    if (open) applySightline(true, true); // entering the studio: scatter-rebuild AND frame the whole bowl
   }
   fxSight.addEventListener('click', () => openSightBay(sightBay.style.display !== 'flex'));
   document.getElementById('sl-back').addEventListener('click', () => openSightBay(false));
@@ -1799,7 +1880,7 @@ import * as THREE from 'three';
         el.value = sightlineCfg[k];
       }
       audio(); beep(520, 0.05, 0.04, 'sine');
-      applySightline(true); // scatter+rebuild: the requested "particles fly to add a balcony" effect
+      applySightline(false, false); // reflow in place, camera held — no scatter, no reframe, every tweak
       syncSeatBounds(); // bowl just changed shape — re-clamp the seat picker to what still exists
       document.getElementById('sl-readout').textContent =
         sightlineCfg.rows + ' orchestra rows × ' + sightlineCfg.seats + ' seats, ' +
@@ -1816,7 +1897,7 @@ import * as THREE from 'three';
     const tier = parseInt(slTier.value, 10);
     const rowN = parseInt(slSeatRow.value, 10);
     const seatN = parseInt(slSeatNum.value, 10);
-    if (currentForm !== 'sightline' || !sightlineRows.length) applySightline(true);
+    if (currentForm !== 'sightline' || !sightlineRows.length) applySightline(true, false); // camera about to be set by the seat-jump itself
     const tierRows = sightlineRows.filter(r => r.tier === tier);
     if (!tierRows.length) { document.getElementById('sl-readout').textContent = 'No such tier — check Balconies above.'; return; }
     const row = tierRows[Math.min(rowN, tierRows.length) - 1];
@@ -1834,6 +1915,7 @@ import * as THREE from 'three';
     const phi = Math.acos(Math.min(1, Math.max(-1, vSc.y / radius)));
     goCamera({ key: 'seat', name: (tier === 0 ? 'ORCH' : 'BALC ' + tier) + ' R' + rowN + ' S' + seatN,
       theta, phi, r: radius, t: [focalSc.x, focalSc.y, focalSc.z] });
+    seatFirstPerson = false; // reset BEFORE the tween starts, so flying to a new seat animates properly
     seatLocked = true; // holds the view still once arrived — no idle drift while "sitting" in a specific seat
     audio(); beep(1200, 0.06, 0.05, 'sine');
     document.getElementById('sl-readout').textContent =
@@ -2165,7 +2247,7 @@ import * as THREE from 'three';
     if (xrPanelDirty && now - xrPanelLastRebuild > 180) {
       xrPanelLastRebuild = now;
       xrPanelDirty = false;
-      applySightline(false); // no scatter: a smooth continuous reshape while you drag
+      applySightline(false, false); // no scatter, no reframe: a smooth continuous reshape while you drag
     }
   }
 
