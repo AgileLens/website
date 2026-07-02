@@ -374,6 +374,47 @@ export default function HomePage() {
         </div>
       </Section>
 
+      {/* ── Vision Pro / Unreal Engine Highlight ── */}
+      <Section className="max-w-[1400px] mx-auto px-6 md:px-12 pb-24">
+        <div className="relative rounded-[24px] border border-border bg-surface overflow-hidden p-10 md:p-16">
+          <div className="pink-glow" style={{ top: '-40%', right: '-15%', opacity: 0.35 }} aria-hidden="true" />
+          <div className="relative z-10 grid md:grid-cols-[1.3fr_1fr] gap-10 items-center">
+            <div>
+              <span className="inline-block px-3 py-1 rounded-full text-xs uppercase tracking-wider border border-pink/30 bg-pink/5 text-pink mb-6 w-fit">
+                Unreal Engine &times; Apple Vision Pro
+              </span>
+              <h2 className="text-[clamp(1.8rem,3.2vw,3rem)] font-bold mb-5 leading-tight">
+                We haven&apos;t found another studio going this deep on Unreal Engine for Vision Pro
+              </h2>
+              <p className="text-muted text-base md:text-lg leading-relaxed mb-8">
+                We&apos;re not betting on one approach. We&apos;re running three in parallel: porting existing
+                Quest, Vive, and Pico experiences over, modifying Unreal Engine&apos;s own source for a faster
+                Vision Pro pipeline, and building UnRealityKit, our system for translating Unreal content
+                directly into RealityKit.
+              </p>
+              <Link href="/vision-pro" className="text-sm font-semibold text-pink flex items-center gap-2 w-fit">
+                See how we&apos;re approaching it
+                <svg width="16" height="16" viewBox="0 0 16 16" fill="none" className="transition-transform hover:translate-x-1">
+                  <path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+                </svg>
+              </Link>
+            </div>
+            <div className="flex flex-col gap-4">
+              {[
+                { label: 'Porting', desc: 'Quest, Vive & Pico experiences, brought to Vision Pro' },
+                { label: 'Engine', desc: "Modifying Unreal's own source for the pipeline" },
+                { label: 'UnRealityKit', desc: 'Unreal content, translated natively into RealityKit' },
+              ].map((t) => (
+                <div key={t.label} className="bg-card border border-border rounded-xl px-5 py-4">
+                  <div className="text-sm font-bold text-text mb-1">{t.label}</div>
+                  <div className="text-xs text-muted leading-snug">{t.desc}</div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </Section>
+
       {/* ── Core Products (sticky stacking cards) ── */}
       <Section id="products" className="max-w-[1100px] mx-auto px-6 md:px-12 pt-32 pb-24">
         <div className="mb-16">

@@ -14,6 +14,7 @@ const navLinks = [
 const pageLinks = [
   { href: '/portfolio', label: 'Portfolio' },
   { href: '/process', label: 'Process' },
+  { href: '/vision-pro', label: 'Vision Pro' },
   { href: '/blog', label: 'Insights' },
   { href: '/unrealnyc', label: 'Unreal NYC' },
   { href: '/team', label: 'Team' },
