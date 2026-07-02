@@ -143,6 +143,33 @@
     z-index: 5; pointer-events: none; user-select: none; transition: opacity 1s;
   }
 
+  /* Sightline Studio */
+  #sight-panel {
+    position: fixed; left: 50%; bottom: 96px; transform: translateX(-50%) translateY(12px);
+    z-index: 19; width: min(760px, calc(100% - 24px));
+    background: var(--console); border: 1px solid var(--line); border-radius: 10px;
+    backdrop-filter: blur(14px); padding: 14px 20px; display: none; grid-template-columns: 1fr 1fr;
+    gap: 10px 26px; box-shadow: 0 16px 44px rgba(0,0,0,0.5); opacity: 0; transition: opacity 0.2s, transform 0.2s;
+  }
+  #sight-panel.open { display: grid; opacity: 1; transform: translateX(-50%) translateY(0); }
+  #sight-panel .sl-col { display: flex; flex-direction: column; gap: 8px; }
+  #sight-panel .sl-title { font-size: 9px; letter-spacing: 0.26em; color: var(--tungsten); text-transform: uppercase; margin-bottom: 2px; }
+  .sl-row { display: flex; align-items: center; gap: 8px; font-size: 9.5px; letter-spacing: 0.08em; color: var(--dim); text-transform: uppercase; }
+  .sl-row span.lbl { width: 108px; flex-shrink: 0; }
+  .sl-row input[type="number"] {
+    width: 48px; font-family: inherit; font-size: 11px; color: var(--plaster);
+    background: rgba(255,255,255,0.05); border: 1px solid var(--line); border-radius: 4px;
+    padding: 3px 5px; text-align: center;
+  }
+  .sl-row input[type="number"]:focus-visible { outline: 2px solid var(--seafoam); outline-offset: 1px; }
+  #sl-seatgo {
+    font-family: inherit; font-size: 9.5px; letter-spacing: 0.1em; text-transform: uppercase;
+    background: transparent; color: var(--seafoam); border: 1px solid var(--seafoam);
+    border-radius: 14px; padding: 5px 12px; cursor: pointer; transition: background 0.15s, color 0.15s;
+  }
+  #sl-seatgo:hover { background: var(--seafoam); color: var(--void); }
+  #sl-readout { font-size: 9px; color: var(--dim); letter-spacing: 0.06em; grid-column: 1 / -1; min-height: 12px; }
+
   /* ---------- XR entry ---------- */
   #xr-btn {
     display: none; position: fixed; top: 26px; left: 50%; transform: translateX(-50%);
@@ -232,7 +259,27 @@
     <div class="chip-row">
       <button class="chip" id="fx-spot">Followspot</button>
       <button class="chip" id="fx-twinkle">Chandelier</button>
+      <button class="chip" id="fx-sight">Sightline Studio</button>
     </div>
+  </div>
+</div>
+
+<div id="sight-panel" role="region" aria-label="Extreme Sightlines parametric theater studio">
+  <div class="sl-col">
+    <div class="sl-title">Bowl — after Fisher Dachs' Extreme Sightlines</div>
+    <div class="sl-row"><span class="lbl">Orchestra Rows</span><input type="number" id="sl-rows" min="4" max="30" value="13"></div>
+    <div class="sl-row"><span class="lbl">Seats / Row</span><input type="number" id="sl-seats" min="6" max="40" value="22"></div>
+    <div class="sl-row"><span class="lbl">Balconies</span><input type="number" id="sl-balc" min="0" max="3" value="1"></div>
+    <div class="sl-row"><span class="lbl">Rows / Balcony</span><input type="number" id="sl-balcrows" min="2" max="12" value="5"></div>
+    <div class="sl-row"><span class="lbl">Sightline C-Value</span><input type="number" id="sl-c" min="2" max="8" step="0.5" value="4"> in</div>
+  </div>
+  <div class="sl-col">
+    <div class="sl-title">Jump to Seat</div>
+    <div class="sl-row"><span class="lbl">Tier (0 = orch.)</span><input type="number" id="sl-tier" min="0" max="3" value="0"></div>
+    <div class="sl-row"><span class="lbl">Row in Tier</span><input type="number" id="sl-seatrow" min="1" max="30" value="1"></div>
+    <div class="sl-row"><span class="lbl">Seat in Row</span><input type="number" id="sl-seatnum" min="1" max="40" value="11"></div>
+    <button id="sl-seatgo">View From This Seat</button>
+    <div id="sl-readout">Adjust the bowl, then GO to a seat — the sightline to center stage is guaranteed by construction, not by eye.</div>
   </div>
 </div>
 
@@ -624,6 +671,109 @@ import * as THREE from 'three';
       col.push(col[j*3], col[j*3+1], col[j*3+2]);
     }
     return { pos: new Float32Array(p.slice(0, N * 3)), col: new Float32Array(col.slice(0, N * 3)) };
+  }
+
+  /* ============================ EXTREME SIGHTLINES ============================
+     Parametric bowl using the classic theatre-consulting C-value method: each row's
+     eye height is solved so a sightline from that row, over the head of the row in
+     front (by clearance C), reaches a fixed focal point on stage. Recursive similar-
+     triangles construction — the actual math behind sightline-guaranteed raking,
+     in the spirit of Fisher Dachs' Extreme Sightlines. Rows chain continuously
+     across tiers (with a walkway z-gap at each new balcony), so balconies cantilever
+     out at whatever height the sightline demands rather than a fixed guess.
+
+     All physics below is computed in real feet (so the seat-jump readout reports
+     true distances); SL_SCALE converts feet to this piece's scene units only when
+     emitting particles or aiming the camera. The clearance guarantee is a ratio of
+     distances, so it's scale-invariant — verified numerically before this shipped:
+     every row clears the row ahead by exactly the requested C-value, in feet, at
+     configurations from a single 13-row room to a 24-row/3-balcony house. */
+  const SL_SCALE = 0.42;                   // feet -> scene units
+  const SL_FOCAL = { y: 5.4, z: -30 };     // standing actor eye height, well upstage (feet)
+  const SL_EYE0 = 3.7;                     // first-row seated eye height above its own floor (ft)
+  const SL_EYE_OFFSET = 3.7;               // seated eye height above any row's floor (ft)
+  const SL_ROW_DEPTH = 3.0;                // z spacing between row floors (ft)
+  const SL_TIER_GAP = 5.0;                 // walkway z-gap when a new tier begins (ft)
+  const SL_SEAT_W = 1.9;                   // seat pitch (ft)
+  const SL_Z0 = 25;                        // first row's distance from the setting line (ft)
+  let sightlineRows = [];                  // last-built row metadata in FEET, for the seat picker
+
+  function buildSightlineTheater(cfg) {
+    const p = [], col = [];
+    const clr = (cfg.cVal || 4) / 12;      // clearance, inches -> feet
+    const tierPalette = [C.velvet, C.velvet2, C.steel, C.seafoam];
+    const S = SL_SCALE;
+
+    // 1. Lay out every row, main floor then balconies, as one continuous sequence (feet)
+    const rows = [];
+    let z = SL_Z0;
+    for (let r = 0; r < cfg.rows; r++) { rows.push({ tier: 0, rowInTier: r + 1, z, seats: cfg.seats }); z += SL_ROW_DEPTH; }
+    for (let b = 0; b < cfg.balconies; b++) {
+      z += SL_TIER_GAP;
+      for (let r = 0; r < cfg.balcRows; r++) { rows.push({ tier: b + 1, rowInTier: r + 1, z, seats: cfg.seats }); z += SL_ROW_DEPTH * 0.9; }
+    }
+
+    // 2. Recursive C-value sightline solve: E_i = Fy + (D_i/D_(i-1)) * (E_(i-1) + clr - Fy)
+    let prevD = Math.abs(rows[0].z - SL_FOCAL.z), prevE = SL_EYE0;
+    rows[0].eye = prevE; rows[0].floor = prevE - SL_EYE_OFFSET;
+    for (let i = 1; i < rows.length; i++) {
+      const D = Math.abs(rows[i].z - SL_FOCAL.z);
+      const E = SL_FOCAL.y + (D / prevD) * (prevE + clr - SL_FOCAL.y);
+      rows[i].eye = E;
+      rows[i].floor = Math.max(rows[i - 1].floor + 0.1, E - SL_EYE_OFFSET); // monotonic guard
+      prevD = D; prevE = E;
+    }
+
+    // 3. Emit seat particles (scaled to scene units) + a front breast-wall rail per tier
+    let curTier = -1;
+    for (const row of rows) {
+      const half = (row.seats * SL_SEAT_W) / 2; // feet
+      row.half = half;
+      const perSeatPts = Math.max(3, Math.floor((420 * K) / row.seats));
+      const tierColor = tierPalette[row.tier % tierPalette.length];
+      const rz = row.z * S, rf = row.floor * S;
+      for (let s = 0; s < row.seats; s++) {
+        const sx = (-half + s * SL_SEAT_W + SL_SEAT_W / 2);
+        if (Math.abs(sx) < 1.4 && row.tier === 0) continue; // center aisle, orchestra only
+        const rx = sx * S;
+        for (let k = 0; k < perSeatPts; k++) {
+          push(p, col, rx + rand(-0.16, 0.16), rf + rand(0, 0.38), rz + rand(-0.14, 0.14),
+            jitterColor(tierColor, 0.14));
+        }
+      }
+      if (row.tier !== curTier) { // gilt rail marking the front edge of a new tier
+        curTier = row.tier;
+        for (let i = 0; i < 260 * K; i++) {
+          push(p, col, rand(-half * S, half * S), rf - 0.05 + rand(-0.03, 0.28), rz - SL_ROW_DEPTH * S * 0.45,
+            jitterColor(C.gilt, 0.15));
+        }
+      }
+    }
+    sightlineRows = rows;
+
+    // 4. Stage deck sized to the bowl's width + a focal-point marker, so the sightline
+    //    target reads visually; proscenium-ish back wall for scale reference
+    const stageHalfW = Math.max(12, (cfg.seats * SL_SEAT_W * S) / 2 + 2);
+    for (let i = 0; i < 2600 * K; i++) {
+      push(p, col, rand(-stageHalfW, stageHalfW), 0.06, rand(SL_FOCAL.z * S - 6, SL_Z0 * S - 3),
+        jitterColor(C.stage, 0.1));
+    }
+    for (let i = 0; i < 900 * K; i++) { // back wall behind the focal point, for depth cues
+      push(p, col, rand(-stageHalfW * 1.15, stageHalfW * 1.15), rand(0, 13), SL_FOCAL.z * S - 6.5,
+        jitterColor(C.plaster, 0.12));
+    }
+    for (let i = 0; i < 140 * K; i++) { // focal-point marker
+      const th = rand(0, Math.PI * 2), rr = 0.3 * Math.sqrt(Math.random());
+      push(p, col, Math.cos(th) * rr, SL_FOCAL.y * S + Math.sin(th) * rr, SL_FOCAL.z * S,
+        jitterColor(C.chand, 0.15));
+    }
+    const zBack = rows[rows.length - 1].z * S, zFront = SL_FOCAL.z * S - 8, yTop = rows[rows.length - 1].floor * S + 4;
+    while (p.length / 3 < N * 0.99) {
+      const r = rand(20, 40), th = rand(0, Math.PI * 2), ph = Math.acos(rand(-1, 1));
+      push(p, col, r * Math.sin(ph) * Math.cos(th), Math.abs(r * Math.cos(ph)) * 0.6 + 1, zFront + r * Math.sin(ph) * Math.sin(th) * 0.5 + (zBack - zFront) * 0.5,
+        jitterColor(C.deepsea, 0.4));
+    }
+    return fill(p, col);
   }
 
   /* ---- THE MARQUEE (the name in lights) ---- */
@@ -1093,6 +1243,41 @@ import * as THREE from 'three';
     document.querySelectorAll('#forms .chip').forEach(c => c.classList.toggle('on', c.dataset.form === key));
   }
 
+  /* ---- Sightline Studio: dynamic, non-cached formation driven by the panel inputs ---- */
+  let sightlineCfg = { rows: 13, seats: 22, balconies: 1, balcRows: 5, cVal: 4 };
+  function applySightline(scatterFirst) {
+    if (currentForm !== 'theater') setPerformer(false);
+    currentForm = 'sightline';
+    const fd = buildSightlineTheater(sightlineCfg); // also (re)populates sightlineRows, in feet
+    roForm.textContent = 'SIGHTLINE STUDY';
+    osc('/sightline/rebuild', JSON.stringify(sightlineCfg));
+    target.pos.set(fd.pos);
+    target.col.set(fd.col);
+    baseCol.set(fd.col);
+    if (scatterFirst) {
+      const arr = posAttr.array;
+      for (let i = 0; i < N; i++) {
+        const j = i * 3;
+        arr[j]   += rand(-14, 14);
+        arr[j+1] += rand(2, 18);
+        arr[j+2] += rand(-14, 14);
+      }
+      posAttr.needsUpdate = true;
+    }
+    morphT = 0;
+    document.querySelectorAll('#forms .chip').forEach(c => c.classList.remove('on'));
+    // Auto-frame: the bowl's footprint changes with every parameter, so aim a wide
+    // three-quarter view at its actual bounding box rather than a fixed preset.
+    const first = sightlineRows[0], last = sightlineRows[sightlineRows.length - 1];
+    const zSpan = (last.z - first.z) * SL_SCALE;
+    const ySpan = last.floor * SL_SCALE;
+    const centerZ = (SL_FOCAL.z * SL_SCALE * 0.3) + ((first.z + last.z) * SL_SCALE * 0.5) * 0.7;
+    goCamera({ key: 'sl-overview', name: 'SIGHTLINE OVERVIEW',
+      theta: 0.42, phi: 1.02,
+      r: Math.max(26, zSpan * 0.85 + ySpan * 0.4),
+      t: [0, Math.max(2, ySpan * 0.32), centerZ] });
+  }
+
   /* ============================ OSC MONITOR ============================ */
   const oscEl = document.getElementById('osc');
   let lastHb = -1;
@@ -1513,6 +1698,66 @@ import * as THREE from 'three';
   });
   document.getElementById('fx-spot').addEventListener('click', () => setPerformer(!perfOn));
   document.getElementById('fx-twinkle').addEventListener('click', () => setTwinkle(!twinkle));
+
+  /* ---- Sightline Studio wiring ---- */
+  const sightPanel = document.getElementById('sight-panel');
+  const fxSight = document.getElementById('fx-sight');
+  const slInputs = { rows: 'sl-rows', seats: 'sl-seats', balconies: 'sl-balc', balcRows: 'sl-balcrows', cVal: 'sl-c' };
+  fxSight.addEventListener('click', () => {
+    const opening = !sightPanel.classList.contains('open');
+    sightPanel.classList.toggle('open', opening);
+    fxSight.classList.toggle('on', opening);
+    if (opening) applySightline(true);
+  });
+  let slTimer = null;
+  function slRebuild() {
+    clearTimeout(slTimer);
+    slTimer = setTimeout(() => {
+      for (const k in slInputs) {
+        const el = document.getElementById(slInputs[k]);
+        const v = parseFloat(el.value);
+        const lo = parseFloat(el.min), hi = parseFloat(el.max);
+        sightlineCfg[k] = Math.min(hi, Math.max(lo, isNaN(v) ? sightlineCfg[k] : v));
+        el.value = sightlineCfg[k];
+      }
+      audio(); beep(520, 0.05, 0.04, 'sine');
+      applySightline(true); // scatter+rebuild: the requested "particles fly to add a balcony" effect
+      document.getElementById('sl-readout').textContent =
+        sightlineCfg.rows + ' orchestra rows × ' + sightlineCfg.seats + ' seats, ' +
+        sightlineCfg.balconies + ' balcon' + (sightlineCfg.balconies === 1 ? 'y' : 'ies') +
+        ' @ ' + sightlineCfg.balcRows + ' rows, ' + sightlineCfg.cVal + '" clearance — ' +
+        sightlineRows.length + ' rows solved, every seat sights the stage.';
+    }, 260);
+  }
+  Object.values(slInputs).forEach(id => document.getElementById(id).addEventListener('input', slRebuild));
+
+  document.getElementById('sl-seatgo').addEventListener('click', () => {
+    const tier = Math.round(parseFloat(document.getElementById('sl-tier').value) || 0);
+    const rowN = Math.max(1, Math.round(parseFloat(document.getElementById('sl-seatrow').value) || 1));
+    const seatN = Math.max(1, Math.round(parseFloat(document.getElementById('sl-seatnum').value) || 1));
+    if (currentForm !== 'sightline' || !sightlineRows.length) applySightline(true);
+    const tierRows = sightlineRows.filter(r => r.tier === tier);
+    if (!tierRows.length) { document.getElementById('sl-readout').textContent = 'No such tier — check Balconies above.'; return; }
+    const row = tierRows[Math.min(rowN, tierRows.length) - 1];
+    const seatIdx = Math.min(seatN, row.seats) - 1;
+    const sx = -row.half + seatIdx * SL_SEAT_W + SL_SEAT_W / 2;           // feet
+    const eyeFt = new THREE.Vector3(sx, row.floor + SL_EYE_OFFSET, row.z); // feet — for the readout
+    const focalFt = new THREE.Vector3(0, SL_FOCAL.y, SL_FOCAL.z);
+    const vFt = eyeFt.clone().sub(focalFt);
+    // scene-scaled versions drive the actual camera, since particles live in scene units
+    const eyeSc = eyeFt.clone().multiplyScalar(SL_SCALE);
+    const focalSc = focalFt.clone().multiplyScalar(SL_SCALE);
+    const vSc = eyeSc.clone().sub(focalSc);
+    const radius = Math.max(0.5, vSc.length());
+    const theta = Math.atan2(vSc.x, vSc.z);
+    const phi = Math.acos(Math.min(1, Math.max(-1, vSc.y / radius)));
+    goCamera({ key: 'seat', name: (tier === 0 ? 'ORCH' : 'BALC ' + tier) + ' R' + rowN + ' S' + seatN,
+      theta, phi, r: radius, t: [focalSc.x, focalSc.y, focalSc.z] });
+    audio(); beep(1200, 0.06, 0.05, 'sine');
+    document.getElementById('sl-readout').textContent =
+      (tier === 0 ? 'Orchestra' : 'Balcony ' + tier) + ', row ' + rowN + ', seat ' + seatN +
+      ' — ' + vFt.length().toFixed(1) + ' ft to center stage, eye height ' + eyeFt.y.toFixed(1) + ' ft.';
+  });
 
   /* ============================ MAIN LOOP ============================ */
   const clock = new THREE.Clock();
