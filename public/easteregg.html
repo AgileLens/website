@@ -1852,8 +1852,16 @@ import * as THREE from 'three';
       return;
     }
 
-    rig.phi = Math.max(0.25, Math.min(1.52, rig.phi));
-    rig.radius = Math.max(8, Math.min(110, rig.radius));
+    // These clamps exist to keep free (mouse-drag) orbiting from reaching gimbal-lock-ish
+    // extreme angles. They must NOT apply while tweening toward — or settled at — a seat:
+    // a seat's target phi/radius are exact geometry, already computed correctly, and can
+    // legitimately fall outside this range (confirmed: real seats need phi up to ~1.69,
+    // this clamp capped at 1.52 — the tween could never converge, so the camera stayed
+    // permanently pinned at the clamp ceiling instead of its true, lower, correct height).
+    if (!seatLocked) {
+      rig.phi = Math.max(0.25, Math.min(1.52, rig.phi));
+      rig.radius = Math.max(8, Math.min(110, rig.radius));
+    }
     camera.position.set(
       rig.tx + rig.radius * Math.sin(rig.phi) * Math.sin(rig.theta),
       rig.ty + rig.radius * Math.cos(rig.phi),
