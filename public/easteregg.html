@@ -239,7 +239,7 @@
 <div id="marquee">
   <div class="eyebrow">Agile Lens · Immersive Design</div>
   <h1>The Unbuilt<br><em>Theater</em></h1>
-  <div class="sub">Every venue we've delivered existed <b>here</b> first — as points in space, waiting for a cue. Take the board. Call the show.</div>
+  <div class="sub">Every venue Agile Lens and Fisher Dachs have ever worked on together existed <b>here</b> first — as points in space, waiting for a cue. Take the board. Call the show.</div>
 </div>
 
 <div id="readout">
@@ -303,6 +303,12 @@
         <div class="sl-row"><span class="lbl">C-Value (in)</span><input type="number" id="sl-c" min="2" max="8" step="0.5" value="4"></div>
         <div class="sl-row"><span class="lbl">Show Heads</span><button class="chip" id="sl-heads" aria-label="Toggle occupant heads to check obstruction">OFF</button></div>
         <div id="sl-heads-hint" style="font-size:9px;color:var(--dim);letter-spacing:0.06em;min-height:12px;display:none;">click any head to jump to that seat</div>
+        <div class="sl-row" style="margin-top:4px"><span class="lbl">Front of House</span></div>
+        <div class="chip-row">
+          <button class="chip" id="fom-pit">Pit</button>
+          <button class="chip" id="fom-apron">Apron</button>
+          <button class="chip" id="fom-close">Close</button>
+        </div>
       </div>
       <div class="sl-col">
         <div class="sl-title">Jump to Seat</div>
@@ -735,10 +741,6 @@ import * as THREE from 'three';
                                               // isn't a cited standard, just a reasonable design
                                               // choice (~6 rows of overhang); easy to retune.
   const SL_SEAT_W = 1.9;                   // seat pitch (ft)
-  const SL_Z0 = -5;                        // first row's distance from the setting line (ft) —
-                                            // ~15ft from the apron edge, a realistic pit+walkway
-                                            // gap (verified this doesn't reintroduce the runaway-
-                                            // rake behavior a too-close first row caused earlier)
   let sightlineRows = [];                  // last-built row metadata in FEET, for the seat picker
   let headSeats = [];                      // world-space (scene units) head positions, for click-to-jump
   let headHitMesh = null;                  // invisible InstancedMesh used purely for raycasting against heads
@@ -785,6 +787,23 @@ import * as THREE from 'three';
     const tierPalette = [C.velvet, C.velvet2, C.steel, C.seafoam];
     const S = SL_SCALE;
 
+    // 0. Stage footprint, computed first: the front-of-house mode decides where row 1
+    //    actually starts, so this has to happen before the row layout below.
+    const stageWidthFt = Math.min(65, Math.max(28, cfg.seats * SL_SEAT_W * 0.65));
+    const stageHalfW = (stageWidthFt / 2) * S;
+    const stageDepthFt = 25;
+    const stageDownstageZ = SL_FOCAL.z + 10;
+    const stageUpstageZ = stageDownstageZ - stageDepthFt;
+    const frontMode = cfg.frontMode || 'pit';
+    // 'close': first row sits right up near the apron, just a walkway gap — no pit, no
+    //   thrust. 'pit'/'apron' both keep the fuller, theatrically realistic gap, but the
+    //   apron mode fills it by extending the stage deck forward, while pit mode sinks an
+    //   actual orchestra pit into it (depth cited from real venue specs: Gershwin 7'3",
+    //   Palace 7'0" below stage; general range 4-8ft, width 24-30ft).
+    const frontGapFt = frontMode === 'close' ? 4 : 15;
+    const firstRowZ = stageDownstageZ + frontGapFt;
+    const apronZ = frontMode === 'apron' ? firstRowZ - 3 : stageDownstageZ; // thrust nearly to the first row
+
     // 1. Lay out every row, main floor then balconies, as one continuous sequence (feet).
     //    Two Z values per row: `z` is the true physical position (what renders and where
     //    the camera goes — balconies legitimately overlap forward over the orchestra here);
@@ -792,24 +811,28 @@ import * as THREE from 'three';
     //    below, so pulling a balcony forward can't make the sightline formula see the
     //    distance-from-stage go backwards, which would break its monotonic assumption.
     const rows = [];
-    let z = SL_Z0, zSight = SL_Z0;
+    let z = firstRowZ, zSight = firstRowZ;
     for (let r = 0; r < cfg.rows; r++) { rows.push({ tier: 0, rowInTier: r + 1, z, zSight, seats: cfg.seats }); z += SL_ROW_DEPTH; zSight += SL_ROW_DEPTH; }
-    // Balconies overhang the rear of the orchestra rather than starting behind it — a
-    // continuous overhang is standard practice (real balcony front edges commonly project
-    // out over the rear rows below), not a fully separate, set-back block. Pull the first
-    // balcony's start back into the orchestra's own depth, capped so it can't reach past
-    // the front of the house even on a very shallow orchestra. (SL_BALCONY_OVERLAP is a
-    // reasonable design choice, not a cited industry figure the way the clearance value is.)
-    const orchLastZ = z - SL_ROW_DEPTH;
-    const orchDepth = orchLastZ - SL_Z0;
-    let bz = orchLastZ - Math.min(SL_BALCONY_OVERLAP, orchDepth * 0.65);
+    // Balconies overhang the tier below rather than starting behind it — real multi-tier
+    // houses stack balconies roughly ABOVE one another (mezzanine above orchestra, upper
+    // balcony above mezzanine), not each one set further back. A cited source on this
+    // directly: a steep rake that "forces the balcony...to be higher, pushing the audience
+    // further from the performance" is described as the tradeoff to minimize, not the goal
+    // — real balconies "keep audiences closer to the stage" specifically via stacking.
+    // Previously only the first balcony got this treatment; additional tiers just kept
+    // stepping back with no overlap at all, compounding into a long receding staircase.
+    let tierLastZ = z - SL_ROW_DEPTH;   // reference Z for the next tier's overlap pull-back
+    let tierDepth = tierLastZ - firstRowZ;
     for (let b = 0; b < cfg.balconies; b++) {
+      let bz = tierLastZ - Math.min(SL_BALCONY_OVERLAP, tierDepth * 0.65);
+      const tierStartZ = bz;
       zSight += SL_TIER_GAP; // physics still gets an honest "further back" step for the clearance math
       for (let r = 0; r < cfg.balcRows; r++) {
         rows.push({ tier: b + 1, rowInTier: r + 1, z: bz, zSight, seats: cfg.seats });
         bz += SL_ROW_DEPTH * 0.9; zSight += SL_ROW_DEPTH * 0.9;
       }
-      bz += SL_TIER_GAP;
+      tierLastZ = bz - SL_ROW_DEPTH * 0.9; // this tier's last row becomes the next tier's overlap reference
+      tierDepth = tierLastZ - tierStartZ;
     }
 
     // 2. Recursive C-value sightline solve: E_i = Fy + (D_i/D_(i-1)) * (E_(i-1) + clr - Fy)
@@ -917,27 +940,45 @@ import * as THREE from 'three';
     //    elements read apart from each other at a glance, and the point budget freed by
     //    removing the ambient sparkle field (see below) is spent here and on the seats
     //    themselves, rather than on floating background dust.
-    const stageWidthFt = Math.min(65, Math.max(28, cfg.seats * SL_SEAT_W * 0.65));
-    const stageHalfW = (stageWidthFt / 2) * S;
-    const stageDepthFt = 25;
-    const stageDownstageZ = SL_FOCAL.z + 10;
-    const stageUpstageZ = stageDownstageZ - stageDepthFt;
-    const stageNearSc = stageDownstageZ * S, stageFarSc = stageUpstageZ * S;
+    const stageNearSc = apronZ * S, stageFarSc = stageUpstageZ * S;
     sightlineStage = { halfW: stageHalfW, zNear: stageNearSc, zFar: stageFarSc }; // for the performer's walk path
 
-    // Stage deck
+    // Stage deck (apron mode thrusts this forward, nearly to the first row)
     for (let i = 0; i < 3000 * K; i++) {
       push(p, col,
         srandRange(skey(901, 0, i, 0), -stageHalfW, stageHalfW), 0.06,
         srandRange(skey(901, 0, i, 1), stageFarSc, stageNearSc),
         jitterColor(C.stage, 0.1));
     }
+    // Orchestra pit — sunk between the true proscenium edge and the first row, cited from
+    // real venue specs (Gershwin: pit 7'3" below stage; Palace: 7'0"; general range 4-8ft
+    // deep, 24-30ft wide). Only rendered in 'pit' mode; apron/close modes have no gap left
+    // to put one in.
+    if (frontMode === 'pit') {
+      const pitDepthFt = 6.5, pitHalfW = stageHalfW * 0.82;
+      const pitNearZ = firstRowZ * S - 1.5, pitFarZ = stageDownstageZ * S;
+      const pitFloorY = -pitDepthFt * S;
+      for (let i = 0; i < 900 * K; i++) { // pit floor
+        push(p, col,
+          srandRange(skey(910, 0, i, 0), -pitHalfW, pitHalfW),
+          pitFloorY + srandRange(skey(910, 0, i, 1), -0.05, 0.05),
+          srandRange(skey(910, 0, i, 2), pitFarZ, pitNearZ),
+          jitterColor(C.graphite, 0.14));
+      }
+      for (let i = 0; i < 400 * K; i++) { // low front rail, audience side
+        push(p, col,
+          srandRange(skey(911, 0, i, 0), -pitHalfW, pitHalfW),
+          srandRange(skey(911, 0, i, 1), pitFloorY, 0.15),
+          pitNearZ + srandRange(skey(911, 0, i, 2), -0.12, 0.12),
+          jitterColor(C.graphite, 0.2));
+      }
+    }
     // Proscenium arch — two columns + a header, framing the opening at the downstage edge.
     // Height scales with width using the ratio implied by real published venues (Marquis
     // 40w/28.5h, Palace 40.8w/30.5h, Poway 39.5w/24h -> roughly 0.6-0.75), clamped to a
     // sane range.
     const prosceniumH = Math.min(35, Math.max(15, stageWidthFt * 0.68)) * S;
-    const prosceniumZ = stageNearSc + 0.3;
+    const prosceniumZ = stageDownstageZ * S + 0.3; // the true proscenium line, not the (possibly thrust) apron edge
     for (let i = 0; i < 2500 * K; i++) {
       const side = (i % 2 === 0) ? -1 : 1;
       push(p, col,
@@ -1475,7 +1516,7 @@ import * as THREE from 'three';
   }
 
   /* ---- Sightline Studio: dynamic, non-cached formation driven by the panel inputs ---- */
-  let sightlineCfg = { rows: 13, seats: 22, balconies: 1, balcRows: 5, cVal: 4, showHeads: false };
+  let sightlineCfg = { rows: 13, seats: 22, balconies: 1, balcRows: 5, cVal: 4, showHeads: false, frontMode: 'pit' };
   function applySightline(scatterFirst) {
     // Only disable the performer when actually LEAVING to some other formation — not on
     // every in-place sightline rebuild (parameter tweak or seat jump), which was resetting
@@ -2069,6 +2110,17 @@ import * as THREE from 'three';
     audio(); beep(sightlineCfg.showHeads ? 600 : 460, 0.05, 0.04, 'sine');
     if (currentForm === 'sightline') applySightline(false); // reflow to reallocate points into/out of heads
   });
+
+  /* ---- Front of House mode: pit / apron / close ---- */
+  const fomChips = { pit: document.getElementById('fom-pit'), apron: document.getElementById('fom-apron'), close: document.getElementById('fom-close') };
+  function setFrontMode(mode) {
+    sightlineCfg.frontMode = mode;
+    Object.entries(fomChips).forEach(([k, el2]) => el2.classList.toggle('on', k === mode));
+    audio(); beep(mode === 'pit' ? 340 : mode === 'apron' ? 460 : 580, 0.05, 0.04, 'sine');
+    if (currentForm === 'sightline') applySightline(false);
+  }
+  Object.entries(fomChips).forEach(([k, el2]) => el2.addEventListener('click', () => setFrontMode(k)));
+  fomChips[sightlineCfg.frontMode].classList.add('on');
 
   /* ---- Sightline Studio wiring: swaps in as the console's 4th bay ---- */
   const sightBay = document.getElementById('sight-bay');
