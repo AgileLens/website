@@ -302,6 +302,8 @@
     <div id="sl-head">
       <button id="sl-back" aria-label="Back to console">← Console</button>
       <button id="sl-reframe" aria-label="Reframe camera to see the whole bowl">⤢ Reframe</button>
+      <span style="font-size:9px;letter-spacing:0.1em;color:var(--dim);text-transform:uppercase;">Brightness</span>
+      <input type="range" id="sl-brightness" min="0" max="100" value="82" style="width:80px;flex-shrink:0;" aria-label="Brightness (same control as the Intensity fader)">
       <div class="bay-label" style="margin:0">Sightline Studio — after Fisher Dachs' Extreme Sightlines</div>
     </div>
     <div class="sl-grid">
@@ -1820,9 +1822,9 @@ import * as THREE from 'three';
       // Convergence check: was theta+radius only, which let phi (and the target) still be
       // mid-tween when seatFirstPerson froze the eye position — confirmed via simulation to
       // produce a real, if usually small, height error. Now requires all six values close.
-      if (Math.abs(rig.gTheta - rig.theta) < 0.002 && Math.abs(rig.gRadius - rig.radius) < 0.05 &&
-          Math.abs(rig.gPhi - rig.phi) < 0.002 &&
-          Math.abs(rig.gtx - rig.tx) < 0.03 && Math.abs(rig.gty - rig.ty) < 0.03 && Math.abs(rig.gtz - rig.tz) < 0.03) {
+      if (Math.abs(rig.gTheta - rig.theta) < 0.0008 && Math.abs(rig.gRadius - rig.radius) < 0.015 &&
+          Math.abs(rig.gPhi - rig.phi) < 0.0008 &&
+          Math.abs(rig.gtx - rig.tx) < 0.01 && Math.abs(rig.gty - rig.ty) < 0.01 && Math.abs(rig.gtz - rig.tz) < 0.01) {
         rig.tweening = false;
       }
     }
@@ -1957,7 +1959,11 @@ import * as THREE from 'three';
   });
   const fInt = document.getElementById('f-int');
   const fHouse = document.getElementById('f-house');
-  fInt.addEventListener('input', () => { faderOsc(fInt, Number(fInt.value)); syncUrlThrottled(); });
+  fInt.addEventListener('input', () => { faderOsc(fInt, Number(fInt.value)); slBrightness.value = fInt.value; syncUrlThrottled(); });
+
+  const slBrightness = document.getElementById('sl-brightness');
+  slBrightness.value = fInt.value;
+  slBrightness.addEventListener('input', () => { fInt.value = slBrightness.value; faderOsc(fInt, Number(fInt.value)); syncUrlThrottled(); });
   fHouse.addEventListener('input', () => { faderOsc(fHouse, Number(fHouse.value)); syncUrlThrottled(); });
 
   const sndChip = document.getElementById('snd');
