@@ -64,6 +64,16 @@
   }
   #hide-ui:hover { color: var(--plaster); border-color: rgba(232,221,201,0.4); }
   #hide-ui:focus-visible { outline: 2px solid var(--seafoam); outline-offset: 2px; }
+  #copy-link {
+    position: fixed; bottom: 18px; right: 60px; z-index: 30;
+    width: 34px; height: 34px; border-radius: 50%; padding: 0;
+    background: rgba(13,18,26,0.78); border: 1px solid var(--line); backdrop-filter: blur(10px);
+    color: var(--dim); font-size: 14px; cursor: pointer; display: flex; align-items: center; justify-content: center;
+    transition: color 0.15s, border-color 0.15s, background 0.15s;
+  }
+  #copy-link:hover { color: var(--plaster); border-color: rgba(232,221,201,0.4); }
+  #copy-link.copied { color: var(--void); background: var(--seafoam); border-color: var(--seafoam); }
+  body.ui-hidden #copy-link { display: none; }
   body.ui-hidden #marquee, body.ui-hidden #readout, body.ui-hidden #osc,
   body.ui-hidden #console, body.ui-hidden #hint { display: none !important; }
 
@@ -250,6 +260,7 @@
 
 <div id="osc" aria-hidden="true"></div>
 <button id="hide-ui" aria-label="Hide interface" title="Hide interface (H)">◐</button>
+<button id="copy-link" aria-label="Copy shareable link" title="Copy a link to this exact view">🔗</button>
 <button id="xr-btn" aria-label="Enter immersive VR">◉ Enter the Theater</button>
 
 <div id="hint">drag to orbit · scroll to dolly</div>
@@ -1493,6 +1504,7 @@ import * as THREE from 'three';
     if (key !== 'theater') setPerformer(false);
     seatLocked = false;
     seatFirstPerson = false;
+    lastSeatSpec = null; // a seat spec only makes sense inside Sightline Studio
     currentForm = key;
     osc('/scene/load', '"' + FORMS[key].name.toLowerCase().replace(' ', '_') + '"');
     roForm.textContent = FORMS[key].name;
@@ -1524,6 +1536,7 @@ import * as THREE from 'three';
     if (currentForm !== 'theater' && currentForm !== 'sightline') setPerformer(false);
     seatLocked = false;
     seatFirstPerson = false;
+    lastSeatSpec = null; // a bowl-shape change invalidates any specific "I'm in this seat" claim; jumpToSeat re-sets this right after calling here
     currentForm = 'sightline';
     const fd = buildSightlineTheater(sightlineCfg); // also (re)populates sightlineRows, in feet
     roForm.textContent = 'SIGHTLINE STUDY';
@@ -1763,6 +1776,7 @@ import * as THREE from 'three';
   let seatFirstPerson = false;
   const seatEyePos = new THREE.Vector3();
   let seatYaw = 0, seatPitch = 0;
+  let lastCamKey = 'booth', gelIndex = 0, lastSeatSpec = null; // tracked purely for the shareable-link URL
   const CAMS = [
     { key: 'booth',    name: 'FOH BOOTH',  theta:  0.03, phi: 1.18, r: 47, t: [0, 5.5, 2] },
     { key: 'orch',     name: 'ORCH ROW F', theta:  0.00, phi: 1.42, r: 22, t: [0, 4.5, -4] },
@@ -1773,6 +1787,7 @@ import * as THREE from 'three';
   const roCam = document.getElementById('ro-cam');
   function goCamera(c, snap) {
     if (c.key !== 'seat') { seatLocked = false; seatFirstPerson = false; } // leaving the seated view — resume normal camera behavior
+    if (['booth', 'orch', 'balcony', 'dsc', 'fly'].includes(c.key)) lastCamKey = c.key; // for the shareable link — ignore internal keys like 'seat'/'sl-overview'
     roCam.textContent = c.name;
     osc('/cam/recall', '"' + c.key + '"');
     if (renderer.xr.isPresenting) { xrTeleport(c); return; }
@@ -1911,16 +1926,18 @@ import * as THREE from 'three';
     b.addEventListener('click', () => {
       gelColor = new THREE.Color(g.hex);
       gelName.textContent = g.name;
+      gelIndex = i;
       osc('/board/gel', '"' + g.name + '"');
       document.querySelectorAll('.gel').forEach(x => x.classList.remove('on'));
       b.classList.add('on');
+      syncUrlThrottled();
     });
     gelWrap.appendChild(b);
   });
   const fInt = document.getElementById('f-int');
   const fHouse = document.getElementById('f-house');
-  fInt.addEventListener('input', () => faderOsc(fInt, Number(fInt.value)));
-  fHouse.addEventListener('input', () => faderOsc(fHouse, Number(fHouse.value)));
+  fInt.addEventListener('input', () => { faderOsc(fInt, Number(fInt.value)); syncUrlThrottled(); });
+  fHouse.addEventListener('input', () => { faderOsc(fHouse, Number(fHouse.value)); syncUrlThrottled(); });
 
   const sndChip = document.getElementById('snd');
   sndChip.classList.add('on');
@@ -1930,6 +1947,7 @@ import * as THREE from 'three';
     sndChip.classList.toggle('on', soundOn);
     if (audio() && master) master.gain.linearRampToValueAtTime(soundOn ? 0.5 : 0.0001, AC.currentTime + 0.2);
     osc('/audio/master', soundOn ? 1 : 0);
+    syncUrlThrottled();
   });
 
   /* ---- Hide-UI toggle (flat screen) ---- */
@@ -2083,7 +2101,7 @@ import * as THREE from 'three';
     b.className = 'chip cam' + (i === 0 ? ' on' : '');
     b.dataset.cam = c.key;
     b.textContent = c.name;
-    b.addEventListener('click', () => goCamera(c));
+    b.addEventListener('click', () => { goCamera(c); syncUrlThrottled(); });
     camWrap.appendChild(b);
   });
   const formWrap = document.getElementById('forms');
@@ -2092,11 +2110,11 @@ import * as THREE from 'three';
     b.className = 'chip' + (i === 0 ? ' on' : '');
     b.dataset.form = k;
     b.textContent = label;
-    b.addEventListener('click', () => setFormation(k, true));
+    b.addEventListener('click', () => { setFormation(k, true); syncUrlThrottled(); });
     formWrap.appendChild(b);
   });
-  document.getElementById('fx-spot').addEventListener('click', () => setPerformer(!perfOn));
-  document.getElementById('fx-twinkle').addEventListener('click', () => setTwinkle(!twinkle));
+  document.getElementById('fx-spot').addEventListener('click', () => { setPerformer(!perfOn); syncUrlThrottled(); });
+  document.getElementById('fx-twinkle').addEventListener('click', () => { setTwinkle(!twinkle); syncUrlThrottled(); });
 
   /* ---- Show Heads: obstruction check + click-to-jump ---- */
   const headsChip = document.getElementById('sl-heads');
@@ -2109,6 +2127,7 @@ import * as THREE from 'three';
     el.style.cursor = sightlineCfg.showHeads && currentForm === 'sightline' ? 'pointer' : 'grab';
     audio(); beep(sightlineCfg.showHeads ? 600 : 460, 0.05, 0.04, 'sine');
     if (currentForm === 'sightline') applySightline(false); // reflow to reallocate points into/out of heads
+    syncUrlThrottled();
   });
 
   /* ---- Front of House mode: pit / apron / close ---- */
@@ -2118,6 +2137,7 @@ import * as THREE from 'three';
     Object.entries(fomChips).forEach(([k, el2]) => el2.classList.toggle('on', k === mode));
     audio(); beep(mode === 'pit' ? 340 : mode === 'apron' ? 460 : 580, 0.05, 0.04, 'sine');
     if (currentForm === 'sightline') applySightline(false);
+    syncUrlThrottled();
   }
   Object.entries(fomChips).forEach(([k, el2]) => el2.addEventListener('click', () => setFrontMode(k)));
   fomChips[sightlineCfg.frontMode].classList.add('on');
@@ -2175,6 +2195,7 @@ import * as THREE from 'three';
         sightlineCfg.balconies + ' balcon' + (sightlineCfg.balconies === 1 ? 'y' : 'ies') +
         ' @ ' + sightlineCfg.balcRows + ' rows, ' + sightlineCfg.cVal + '" clearance — ' +
         sightlineRows.length + ' rows solved, every seat sights the stage.';
+      syncUrlThrottled();
     }, 260);
   }
   Object.values(slInputs).forEach(id => document.getElementById(id).addEventListener('input', slRebuild));
@@ -2191,6 +2212,7 @@ import * as THREE from 'three';
     if (!tierRows.length) { document.getElementById('sl-readout').textContent = 'No such tier — check Balconies above.'; return; }
     const row = tierRows[Math.min(rowN, tierRows.length) - 1];
     const seatIdx = Math.min(seatN, row.seats) - 1;
+    lastSeatSpec = { tier, rowInTier: row.rowInTier, seatN: seatIdx + 1 }; // clamped, exact values — for the shareable link
     const sx = seatX(row, seatIdx); // feet — same helper the renderer used, so this is always a real seat, never the aisle
     const eyeFt = new THREE.Vector3(sx, row.floor + SL_EYE_OFFSET, row.z); // feet — for the readout
     const focalFt = new THREE.Vector3(0, SL_FOCAL.y, SL_FOCAL.z);
@@ -2210,6 +2232,7 @@ import * as THREE from 'three';
     document.getElementById('sl-readout').textContent =
       (tier === 0 ? 'Orchestra' : 'Balcony ' + tier) + ', row ' + rowN + ', seat ' + seatN +
       ' — ' + vFt.length().toFixed(1) + ' ft to center stage, eye height ' + (SL_EYE_OFFSET*12).toFixed(0) + '" (seated).';
+    syncUrlThrottled();
   }
   document.getElementById('sl-seatgo').addEventListener('click', () => {
     syncSeatBounds(); // belt-and-suspenders: the fields can't hold an invalid value, but re-clamp anyway
@@ -2615,10 +2638,109 @@ import * as THREE from 'three';
     osc('/xr/session', 'end');
   });
 
+  /* ============================ SHAREABLE LINK ============================
+     Every setting that matters gets folded into the query string (?rows=15&
+     seats=20&...) and the address bar updates live via history.replaceState
+     as things change — no reload, no new history entries. Only non-default
+     values are included, so a lightly-customized view still gets a short
+     link and a heavily-customized one gets a longer, fully explicit one. */
+  function encodeStateToParams() {
+    const p = new URLSearchParams();
+    p.set('form', currentForm);
+    if (K !== 4) p.set('k', String(K));
+    if (currentForm === 'sightline') {
+      if (sightlineCfg.rows !== 13) p.set('rows', sightlineCfg.rows);
+      if (sightlineCfg.seats !== 22) p.set('seats', sightlineCfg.seats);
+      if (sightlineCfg.balconies !== 1) p.set('balc', sightlineCfg.balconies);
+      if (sightlineCfg.balcRows !== 5) p.set('balcrows', sightlineCfg.balcRows);
+      if (sightlineCfg.cVal !== 4) p.set('cval', sightlineCfg.cVal);
+      if (sightlineCfg.showHeads) p.set('heads', '1');
+      if (sightlineCfg.frontMode !== 'pit') p.set('front', sightlineCfg.frontMode);
+      if (lastSeatSpec) p.set('seat', lastSeatSpec.tier + '.' + lastSeatSpec.rowInTier + '.' + lastSeatSpec.seatN);
+      else if (lastCamKey !== 'booth') p.set('cam', lastCamKey);
+    } else if (lastCamKey !== 'booth') {
+      p.set('cam', lastCamKey);
+    }
+    if (perfOn) p.set('spot', '1');
+    if (twinkle) p.set('twinkle', '1');
+    if (gelIndex !== 0) p.set('gel', String(gelIndex));
+    if (Number(fInt.value) !== 82) p.set('int', fInt.value);
+    if (Number(fHouse.value) !== 22) p.set('house', fHouse.value);
+    if (!soundOn) p.set('sound', '0');
+    return p;
+  }
+  function syncUrl() {
+    const qs = encodeStateToParams().toString();
+    history.replaceState(null, '', location.pathname + (qs ? '?' + qs : ''));
+  }
+  let urlSyncTimer = null;
+  function syncUrlThrottled() { clearTimeout(urlSyncTimer); urlSyncTimer = setTimeout(syncUrl, 150); }
+
+  function loadStateFromUrl() {
+    const lp = new URLSearchParams(location.search);
+    const form = lp.get('form');
+    if (form === 'sightline') {
+      if (lp.has('rows')) sightlineCfg.rows = Math.max(4, Math.min(30, parseInt(lp.get('rows'), 10) || sightlineCfg.rows));
+      if (lp.has('seats')) sightlineCfg.seats = Math.max(6, Math.min(40, parseInt(lp.get('seats'), 10) || sightlineCfg.seats));
+      if (lp.has('balc')) sightlineCfg.balconies = Math.max(0, Math.min(3, parseInt(lp.get('balc'), 10)));
+      if (lp.has('balcrows')) sightlineCfg.balcRows = Math.max(2, Math.min(12, parseInt(lp.get('balcrows'), 10) || sightlineCfg.balcRows));
+      if (lp.has('cval')) sightlineCfg.cVal = Math.max(2, Math.min(8, parseFloat(lp.get('cval')) || sightlineCfg.cVal));
+      if (lp.get('heads') === '1') sightlineCfg.showHeads = true;
+      if (['pit', 'apron', 'close'].includes(lp.get('front'))) sightlineCfg.frontMode = lp.get('front');
+      openSightBay(true);
+      document.getElementById('sl-rows').value = sightlineCfg.rows;
+      document.getElementById('sl-seats').value = sightlineCfg.seats;
+      document.getElementById('sl-balc').value = sightlineCfg.balconies;
+      document.getElementById('sl-balcrows').value = sightlineCfg.balcRows;
+      document.getElementById('sl-c').value = sightlineCfg.cVal;
+      if (sightlineCfg.showHeads) { headsChip.textContent = 'ON'; headsChip.classList.add('on'); headsHint.style.display = 'block'; }
+      Object.entries(fomChips).forEach(([k, el2]) => el2.classList.toggle('on', k === sightlineCfg.frontMode));
+      syncSeatBounds();
+      const seatSpec = lp.get('seat');
+      if (seatSpec) {
+        const parts = seatSpec.split('.').map(x => parseInt(x, 10));
+        if (parts.length === 3 && parts.every(x => !isNaN(x))) {
+          document.getElementById('sl-tier').value = parts[0];
+          document.getElementById('sl-seatrow').value = parts[1];
+          document.getElementById('sl-seatnum').value = parts[2];
+          jumpToSeat(parts[0], parts[1], parts[2]);
+        }
+      } else {
+        const camObj = CAMS.find(c => c.key === lp.get('cam'));
+        if (camObj) goCamera(camObj, true);
+      }
+    } else if (form && FORMS[form]) {
+      setFormation(form, false); // smooth morph in from the initial scan, not an instant snap
+      const camObj = CAMS.find(c => c.key === lp.get('cam'));
+      if (camObj) goCamera(camObj, true);
+    } else {
+      return; // no recognizable 'form' param — nothing to restore, keep the defaults already applied
+    }
+    if (lp.get('spot') === '1') setPerformer(true);
+    if (lp.get('twinkle') === '1') setTwinkle(true);
+    if (lp.has('gel')) { const gi = parseInt(lp.get('gel'), 10); if (gi >= 0 && gi < GELS.length) pickGel(gi); }
+    if (lp.has('int')) fInt.value = Math.max(0, Math.min(100, parseFloat(lp.get('int')) || 82));
+    if (lp.has('house')) fHouse.value = Math.max(0, Math.min(100, parseFloat(lp.get('house')) || 22));
+    if (lp.get('sound') === '0') sndChip.click();
+    syncUrl(); // normalize back to clean, canonical param values
+  }
+
+  const copyLinkBtn = document.getElementById('copy-link');
+  copyLinkBtn.addEventListener('click', async () => {
+    syncUrl();
+    try { await navigator.clipboard.writeText(location.href); }
+    catch (e) { window.prompt('Copy this link:', location.href); }
+    copyLinkBtn.classList.add('copied');
+    copyLinkBtn.textContent = '✓';
+    setTimeout(() => { copyLinkBtn.classList.remove('copied'); copyLinkBtn.textContent = '🔗'; }, 1400);
+    audio(); beep(900, 0.05, 0.04, 'sine');
+  });
+
   // Open on the survey, booth view
   document.getElementById('ro-pts').textContent = N.toLocaleString('en-US');
   goCamera(CAMS[0], true);
   applyBoard();
+  loadStateFromUrl(); // if the URL encodes a specific view, this overrides the defaults just set above
   renderer.setAnimationLoop(animate);
   // Pregenerate the remaining formations during idle time so GO never hitches
   const PREGEN = ['theater', 'headset', 'marquee', 'skyline', 'guitar', 'wave', 'globe', 'dominoes', 'monocle'];
