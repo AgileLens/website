@@ -1817,7 +1817,14 @@ import * as THREE from 'three';
       rig.tx += (rig.gtx - rig.tx) * k;
       rig.ty += (rig.gty - rig.ty) * k;
       rig.tz += (rig.gtz - rig.tz) * k;
-      if (Math.abs(rig.gTheta - rig.theta) < 0.002 && Math.abs(rig.gRadius - rig.radius) < 0.05) rig.tweening = false;
+      // Convergence check: was theta+radius only, which let phi (and the target) still be
+      // mid-tween when seatFirstPerson froze the eye position — confirmed via simulation to
+      // produce a real, if usually small, height error. Now requires all six values close.
+      if (Math.abs(rig.gTheta - rig.theta) < 0.002 && Math.abs(rig.gRadius - rig.radius) < 0.05 &&
+          Math.abs(rig.gPhi - rig.phi) < 0.002 &&
+          Math.abs(rig.gtx - rig.tx) < 0.03 && Math.abs(rig.gty - rig.ty) < 0.03 && Math.abs(rig.gtz - rig.tz) < 0.03) {
+        rig.tweening = false;
+      }
     }
 
     // The instant a seat's fly-in tween settles, freeze the eye position and hand off
@@ -1954,6 +1961,29 @@ import * as THREE from 'three';
     if (audio() && master) master.gain.linearRampToValueAtTime(soundOn ? 0.5 : 0.0001, AC.currentTime + 0.2);
     osc('/audio/master', soundOn ? 1 : 0);
     syncUrlThrottled();
+  });
+
+  /* ---- Fly controls (flat screen): WASD to move, Space/Shift for up/down ---- */
+  const flyKeys = { w: false, a: false, s: false, d: false, ' ': false, shift: false };
+  function typingInField() {
+    const tag = (document.activeElement && document.activeElement.tagName) || '';
+    return tag === 'INPUT' || tag === 'TEXTAREA';
+  }
+  window.addEventListener('keydown', e => {
+    if (typingInField()) return;
+    const k = e.key.toLowerCase();
+    if (k === 'w' || k === 'a' || k === 's' || k === 'd') flyKeys[k] = true;
+    if (e.key === ' ') { flyKeys[' '] = true; e.preventDefault(); } // stop the page from scrolling
+    if (e.key === 'Shift') flyKeys.shift = true;
+  });
+  window.addEventListener('keyup', e => {
+    const k = e.key.toLowerCase();
+    if (k === 'w' || k === 'a' || k === 's' || k === 'd') flyKeys[k] = false;
+    if (e.key === ' ') flyKeys[' '] = false;
+    if (e.key === 'Shift') flyKeys.shift = false;
+  });
+  window.addEventListener('blur', () => { // e.g. alt-tabbing away mid-press — don't leave a key "stuck"
+    flyKeys.w = flyKeys.a = flyKeys.s = flyKeys.d = flyKeys[' '] = flyKeys.shift = false;
   });
 
   /* ---- Hide-UI toggle (flat screen) ---- */
@@ -2368,6 +2398,28 @@ import * as THREE from 'three';
 
     // Idle drift when settled and hands-off
     if (!dragging && !rig.tweening && !REDUCED && !seatLocked) rig.theta += 0.0005;
+
+    // Fly controls: WASD moves the orbit target along the camera's own facing directions,
+    // which drags the camera with it (same radius/theta/phi offset preserved) — moving the
+    // "thing you're orbiting" is a simpler way to fly than maintaining a whole separate
+    // free-camera mode, and it means mouse-drag orbiting still works seamlessly afterward.
+    if (!renderer.xr.isPresenting) {
+      const flying = flyKeys.w || flyKeys.a || flyKeys.s || flyKeys.d || flyKeys[' '] || flyKeys.shift;
+      if (flying) {
+        seatLocked = false; seatFirstPerson = false; rig.tweening = false;
+        document.querySelectorAll('#cams .chip').forEach(ch => ch.classList.remove('on'));
+        roCam.textContent = 'FREE FLIGHT';
+        const fwd = new THREE.Vector3(); camera.getWorldDirection(fwd);
+        const right = new THREE.Vector3().crossVectors(fwd, camera.up).normalize();
+        const speed = 16 * dt; // scene units/sec — tune here if it feels too fast/slow for a given formation's scale
+        if (flyKeys.w) { rig.tx += fwd.x * speed; rig.ty += fwd.y * speed; rig.tz += fwd.z * speed; }
+        if (flyKeys.s) { rig.tx -= fwd.x * speed; rig.ty -= fwd.y * speed; rig.tz -= fwd.z * speed; }
+        if (flyKeys.d) { rig.tx += right.x * speed; rig.ty += right.y * speed; rig.tz += right.z * speed; }
+        if (flyKeys.a) { rig.tx -= right.x * speed; rig.ty -= right.y * speed; rig.tz -= right.z * speed; }
+        if (flyKeys[' ']) rig.ty += speed;
+        if (flyKeys.shift) rig.ty -= speed;
+      }
+    }
 
     // Breathing point size — splat shimmer
     if (!REDUCED) mat.uniforms.uSize.value = baseSize + Math.sin(t * 1.3) * 0.02 * (baseSize / 0.22);
