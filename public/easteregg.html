@@ -922,7 +922,14 @@ import * as THREE from 'three';
             rz + srandRange(skey(row.tier, row.rowInTier, s, 5000 + k * 3 + 2), 0.12, 0.30),
             jitterColor(tierColor, 0.18));
         }
-        if (cfg.showHeads) {
+        // Skip the head for whichever seat you're actually sitting in — the camera lands
+        // almost exactly at that position (eye height is only ~1.8in below the head's own
+        // center), so without this exclusion you'd be looking at the inside of your own
+        // head, which is exactly what was reported: looking straight down shows the head
+        // "you should be inside of" sitting just below you.
+        const isMySeat = lastSeatSpec && row.tier === lastSeatSpec.tier &&
+          row.rowInTier === lastSeatSpec.rowInTier && (s + 1) === lastSeatSpec.seatN;
+        if (cfg.showHeads && !isMySeat) {
           for (let k = 0; k < headPts; k++) {
             push(p, col,
               rx + srandRange(skey(row.tier, row.rowInTier, s, 9000 + k * 3), -0.13, 0.13),
@@ -1536,7 +1543,6 @@ import * as THREE from 'three';
     if (currentForm !== 'theater' && currentForm !== 'sightline') setPerformer(false);
     seatLocked = false;
     seatFirstPerson = false;
-    lastSeatSpec = null; // a bowl-shape change invalidates any specific "I'm in this seat" claim; jumpToSeat re-sets this right after calling here
     currentForm = 'sightline';
     const fd = buildSightlineTheater(sightlineCfg); // also (re)populates sightlineRows, in feet
     roForm.textContent = 'SIGHTLINE STUDY';
@@ -2152,6 +2158,7 @@ import * as THREE from 'three';
     otherBays.forEach(b => { b.style.display = open ? 'none' : 'flex'; });
     fxSight.classList.toggle('on', open);
     if (open) {
+      lastSeatSpec = null; // fresh entry — no seat chosen yet in this session
       applySightline(true); // entering the studio: scatter-rebuild, camera untouched
       if (!perfOn) setPerformer(true); // sightline-checking wants a moving reference on stage by default
     }
@@ -2202,17 +2209,24 @@ import * as THREE from 'three';
   syncSeatBounds(); // set correct bounds for the default config on load
 
   function jumpToSeat(tier, rowN, seatN) {
-    currentSeatRow = { tier, rowInTier: rowN }; // drives proximity density on the rebuild below
-    // Always rebuild so points redistribute around the new seat; scatter only on a fresh
-    // entry into sightline mode. Mid-session seat jumps reflow smoothly in place — the
-    // stage, backwall, rails, and any performer don't depend on currentSeatRow, so those
-    // hold completely still while only the seat/head density redistributes around you.
-    applySightline(currentForm !== 'sightline');
+    // Resolve which row/seat this actually is FIRST, using whatever row data currently
+    // exists. If we're not in sightline mode yet (or have no data at all), do one cheap
+    // preliminary build just to get valid geometry to resolve against — this only happens
+    // once per session, on the very first jump.
+    if (currentForm !== 'sightline' || !sightlineRows.length) applySightline(true);
     const tierRows = sightlineRows.filter(r => r.tier === tier);
     if (!tierRows.length) { document.getElementById('sl-readout').textContent = 'No such tier — check Balconies above.'; return; }
     const row = tierRows[Math.min(rowN, tierRows.length) - 1];
     const seatIdx = Math.min(seatN, row.seats) - 1;
-    lastSeatSpec = { tier, rowInTier: row.rowInTier, seatN: seatIdx + 1 }; // clamped, exact values — for the shareable link
+    currentSeatRow = { tier, rowInTier: row.rowInTier }; // drives proximity density
+    // Set BEFORE the real rebuild below, not after — the self-head-exclusion check inside
+    // buildSightlineTheater reads lastSeatSpec, so if this were set afterward the exclusion
+    // would always be one seat behind (still showing the head at the seat you just left).
+    lastSeatSpec = { tier, rowInTier: row.rowInTier, seatN: seatIdx + 1 };
+    // Rebuild so points redistribute around the new seat AND the correct head is excluded.
+    // Stage, backwall, rails, and any performer don't depend on currentSeatRow/lastSeatSpec,
+    // so those hold completely still while only the seat/head density and exclusion update.
+    applySightline(false);
     const sx = seatX(row, seatIdx); // feet — same helper the renderer used, so this is always a real seat, never the aisle
     const eyeFt = new THREE.Vector3(sx, row.floor + SL_EYE_OFFSET, row.z); // feet — for the readout
     const focalFt = new THREE.Vector3(0, SL_FOCAL.y, SL_FOCAL.z);
