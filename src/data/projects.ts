@@ -733,7 +733,7 @@ export const projects: Project[] = [
     images: ['/portfolio/lovebird/01.jpg', '/portfolio/lovebird/02.jpg', '/portfolio/lovebird/03.jpg', '/portfolio/lovebird/04.jpg'],
   },
   {
-    slug: 'ny-dbox-holodeck',
+    slug: 'ny-dbox-space',
     name: 'NY DBOX VR Experience Space',
     status: 'Completed',
     featured: false,
@@ -754,8 +754,8 @@ export const projects: Project[] = [
     links: '',
     category1: 'Real Estate',
     category2: 'Architecture',
-    image: '/portfolio/ny-dbox-holodeck/01.jpg',
-    images: ['/portfolio/ny-dbox-holodeck/01.jpg', '/portfolio/ny-dbox-holodeck/02.jpg', '/portfolio/ny-dbox-holodeck/03.jpg', '/portfolio/ny-dbox-holodeck/04.jpg', '/portfolio/ny-dbox-holodeck/05.jpg'],
+    image: '/portfolio/ny-dbox-space/01.jpg',
+    images: ['/portfolio/ny-dbox-space/01.jpg', '/portfolio/ny-dbox-space/02.jpg', '/portfolio/ny-dbox-space/03.jpg', '/portfolio/ny-dbox-space/04.jpg', '/portfolio/ny-dbox-space/05.jpg'],
   },
   {
     slug: 'perfect-day-mexico',
