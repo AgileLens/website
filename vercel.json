@@ -1,0 +1,9 @@
+{
+  "redirects": [
+    {
+      "source": "/portfolio/ny-dbox-holodeck",
+      "destination": "/portfolio/ny-dbox-space",
+      "permanent": true
+    }
+  ]
+}
