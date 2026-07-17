@@ -743,7 +743,7 @@ export const projects: Project[] = [
     awards: '',
     press: '',
     clients: 'DBOX, Impossible Ventures',
-    overview: 'A permanent co-located VR experience space inside DBOX\'s Manhattan headquarters — a second-generation system that replaced OptiTrack with shared spatial anchors, enabling high-end architectural visualization tours without requiring clients to travel to Austin.',
+    overview: 'A permanent co-located VR experience space inside DBOX\'s Manhattan headquarters — a second generation system that replaced Four Seasons Lake Austin\'s first-generation Optitrack with shared spatial anchors, enabling high-end architectural visualization tours without requiring clients to travel to Austin.',
     video: '',
     imageCarousel: '',
     description: 'DBOX has been the design partner behind the Four Seasons Lake Austin from the beginning — and in 2025 they set aside nearly 2,000 sq ft of their New York offices to bring that experience to their home city. The result is a Gen 2 VR experience space that rethinks how shared VR environments are built. Out went the dozens of OptiTrack cameras required by the Austin setup. In came a shared spatial anchor system developed by Agile Lens that works reliably in the high-density Wi-Fi environment of downtown Manhattan — a meaningful technical leap from a hilltop in Austin. The experience itself was rebuilt from UE 4.27 to Unreal Engine 5.4, improving performance significantly. New control panels, onboarding flows, and real-time analytics for spatial anchor health were designed to make the experience as smooth for operators as it is for viewers.',
