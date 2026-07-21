@@ -37,6 +37,12 @@
               Optional title/subtitle renders as frosted-glass overlay.
    'IFRAME:'  Prefix c.img with 'IFRAME:' to embed a URL (YouTube, etc.)
    ======================================================================= */
+// Prefix for all image/video paths. Vercel serves this deck at a clean URL with
+// no trailing slash and redirects the trailing-slash form back to it, so plain
+// relative paths (e.g. 'images/x.png') resolve one directory too high in
+// production. Empty for local dev/preview (served at root); set to the deployed
+// mount path (e.g. '/presentations/cmet2026-1/') before pushing to production.
+const ASSET_BASE = '/presentations/cmet2026-1/';
 const SECTIONS = [
   { year: 'CH 1', accent: 'purple', bgImg: 'images/lesson-ch2.svg', badge: 'Live Lesson',
     lesson: { title:'Throw Out\nThe Rundown.', short:'BUILD IT LIVE, RUN IT LIVE', tagline:'A show isn\u2019t live if it\u2019s simply on rails. These cases keep human operators in the loop to sync, audible, and push based on live events and decisions. Live actors, live broadcasts, live rehearsal choices.', tags:'Live Performance \u00b7 Real-Time Sync \u00b7 Mixed Reality' },
@@ -749,20 +755,20 @@ deck.appendChild(cov);allSlides.push(cov);
 
 // Sizzle reel
 const sizzle=document.createElement('div');sizzle.className='slide slide-sizzle';sizzle.dataset.type='sizzle';
-sizzle.innerHTML=`<video class="sizzle-video" src="media/sizzle.mp4" controls playsinline preload="metadata"></video><div class="sizzle-topscrim"></div><div class="sizzle-tag">Agile Lens &middot; Sizzle Reel</div><h2 class="sizzle-title">10 years of interactive immersive performances</h2>`;
+sizzle.innerHTML=`<video class="sizzle-video" src="${ASSET_BASE}media/sizzle.mp4" controls playsinline preload="metadata"></video><div class="sizzle-topscrim"></div><div class="sizzle-tag">Agile Lens &middot; Sizzle Reel</div><h2 class="sizzle-title">10 years of interactive immersive performances</h2>`;
 deck.appendChild(sizzle);allSlides.push(sizzle);
 
 // Build sections
 SECTIONS.forEach((sec,si)=>{
   const ac=sec.accent!=='teal'?` accent-${sec.accent}`:'';
   const ls=document.createElement('div');ls.className=`slide slide-lesson${ac}`;ls.dataset.type='lesson';ls.dataset.year=sec.year;ls.dataset.section=si;ls.dataset.ln=si+1;
-  ls.innerHTML=`${sec.bgImg?`<div class="lesson-bg" style="background-image:url('${sec.bgImg}')"></div><div class="lesson-scrim"></div>`:''}<div class="lesson-ey"><span class="ey-yr">${sec.year}</span><span class="ey-sep">&middot;</span><span class="ey-badge">${si+1} / ${SECTIONS.length}</span></div><h2 class="lesson-title">${sec.lesson.title}</h2><p class="lesson-tagline">${sec.lesson.tagline.replace(/<br><br>/g,'<br><span class="para-gap"></span>')}</p>${sec.lesson.tags?`<div class="lesson-tags">${sec.lesson.tags}</div>`:''}<div class="lesson-rule"></div>${sec.badge?`<div class="lesson-badge">${sec.badge}</div>`:''}`;
+  ls.innerHTML=`${sec.bgImg?`<div class="lesson-bg" style="background-image:url('${ASSET_BASE}${sec.bgImg}')"></div><div class="lesson-scrim"></div>`:''}<div class="lesson-ey"><span class="ey-yr">${sec.year}</span><span class="ey-sep">&middot;</span><span class="ey-badge">${si+1} / ${SECTIONS.length}</span></div><h2 class="lesson-title">${sec.lesson.title}</h2><p class="lesson-tagline">${sec.lesson.tagline.replace(/<br><br>/g,'<br><span class="para-gap"></span>')}</p>${sec.lesson.tags?`<div class="lesson-tags">${sec.lesson.tags}</div>`:''}<div class="lesson-rule"></div>${sec.badge?`<div class="lesson-badge">${sec.badge}</div>`:''}`;
   deck.appendChild(ls);allSlides.push(ls);lessonIdxs.push(allSlides.length-1);
   sec.cases.forEach(c=>{
     const s=document.createElement('div');s.className=`slide case-slide${ac}${c.layout?' layout-'+c.layout:''}${c.gridCover?' grid-cover':''}`;s.dataset.type='case';s.dataset.year=sec.year;s.dataset.section=si;
     // layout: 'hero' — full-bleed background image, dark scrim, title/subtitle bottom-left
     if(c.layout==='hero'){
-      s.innerHTML=`<div class="hero-bg" style="background-image:url('${c.img}')"></div><div class="hero-scrim"></div><div class="hero-content"><div class="hero-tag">${sec.year}&nbsp;&middot;&nbsp;${sec.lesson.short||''}</div><h2 class="hero-title">${c.title.replace(/\n/g,'<br>')}</h2><p class="hero-sub">${c.subtitle||''}</p></div>`;
+      s.innerHTML=`<div class="hero-bg" style="background-image:url('${ASSET_BASE}${c.img}')"></div><div class="hero-scrim"></div><div class="hero-content"><div class="hero-tag">${sec.year}&nbsp;&middot;&nbsp;${sec.lesson.short||''}</div><h2 class="hero-title">${c.title.replace(/\n/g,'<br>')}</h2><p class="hero-sub">${c.subtitle||''}</p></div>`;
       deck.appendChild(s);allSlides.push(s);return;
     }
     // layout: 'big' — full-slide statement text (bigText, optional title/subtitle/bigCaption)
@@ -859,7 +865,7 @@ SECTIONS.forEach((sec,si)=>{
       const iframeSrc=c.img.slice(7);
       imgHTML=`<iframe src="${iframeSrc}" style="width:100%;height:100%;border:none;border-radius:18px" allow="autoplay;fullscreen;xr-spatial-tracking" allowfullscreen></iframe>`;
     } else if(c.img&&c.img!=='MEDIA_CYCLER'){
-      imgHTML=`<img src="${c.img}" loading="lazy" style="border-radius:18px">`;
+      imgHTML=`<img src="${ASSET_BASE}${c.img}" loading="lazy" style="border-radius:18px">`;
     } else {
       imgHTML=`<div class="media-cycler-mount" style="width:100%;height:100%"></div>`;
     }
