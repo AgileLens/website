@@ -23,4 +23,13 @@ export const presentations: Presentation[] = [
     description:
       'Seven live events where XR turned the audience into a participant — from a mixed reality art installation to a hot-air balloon ride over a resort that doesn’t exist yet.',
   },
+  {
+    slug: 'cmet2026-2',
+    title: 'Enterprise Holodecks for Pre-Construction Value',
+    event: 'CMET Summit — Intelligent Systems & Immersive Technology Panel',
+    date: 'July 2026',
+    speaker: 'Henry Keyser',
+    description:
+      'Three generations of co-located VR holodecks, and how a firm that doesn’t need AI still uses it deliberately — to repurpose hardware, speed up production, and rebuild its own tools.',
+  },
 ];
