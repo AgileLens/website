@@ -231,11 +231,43 @@ export default function MountainViewInvite() {
         </div>
       </Section>
 
+      {/* ───────── Who's hosting (Jonathan bio) ───────── */}
+      <Section className="border-t border-border">
+        <div className="max-w-3xl mx-auto px-6 md:px-12 py-20 md:py-28">
+          <p className="text-xs uppercase tracking-wider text-pink font-bold mb-4">Who&rsquo;s hosting</p>
+          <h2 className="text-2xl md:text-3xl font-black mb-6">
+            A little about me, since I&rsquo;ll be the one showing you around.
+          </h2>
+          <p className="text-muted leading-relaxed text-base mb-4">
+            I&rsquo;m not an important or famous person, but I&rsquo;ve had an unusual few
+            decades. I started 1-800 Contacts in my dorm room in 1992 with $50; it sold in 2012
+            for $900 million, and again in 2020 for $3.1 billion. I spent five years in
+            Washington fighting a well-funded lobby to pass the Fairness to Contact Lens
+            Consumers Act, a federal law that gave 36 million Americans the right to their own
+            prescriptions. My wife Kirsten and I funded a small movie my brother Jeremy made
+            called Napoleon Dynamite.
+          </p>
+          <p className="text-muted leading-relaxed text-base mb-6">
+            None of that has much to do with VR, except that it&rsquo;s probably why I was
+            stubborn enough to spend millions of dollars figuring out how to build a holodeck
+            through trial and error.
+          </p>
+          <a
+            href="https://www.jonathancoon.com"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-pink hover:underline text-sm font-semibold"
+          >
+            More about me, if you&rsquo;re curious &rarr;
+          </a>
+        </div>
+      </Section>
+
       {/* ───────── Built by (credit + testimonial) ───────── */}
       <Section className="relative overflow-hidden">
         <div className="pink-glow" style={{ top: '-10vh', right: '-20vh' }} />
         <div className="relative max-w-3xl mx-auto px-6 md:px-12 py-20 md:py-28">
-          <p className="text-xs uppercase tracking-wider text-muted font-bold mb-6">Built by</p>
+          <p className="text-xs uppercase tracking-wider text-muted font-bold mb-6">Who built it</p>
           <blockquote className="text-2xl md:text-3xl font-medium leading-snug mb-6">
             &ldquo;Agile Lens is an XR SEAL Team Six&hellip; What the team, including Pureblink
             and DBOX, has built is a time machine.&rdquo;
@@ -243,7 +275,8 @@ export default function MountainViewInvite() {
           <p className="text-sm text-muted font-semibold mb-10">Jonathan Coon, developer</p>
           <p className="text-muted leading-relaxed text-base">
             Agile Lens wrote the software and ran the Holodeck floor. Pureblink and DBOX built
-            the visuals from our architects&rsquo; renders. I just get to give the tours.
+            the visuals from our architects&rsquo; renders. I run the floor now, and I&rsquo;m
+            usually the one giving the tour.
           </p>
         </div>
       </Section>
