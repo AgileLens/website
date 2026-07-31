@@ -95,10 +95,10 @@ export default function MountainViewInvite() {
         <div className="absolute inset-0">
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
-            src="/mountain-view/floor-hero.jpg"
-            alt="Guests standing on the bare, marker-tracked floor of the Holodeck before the headsets go on."
+            src="/mountain-view/floor-wide.jpg"
+            alt="Four guests in headsets, spread across the bare marker-tracked floor of the Holodeck."
             className="w-full h-full object-cover"
-            style={{ objectPosition: 'center 38%' }}
+            style={{ objectPosition: 'center 45%' }}
           />
         </div>
         <div
@@ -119,9 +119,9 @@ export default function MountainViewInvite() {
               The room is empty.<br />Then it isn&rsquo;t.
             </h1>
             <p className="hero-subtitle text-lg md:text-xl text-white/85 max-w-[56ch] leading-relaxed mb-10">
-              We have a 5,000 square foot Holodeck in Mountain View, open by appointment from
-              July 28 through August 7. Walk into it, and you&rsquo;re walking through $300 million
-              of Four Seasons Private Residences Lake Austin amenities that don&rsquo;t exist yet.
+              A 5,000 square foot Holodeck is open in Mountain View by appointment, July 28
+              through August 7. Walk into it and you&rsquo;re walking through $300 million of Four
+              Seasons Private Residences Lake Austin amenities that don&rsquo;t exist yet.
             </p>
             <div className="hero-subtitle flex flex-wrap items-center gap-6">
               <a href={RSVP_MAILTO} className="btn-gradient px-7 py-3.5 rounded-full text-sm font-semibold text-white">
@@ -198,9 +198,9 @@ export default function MountainViewInvite() {
           his own team.
         </p>
         <p className="text-muted leading-relaxed text-base">
-          We&rsquo;ve hosted more than 1,000 tours for more than 2,500 guests, with a 100%
-          completion rate on the full 25-minute experience. That&rsquo;s unheard of in this
-          industry.
+          Jonathan Coon and his team have hosted more than 1,000 tours for more than 2,500
+          guests, with a 100% completion rate on the full 25-minute experience. That&rsquo;s
+          unheard of in this industry.
         </p>
       </Section>
 
@@ -234,23 +234,22 @@ export default function MountainViewInvite() {
       {/* ───────── Who's hosting (Jonathan bio) ───────── */}
       <Section className="border-t border-border">
         <div className="max-w-3xl mx-auto px-6 md:px-12 py-20 md:py-28">
-          <p className="text-xs uppercase tracking-wider text-pink font-bold mb-4">Who&rsquo;s hosting</p>
+          <p className="text-xs uppercase tracking-wider text-pink font-bold mb-4">About your host</p>
           <h2 className="text-2xl md:text-3xl font-black mb-6">
-            A little about me, since I&rsquo;ll be the one showing you around.
+            Jonathan Coon built this because he doesn&rsquo;t take no for an answer.
           </h2>
           <p className="text-muted leading-relaxed text-base mb-4">
-            I&rsquo;m not an important or famous person, but I&rsquo;ve had an unusual few
-            decades. I started 1-800 Contacts in my dorm room in 1992 with $50; it sold in 2012
-            for $900 million, and again in 2020 for $3.1 billion. I spent five years in
-            Washington fighting a well-funded lobby to pass the Fairness to Contact Lens
-            Consumers Act, a federal law that gave 36 million Americans the right to their own
-            prescriptions. My wife Kirsten and I funded a small movie my brother Jeremy made
-            called Napoleon Dynamite.
+            He started 1-800 Contacts in his dorm room in 1992 with $50. It sold in 2012 for
+            $900 million, and again in 2020 for $3.1 billion. When 36 million Americans
+            couldn&rsquo;t get copies of their own contact lens prescriptions, he spent five
+            years in Washington fighting a well-funded lobby until the Fairness to Contact Lens
+            Consumers Act passed as a standalone federal law. He and his wife Kirsten also
+            funded a small movie his brother Jeremy made called Napoleon Dynamite.
           </p>
           <p className="text-muted leading-relaxed text-base mb-6">
-            None of that has much to do with VR, except that it&rsquo;s probably why I was
-            stubborn enough to spend millions of dollars figuring out how to build a holodeck
-            through trial and error.
+            None of that is about VR. It&rsquo;s the pattern that explains why he spent millions
+            of dollars and years of trial and error building a holodeck at a point when nobody
+            had built one that worked.
           </p>
           <a
             href="https://www.jonathancoon.com"
@@ -258,7 +257,7 @@ export default function MountainViewInvite() {
             rel="noopener noreferrer"
             className="text-pink hover:underline text-sm font-semibold"
           >
-            More about me, if you&rsquo;re curious &rarr;
+            More about Jonathan &rarr;
           </a>
         </div>
       </Section>
@@ -274,9 +273,10 @@ export default function MountainViewInvite() {
           </blockquote>
           <p className="text-sm text-muted font-semibold mb-10">Jonathan Coon, developer</p>
           <p className="text-muted leading-relaxed text-base">
-            Agile Lens wrote the software and ran the Holodeck floor. Pureblink and DBOX built
-            the visuals from our architects&rsquo; renders. I run the floor now, and I&rsquo;m
-            usually the one giving the tour.
+            Agile Lens wrote the software and ran the Holodeck floor through its first months of
+            operation. Pureblink and DBOX built the visuals from the project&rsquo;s
+            architectural renders. Jonathan&rsquo;s team runs it now, and he usually gives the
+            tour himself.
           </p>
         </div>
       </Section>
@@ -297,7 +297,7 @@ export default function MountainViewInvite() {
 
       <div className="max-w-7xl mx-auto px-6 md:px-12 pb-20 md:pb-28 space-y-1">
         <Section className="grid grid-cols-1 md:grid-cols-2 gap-1">
-          <PairCell tag="The room" src="/mountain-view/floor-wide.jpg" alt="Guests standing on the empty, marker-tracked Holodeck floor, headsets on." caption="Guests before the headset goes on." />
+          <PairCell tag="The room" src="/mountain-view/floor-hero.jpg" alt="A guest in a headset reaching out toward something only visible inside the Holodeck." caption="Reaching for something that isn’t there." />
           <PairCell tag="The world" src="/mountain-view/residence-dining.jpg" alt="Photoreal rendering of a private dining room high above Lake Austin, part of the VR tour." caption="Private dining, high above Lake Austin." rendered />
         </Section>
         <Section className="grid grid-cols-1 md:grid-cols-2 gap-1">
@@ -313,7 +313,7 @@ export default function MountainViewInvite() {
       {/* ───────── Video ───────── */}
       <Section className="max-w-5xl mx-auto px-6 md:px-12 py-20 md:py-28">
         <div className="text-center max-w-2xl mx-auto mb-12">
-          <h2 className="text-3xl md:text-4xl font-black mb-4">I&rsquo;ll let the film do some of the talking.</h2>
+          <h2 className="text-3xl md:text-4xl font-black mb-4">See it in motion first.</h2>
           <p className="text-muted leading-relaxed text-base">
             A short film shot inside a live Holodeck tour, plus the videos the press shot when
             they came to see it themselves.
@@ -383,16 +383,17 @@ export default function MountainViewInvite() {
       <Section className="border-t border-border">
         <div className="max-w-3xl mx-auto px-6 md:px-12 py-20 md:py-28">
           <p className="text-xs uppercase tracking-wider text-muted font-bold mb-4">No agenda required</p>
-          <h2 className="text-2xl md:text-3xl font-black mb-6">This isn&rsquo;t a business for us.</h2>
+          <h2 className="text-2xl md:text-3xl font-black mb-6">The Holodeck isn&rsquo;t a business.</h2>
           <p className="text-muted leading-relaxed text-base mb-4">
-            We built the Holodeck, at real cost, so we could show guests what the residences and
-            amenities at Four Seasons Lake Austin will feel like before they&rsquo;re finished.
-            We&rsquo;re happy to open-source what we&rsquo;ve learned along the way.
+            Jonathan built it, at real cost, so guests could feel what the residences and
+            amenities at Four Seasons Lake Austin will be like before they&rsquo;re finished.
+            He&rsquo;s happy to open-source the platform and share what the team learned building
+            it.
           </p>
           <p className="text-muted leading-relaxed text-base">
-            You don&rsquo;t have to be a prospective buyer to come. We&rsquo;ve found it helps to
-            have people who love where architecture and technology meet walk through it, so they
-            know about the project and can tell others.
+            Guests don&rsquo;t have to be prospective buyers. He&rsquo;s found it helps to have
+            people who love where architecture and technology meet walk through it, so they know
+            the project exists and can tell others about it.
           </p>
         </div>
       </Section>
@@ -416,11 +417,11 @@ export default function MountainViewInvite() {
             Mountain View, CA &middot; By appointment only
           </p>
           <h2 className="text-3xl md:text-5xl font-black mb-6 max-w-[14ch] leading-tight">
-            Come see it while we&rsquo;re here.
+            Come see it while it&rsquo;s here.
           </h2>
           <p className="text-white/80 text-lg leading-relaxed mb-2 max-w-[48ch]">
-            We&rsquo;re open July 28 through August 7. If you&rsquo;d like to visit, send an
-            email to both Nashid and me:
+            The Holodeck is open July 28 through August 7. To request a visit, email both
+            Jonathan and Nashid:
           </p>
           <div className="flex flex-col gap-1 mb-8 text-lg">
             <a href="mailto:jonathan@austincapitalpartners.com" className="text-pink hover:underline w-fit">
@@ -430,14 +431,12 @@ export default function MountainViewInvite() {
               nashid@austincapitalpartners.com
             </a>
           </div>
-          <a href={RSVP_MAILTO} className="btn-gradient inline-block px-7 py-3.5 rounded-full text-sm font-semibold text-white mb-16">
-            Email us both
+          <a href={RSVP_MAILTO} className="btn-gradient inline-block px-7 py-3.5 rounded-full text-sm font-semibold text-white">
+            Email Jonathan and Nashid
           </a>
-          <p className="italic text-white/90 text-lg">Jonathan</p>
 
           <div className="mt-16 pt-8 border-t border-white/10 text-sm text-white/50">
-            The Holodeck experience is built and operated by Agile Lens, with visuals from
-            DBOX and Pureblink.
+            Holodeck platform and software by Agile Lens. Visuals by DBOX and Pureblink.
           </div>
         </div>
       </Section>
