@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 /* ── Scroll Reveal (same pattern as homepage) ── */
 function useReveal() {
@@ -37,6 +37,15 @@ const RSVP_MAILTO =
     "My name:\nPreferred dates/times:\nGuests in my party:\n\nThanks!"
   );
 
+/**
+ * The .btn-gradient utility in globals.css also sets `position: relative`, which
+ * beats Tailwind's `absolute` on source order. These tags are pinned to a corner,
+ * so they take the gradient inline instead of via that class.
+ */
+const tagGradient: React.CSSProperties = {
+  backgroundImage: 'linear-gradient(225deg, var(--color-purple), var(--color-pink))',
+};
+
 const gridTex: React.CSSProperties = {
   backgroundImage:
     'linear-gradient(rgba(251,251,251,.06) 1px, transparent 1px), linear-gradient(90deg, rgba(251,251,251,.06) 1px, transparent 1px)',
@@ -49,6 +58,70 @@ function Stat({ num, label }: { num: string; label: string }) {
       <span className="gradient-text block text-4xl md:text-5xl font-black tabular-nums">{num}</span>
       <span className="block mt-2 text-sm text-muted max-w-[26ch]">{label}</span>
     </div>
+  );
+}
+
+/**
+ * Looping video that costs nothing until it is nearly on screen.
+ * The poster renders immediately and stays put until the first frame is
+ * decodable, so a slow connection sees a real still rather than a black box.
+ */
+function LoopVideo({
+  src,
+  poster,
+  label,
+  className = '',
+  style,
+}: {
+  src: string;
+  poster: string;
+  label: string;
+  className?: string;
+  style?: React.CSSProperties;
+}) {
+  const ref = useRef<HTMLVideoElement>(null);
+  const [reduced, setReduced] = useState(false);
+
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+
+    const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    setReduced(prefersReduced);
+    if (prefersReduced) return; // leave the poster up, expose controls instead
+
+    const io = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          if (!el.getAttribute('src')) {
+            el.setAttribute('src', src);
+            el.load();
+          }
+          void el.play().catch(() => {});
+        } else if (!el.paused) {
+          el.pause();
+        }
+      },
+      { rootMargin: '300px 0px' },
+    );
+    io.observe(el);
+    return () => io.disconnect();
+  }, [src]);
+
+  return (
+    <video
+      ref={ref}
+      poster={poster}
+      aria-label={label}
+      muted
+      loop
+      playsInline
+      preload="none"
+      controls={reduced}
+      src={reduced ? src : undefined}
+      className={className}
+      style={style}
+    />
   );
 }
 
@@ -69,8 +142,9 @@ function PairCell({
     <div className="relative aspect-[4/3] overflow-hidden bg-surface group">
       <span
         className={`absolute top-4 left-4 z-10 text-[0.65rem] font-bold uppercase tracking-wider text-white px-3 py-1.5 rounded-full ${
-          rendered ? 'btn-gradient' : 'bg-black/55 backdrop-blur-sm'
+          rendered ? '' : 'bg-black/55 backdrop-blur-sm'
         }`}
+        style={rendered ? tagGradient : undefined}
       >
         {tag}
       </span>
@@ -165,7 +239,7 @@ export default function MountainViewInvite() {
             href="https://arinsider.co/2026/06/10/lake-austin-luxury-how-a-developer-presold-500m-in-real-estate-with-vr/"
             target="_blank"
             rel="noopener noreferrer"
-            className="text-muted hover:text-text transition-colors font-semibold"
+            className="text-muted hover:text-text transition-colors italic text-lg"
           >
             AR Insider
           </a>
@@ -173,7 +247,7 @@ export default function MountainViewInvite() {
             href="https://www.uploadvr.com/four-seasons-private-residences-austin-vr-holodeck/"
             target="_blank"
             rel="noopener noreferrer"
-            className="text-muted hover:text-text transition-colors font-semibold"
+            className="text-muted hover:text-text transition-colors italic text-lg"
           >
             UploadVR
           </a>
@@ -181,7 +255,7 @@ export default function MountainViewInvite() {
             href="https://www.papercitymag.com/real-estate/four-seasons-private-residences-lake-austin-creates-2-million-holodeck-real-estate-amenities/"
             target="_blank"
             rel="noopener noreferrer"
-            className="text-muted hover:text-text transition-colors font-semibold"
+            className="text-muted hover:text-text transition-colors italic text-lg"
           >
             PaperCity Magazine
           </a>
@@ -191,7 +265,7 @@ export default function MountainViewInvite() {
       {/* ───────── Why people fly in ───────── */}
       <Section className="max-w-3xl mx-auto px-6 md:px-12 py-20 md:py-28">
         <p className="text-xs uppercase tracking-wider text-pink font-bold mb-4">Why people fly in for this</p>
-        <h2 className="text-3xl md:text-4xl font-black mb-6 leading-tight">It has a way of getting attention.</h2>
+        <h2 className="text-3xl md:text-4xl font-black mb-6 leading-tight">There&rsquo;s nothing else like this.</h2>
         <p className="text-muted leading-relaxed text-base mb-4">
           The Holodeck is so far ahead of other VR experiences that John Carmack, former CTO of
           Oculus, came to see it in person. Then Meta&rsquo;s CTO, Andrew Bosworth, flew in with
@@ -236,7 +310,7 @@ export default function MountainViewInvite() {
         <div className="max-w-3xl mx-auto px-6 md:px-12 py-20 md:py-28">
           <p className="text-xs uppercase tracking-wider text-pink font-bold mb-4">About your host</p>
           <h2 className="text-2xl md:text-3xl font-black mb-6">
-            Jonathan Coon built this because he doesn&rsquo;t take no for an answer.
+            Jonathan Coon built this because no one else did.
           </h2>
           <p className="text-muted leading-relaxed text-base mb-4">
             He started 1-800 Contacts in his dorm room in 1992 with $50. It sold in 2012 for
@@ -271,24 +345,18 @@ export default function MountainViewInvite() {
             &ldquo;Agile Lens is an XR SEAL Team Six&hellip; What the team, including Pureblink
             and DBOX, has built is a time machine.&rdquo;
           </blockquote>
-          <p className="text-sm text-muted font-semibold mb-10">Jonathan Coon, developer</p>
-          <p className="text-muted leading-relaxed text-base">
-            Agile Lens wrote the software and ran the Holodeck floor through its first months of
-            operation. Pureblink and DBOX built the visuals from the project&rsquo;s
-            architectural renders. Jonathan&rsquo;s team runs it now, and he usually gives the
-            tour himself.
-          </p>
+          <p className="text-sm text-muted font-semibold">Jonathan Coon, developer</p>
         </div>
       </Section>
 
       {/* ───────── Six scenes / before-after ───────── */}
       <Section className="max-w-7xl mx-auto px-6 md:px-12 pt-20 md:pt-28 pb-10">
         <p className="text-xs uppercase tracking-wider text-pink font-bold mb-4">One room, six places</p>
-        <h2 className="text-3xl md:text-4xl font-black mb-6 max-w-[16ch] leading-tight">
-          You never leave the floor. The floor leaves reality.
+        <h2 className="text-3xl md:text-4xl font-black mb-6 max-w-[18ch] leading-tight">
+          Guests walk freely across the floor. The floor hosts a new reality.
         </h2>
         <p className="text-muted leading-relaxed text-base max-w-[64ch]">
-          Without taking off the headset, you&rsquo;ll move through six scenes built at full
+          Without taking off the headset, guests move through six scenes built at full
           architectural scale: the residence, the lake clubhouse, indoor sports and wellness,
           private dining, the sports bar, and a 96-seat theater, where four real seats are
           waiting at the end.
@@ -302,11 +370,34 @@ export default function MountainViewInvite() {
         </Section>
         <Section className="grid grid-cols-1 md:grid-cols-2 gap-1">
           <PairCell tag="The room" src="/mountain-view/floor-seated.jpg" alt="Guests seated in real chairs mid-tour, wearing headsets in the tracked Holodeck space." caption="Same floor, seated mid-tour." />
-          <PairCell tag="The world" src="/mountain-view/sports-wellness.jpg" alt="Photoreal rendering of the indoor sports and wellness club, part of the VR tour." caption="The indoor sports and wellness club." rendered />
+          <PairCell tag="The world" src="/mountain-view/lake-clubhouse.jpg" alt="Photoreal rendering of the lake clubhouse lounge, glass walls facing the water, part of the VR tour." caption="The lake clubhouse, glass to the water." rendered />
         </Section>
-        <Section className="grid grid-cols-1 md:grid-cols-2 gap-1">
-          <PairCell tag="The room" src="/mountain-view/floor-couch.jpg" alt="Guests seated on a physical couch in the Holodeck, wearing headsets." caption="A couch that exists in two places at once." />
-          <PairCell tag="The world" src="/mountain-view/lake-clubhouse.jpg" alt="Photoreal rendering of the lake clubhouse living room, glass walls facing the water, part of the VR tour." caption="The lake clubhouse, glass to the water." rendered />
+
+        {/* Theater: the physical seats and the virtual theater, side by side, in motion */}
+        <Section className="relative overflow-hidden bg-surface">
+          <LoopVideo
+            src="/mountain-view/theater-loop.mp4"
+            poster="/mountain-view/theater-poster.jpg"
+            label="Two guests settling into real theater seats on the left, and the 96-seat virtual theater they see through the headset on the right."
+            className="w-full block"
+            style={{ aspectRatio: '2560 / 720' }}
+          />
+          <span className="absolute top-4 left-4 z-10 text-[0.65rem] font-bold uppercase tracking-wider text-white px-3 py-1.5 rounded-full bg-black/55 backdrop-blur-sm">
+            The room
+          </span>
+          <span
+            className="absolute top-4 right-4 z-10 text-[0.65rem] font-bold uppercase tracking-wider text-white px-3 py-1.5 rounded-full"
+            style={tagGradient}
+          >
+            The world
+          </span>
+          {/* The clip is 3.56:1, so on a phone it is short. Overlay the caption only
+              where there is room for it; below that, let it sit under the video. */}
+          <div className="px-4 py-3 md:absolute md:inset-x-0 md:bottom-0 md:z-10 md:px-4 md:pb-4 md:pt-10 md:bg-gradient-to-t md:from-black/85 md:to-transparent">
+            <p className="text-sm text-white/95 text-center">
+              The tour ends in a 96-seat theater. Four of those seats are real.
+            </p>
+          </div>
         </Section>
       </div>
 
@@ -395,6 +486,29 @@ export default function MountainViewInvite() {
             people who love where architecture and technology meet walk through it, so they know
             the project exists and can tell others about it.
           </p>
+        </div>
+      </Section>
+
+      {/* ───────── On tour film ───────── */}
+      <Section className="border-t border-border">
+        <div className="max-w-5xl mx-auto px-6 md:px-12 pt-20 md:pt-28">
+          <p className="text-xs uppercase tracking-wider text-pink font-bold mb-4">On the road</p>
+          <h2 className="text-2xl md:text-3xl font-black mb-6">The whole thing packs up and moves.</h2>
+          <p className="text-muted leading-relaxed text-base max-w-[62ch]">
+            What it looks like when the Holodeck goes on tour: an empty ballroom becomes a working
+            Holodeck, and comes back down again, inside of a week.
+          </p>
+        </div>
+        <div className="max-w-5xl mx-auto px-6 md:px-12 pt-10 pb-20 md:pb-28">
+          <div className="rounded-xl overflow-hidden border border-border bg-surface">
+            <LoopVideo
+              src="/mountain-view/holodeck-tour.mp4"
+              poster="/mountain-view/holodeck-tour-poster.jpg"
+              label="The Holodeck being assembled in a hotel ballroom, headsets prepared, and the finished virtual interiors it renders."
+              className="w-full block"
+              style={{ aspectRatio: '16 / 9' }}
+            />
+          </div>
         </div>
       </Section>
 
