@@ -265,7 +265,7 @@ export default function MountainViewInvite() {
       {/* ───────── Why people fly in ───────── */}
       <Section className="max-w-3xl mx-auto px-6 md:px-12 py-20 md:py-28">
         <p className="text-xs uppercase tracking-wider text-pink font-bold mb-4">Why people fly in for this</p>
-        <h2 className="text-3xl md:text-4xl font-black mb-6 leading-tight">There&rsquo;s nothing else like this.</h2>
+        <h2 className="text-3xl md:text-4xl font-black mb-6 leading-tight">There&rsquo;s nothing else like it.</h2>
         <p className="text-muted leading-relaxed text-base mb-4">
           The Holodeck is so far ahead of other VR experiences that John Carmack, former CTO of
           Oculus, came to see it in person. Then Meta&rsquo;s CTO, Andrew Bosworth, flew in with
@@ -313,12 +313,30 @@ export default function MountainViewInvite() {
             Jonathan Coon built this because no one else did.
           </h2>
           <p className="text-muted leading-relaxed text-base mb-4">
-            He started 1-800 Contacts in his dorm room in 1992 with $50. It sold in 2012 for
-            $900 million, and again in 2020 for $3.1 billion. When 36 million Americans
-            couldn&rsquo;t get copies of their own contact lens prescriptions, he spent five
-            years in Washington fighting a well-funded lobby until the Fairness to Contact Lens
-            Consumers Act passed as a standalone federal law. He and his wife Kirsten also
-            funded a small movie his brother Jeremy made called Napoleon Dynamite.
+            He started{' '}
+            <a
+              href="https://www.1800contacts.com"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-pink hover:underline"
+            >
+              1-800 Contacts
+            </a>{' '}
+            in his dorm room in 1992 with $50. It sold in 2012 for $900 million, and again in
+            2020 for $3.1 billion. When 36 million Americans couldn&rsquo;t get copies of their
+            own contact lens prescriptions, he spent five years in Washington fighting a
+            well-funded lobby until the Fairness to Contact Lens Consumers Act passed as a
+            standalone federal law. He and his wife Kirsten also funded a small movie his
+            brother Jeremy made called{' '}
+            <a
+              href="https://www.imdb.com/title/tt0374900/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-pink hover:underline"
+            >
+              Napoleon Dynamite
+            </a>
+            .
           </p>
           <p className="text-muted leading-relaxed text-base mb-6">
             None of that is about VR. It&rsquo;s the pattern that explains why he spent millions
@@ -373,16 +391,18 @@ export default function MountainViewInvite() {
           <PairCell tag="The world" src="/mountain-view/lake-clubhouse.jpg" alt="Photoreal rendering of the lake clubhouse lounge, glass walls facing the water, part of the VR tour." caption="The lake clubhouse, glass to the water." rendered />
         </Section>
 
-        {/* Theater: the physical seats and the virtual theater, side by side, in motion */}
-        <Section className="relative overflow-hidden bg-surface">
+        {/* Theater: the physical seats and the virtual theater, side by side, in motion.
+            The source is a single 2560x720 (3.56:1) split. On a phone that ratio reads as
+            a thin strip, so below md we crop the frame down to just the VR (right) half,
+            which is exactly 1280x720 (16:9) on its own — no vertical cropping needed. */}
+        <Section className="relative overflow-hidden bg-surface aspect-[1280/720] md:aspect-[2560/720]">
           <LoopVideo
             src="/mountain-view/theater-loop.mp4"
             poster="/mountain-view/theater-poster.jpg"
             label="Two guests settling into real theater seats on the left, and the 96-seat virtual theater they see through the headset on the right."
-            className="w-full block"
-            style={{ aspectRatio: '2560 / 720' }}
+            className="absolute inset-0 w-full h-full block object-cover object-right md:object-center"
           />
-          <span className="absolute top-4 left-4 z-10 text-[0.65rem] font-bold uppercase tracking-wider text-white px-3 py-1.5 rounded-full bg-black/55 backdrop-blur-sm">
+          <span className="hidden md:inline-block absolute top-4 left-4 z-10 text-[0.65rem] font-bold uppercase tracking-wider text-white px-3 py-1.5 rounded-full bg-black/55 backdrop-blur-sm">
             The room
           </span>
           <span
@@ -391,9 +411,7 @@ export default function MountainViewInvite() {
           >
             The world
           </span>
-          {/* The clip is 3.56:1, so on a phone it is short. Overlay the caption only
-              where there is room for it; below that, let it sit under the video. */}
-          <div className="px-4 py-3 md:absolute md:inset-x-0 md:bottom-0 md:z-10 md:px-4 md:pb-4 md:pt-10 md:bg-gradient-to-t md:from-black/85 md:to-transparent">
+          <div className="absolute inset-x-0 bottom-0 z-10 px-4 pb-4 pt-10 bg-gradient-to-t from-black/85 to-transparent">
             <p className="text-sm text-white/95 text-center">
               The tour ends in a 96-seat theater. Four of those seats are real.
             </p>
