@@ -29,7 +29,7 @@ function Section({ children, className = '', id }: { children: React.ReactNode; 
 }
 
 const RSVP_MAILTO =
-  "mailto:jonathan@austincapitalpartners.com,nashid@austincapitalpartners.com" +
+  "mailto:jonathan@austincapitalpartners.com,nashid@austincapitalpartners.com,alex@agilelens.com" +
   "?subject=" + encodeURIComponent("Mountain View Holodeck: Visit Request") +
   "&body=" + encodeURIComponent(
     "Hi Jonathan and Nashid,\n\n" +
@@ -552,8 +552,8 @@ export default function MountainViewInvite() {
             Come see it while it&rsquo;s here.
           </h2>
           <p className="text-white/80 text-lg leading-relaxed mb-2 max-w-[48ch]">
-            The Holodeck is open July 28 through August 7. To request a visit, email both
-            Jonathan and Nashid:
+            The Holodeck is open July 28 through August 7. To request a visit, email
+            Jonathan, Nashid, and Alex:
           </p>
           <div className="flex flex-col gap-1 mb-8 text-lg">
             <a href="mailto:jonathan@austincapitalpartners.com" className="text-pink hover:underline w-fit">
@@ -562,9 +562,12 @@ export default function MountainViewInvite() {
             <a href="mailto:nashid@austincapitalpartners.com" className="text-pink hover:underline w-fit">
               nashid@austincapitalpartners.com
             </a>
+            <a href="mailto:alex@agilelens.com" className="text-pink hover:underline w-fit">
+              alex@agilelens.com
+            </a>
           </div>
           <a href={RSVP_MAILTO} className="btn-gradient inline-block px-7 py-3.5 rounded-full text-sm font-semibold text-white">
-            Email Jonathan and Nashid
+            Email Jonathan, Nashid, and Alex
           </a>
 
           <div className="mt-16 pt-8 border-t border-white/10 text-sm text-white/50">
