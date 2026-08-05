@@ -1,7 +1,7 @@
 'use client';
 
 import { Suspense, useEffect, useState } from 'react';
-import { useSearchParams } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import { projects } from '@/data/projects';
 
@@ -27,6 +27,7 @@ export default function PortfolioPage() {
 }
 
 function PortfolioInner() {
+  const router = useRouter();
   const searchParams = useSearchParams();
   const [activeCategory, setActiveCategory] = useState('All');
 
@@ -53,7 +54,11 @@ function PortfolioInner() {
         {categories.map(c => (
           <button
             key={c}
-            onClick={() => setActiveCategory(c)}
+            onClick={() => {
+              setActiveCategory(c);
+              const url = c === 'All' ? '/portfolio' : `/portfolio?category=${encodeURIComponent(c)}`;
+              router.replace(url, { scroll: false });
+            }}
             className={`px-4 py-1.5 text-sm rounded-full border transition-all ${
               activeCategory === c
                 ? 'border-pink bg-pink/10 text-pink'

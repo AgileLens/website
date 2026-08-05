@@ -1,0 +1,2836 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>The Unbuilt Theater — Agile Lens</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..700;1,9..144,300..700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --void: #0a0e14;
+    --plaster: #e8ddc9;
+    --tungsten: #ffb457;
+    --seafoam: #7fd8c9;
+    --rose: #ff7f9e;
+    --steel: #7fa8d8;
+    --dim: #5a6470;
+    --console: rgba(13, 18, 26, 0.88);
+    --line: rgba(232, 221, 201, 0.14);
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html, body { height: 100%; overflow: hidden; background: var(--void); }
+  body { font-family: 'IBM Plex Mono', ui-monospace, monospace; color: var(--plaster); }
+  #stage { position: fixed; inset: 0; cursor: grab; }
+  #stage:active { cursor: grabbing; }
+
+  /* ---------- Title block ---------- */
+  #marquee {
+    position: fixed; top: 28px; left: 32px; z-index: 10;
+    pointer-events: none; user-select: none;
+  }
+  #marquee .eyebrow {
+    font-size: 10px; letter-spacing: 0.32em; color: var(--tungsten);
+    text-transform: uppercase; margin-bottom: 10px;
+  }
+  #marquee h1 {
+    font-family: 'Fraunces', Georgia, serif;
+    font-weight: 340; font-size: clamp(30px, 4.6vw, 54px);
+    line-height: 1.02; letter-spacing: -0.01em; color: var(--plaster);
+    font-variation-settings: "opsz" 100;
+  }
+  #marquee h1 em { font-style: italic; color: var(--seafoam); }
+  #marquee .sub {
+    margin-top: 12px; font-size: 11px; color: var(--dim); letter-spacing: 0.06em;
+    max-width: 340px; line-height: 1.7;
+  }
+  #marquee .sub b { color: var(--plaster); font-weight: 500; }
+
+  /* ---------- Readout (top right) ---------- */
+  #readout {
+    position: fixed; top: 32px; right: 32px; z-index: 10; text-align: right;
+    font-size: 10px; letter-spacing: 0.18em; color: var(--dim);
+    text-transform: uppercase; line-height: 2; user-select: none; pointer-events: none;
+  }
+  #readout .val { color: var(--seafoam); }
+
+  /* ---------- Hide-UI toggle ---------- */
+  #hide-ui {
+    position: fixed; bottom: 18px; right: 18px; z-index: 30;
+    width: 34px; height: 34px; border-radius: 50%; padding: 0;
+    background: rgba(13,18,26,0.78); border: 1px solid var(--line); backdrop-filter: blur(10px);
+    color: var(--dim); font-size: 15px; cursor: pointer; display: flex; align-items: center; justify-content: center;
+    transition: color 0.15s, border-color 0.15s;
+  }
+  #hide-ui:hover { color: var(--plaster); border-color: rgba(232,221,201,0.4); }
+  #hide-ui:focus-visible { outline: 2px solid var(--seafoam); outline-offset: 2px; }
+  #copy-link {
+    position: fixed; bottom: 18px; right: 60px; z-index: 30;
+    width: 34px; height: 34px; border-radius: 50%; padding: 0;
+    background: rgba(13,18,26,0.78); border: 1px solid var(--line); backdrop-filter: blur(10px);
+    color: var(--dim); font-size: 14px; cursor: pointer; display: flex; align-items: center; justify-content: center;
+    transition: color 0.15s, border-color 0.15s, background 0.15s;
+  }
+  #copy-link:hover { color: var(--plaster); border-color: rgba(232,221,201,0.4); }
+  #copy-link.copied { color: var(--void); background: var(--seafoam); border-color: var(--seafoam); }
+  body.ui-hidden #copy-link { display: none; }
+  body.ui-hidden #marquee, body.ui-hidden #readout, body.ui-hidden #osc,
+  body.ui-hidden #console, body.ui-hidden #hint { display: none !important; }
+
+  /* ---------- Console ---------- */
+  #console {
+    position: fixed; left: 50%; bottom: 18px; transform: translateX(-50%);
+    z-index: 20; width: min(1060px, calc(100% - 24px));
+    background: var(--console); border: 1px solid var(--line);
+    border-radius: 10px; backdrop-filter: blur(14px);
+    display: flex; align-items: stretch; gap: 0;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.55);
+  }
+  .bay { padding: 14px 18px; display: flex; flex-direction: column; gap: 10px; min-width: 0; }
+  .bay + .bay { border-left: 1px solid var(--line); }
+  .bay-label {
+    font-size: 9px; letter-spacing: 0.28em; text-transform: uppercase;
+    color: var(--dim); user-select: none;
+  }
+
+  /* Cue bay */
+  #cue-bay { flex: 1.35; }
+  #cue-list { display: flex; flex-direction: column; gap: 3px; max-height: 96px; overflow-y: auto; scrollbar-width: thin; }
+  .cue {
+    display: flex; gap: 10px; align-items: baseline;
+    font-size: 10.5px; color: var(--dim); padding: 2px 6px; border-radius: 4px;
+    letter-spacing: 0.04em; transition: color 0.25s, background 0.25s;
+  }
+  .cue .num { color: var(--steel); width: 44px; flex-shrink: 0; }
+  .cue.standby { color: var(--plaster); background: rgba(255,180,87,0.08); }
+  .cue.standby .num { color: var(--tungsten); }
+  .cue.done { opacity: 0.35; }
+  .cue.done .num { color: var(--dim); }
+  #go-row { display: flex; align-items: center; gap: 14px; margin-top: 2px; }
+  #go {
+    font-family: inherit; font-weight: 600; font-size: 15px; letter-spacing: 0.24em;
+    background: var(--tungsten); color: #1a1206; border: none; border-radius: 6px;
+    padding: 10px 30px 10px 34px; cursor: pointer; transition: transform 0.08s, background 0.2s, box-shadow 0.2s;
+    box-shadow: 0 0 0 0 rgba(255,180,87,0.0);
+  }
+  #go:hover { background: #ffc478; box-shadow: 0 0 24px 2px rgba(255,180,87,0.35); }
+  #go:active { transform: scale(0.96); }
+  #go:focus-visible, .chip:focus-visible, .gel:focus-visible { outline: 2px solid var(--seafoam); outline-offset: 2px; }
+  #go.spent { background: #2a3240; color: var(--dim); cursor: default; box-shadow: none; }
+  #standby-line { font-size: 10px; color: var(--tungsten); letter-spacing: 0.14em; min-height: 14px; }
+  #standby-line.flash { animation: sb 1.2s ease-in-out infinite; }
+  @keyframes sb { 50% { opacity: 0.35; } }
+
+  /* Board bay: faders + gels */
+  #board-bay { flex: 1; }
+  .fader-row { display: flex; align-items: center; gap: 10px; font-size: 9px; letter-spacing: 0.16em; color: var(--dim); text-transform: uppercase; }
+  .fader-row span { width: 62px; flex-shrink: 0; }
+  input[type="range"] {
+    -webkit-appearance: none; appearance: none; flex: 1; height: 2px;
+    background: rgba(232,221,201,0.22); border-radius: 2px; cursor: pointer;
+  }
+  input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none; appearance: none; width: 12px; height: 22px; border-radius: 3px;
+    background: var(--plaster); border: 1px solid rgba(0,0,0,0.4); cursor: grab;
+  }
+  input[type="range"]::-moz-range-thumb {
+    width: 12px; height: 22px; border-radius: 3px; background: var(--plaster);
+    border: 1px solid rgba(0,0,0,0.4); cursor: grab;
+  }
+  #gels { display: flex; gap: 8px; align-items: center; }
+  .gel {
+    width: 26px; height: 26px; border-radius: 5px; border: 1px solid rgba(255,255,255,0.15);
+    cursor: pointer; transition: transform 0.12s, box-shadow 0.12s; padding: 0; flex-shrink: 0;
+  }
+  .gel:hover { transform: translateY(-2px); }
+  .gel.on { box-shadow: 0 0 0 2px var(--void), 0 0 0 3.5px var(--plaster); }
+  .gel-label { font-size: 9px; letter-spacing: 0.14em; color: var(--dim); text-transform: uppercase; }
+
+  /* Views bay */
+  #views-bay { flex: 1.1; }
+  .chip-row { display: flex; flex-wrap: wrap; gap: 6px; }
+  .chip {
+    font-family: inherit; font-size: 9.5px; letter-spacing: 0.1em; text-transform: uppercase;
+    background: transparent; color: var(--dim); border: 1px solid var(--line);
+    border-radius: 20px; padding: 6px 12px; cursor: pointer;
+    transition: color 0.18s, border-color 0.18s, background 0.18s;
+  }
+  .chip:hover { color: var(--plaster); border-color: rgba(232,221,201,0.4); }
+  .chip.on { color: var(--void); background: var(--seafoam); border-color: var(--seafoam); font-weight: 600; }
+  .chip.cam.on { background: var(--steel); border-color: var(--steel); }
+
+  /* Hint */
+  #hint {
+    position: fixed; bottom: 148px; left: 50%; transform: translateX(-50%);
+    font-size: 10px; letter-spacing: 0.2em; color: var(--dim); text-transform: uppercase;
+    z-index: 5; pointer-events: none; user-select: none; transition: opacity 1s;
+  }
+
+  /* Sightline Studio — a 4th console bay that swaps in for cue/board/views, not an extra panel */
+  #sight-bay { flex: 1; min-width: 0; }
+  #sl-head { display: flex; align-items: center; gap: 12px; margin-bottom: 4px; }
+  #sl-back {
+    font-family: inherit; font-size: 9.5px; letter-spacing: 0.1em; text-transform: uppercase;
+    background: transparent; color: var(--dim); border: 1px solid var(--line); border-radius: 14px;
+    padding: 4px 10px; cursor: pointer; transition: color 0.15s, border-color 0.15s; flex-shrink: 0;
+  }
+  #sl-back:hover { color: var(--plaster); border-color: rgba(232,221,201,0.4); }
+  #sl-reframe {
+    font-family: inherit; font-size: 9.5px; letter-spacing: 0.1em; text-transform: uppercase;
+    background: transparent; color: var(--seafoam); border: 1px solid var(--seafoam); border-radius: 14px;
+    padding: 4px 10px; cursor: pointer; transition: background 0.15s, color 0.15s; flex-shrink: 0;
+  }
+  #sl-reframe:hover { background: var(--seafoam); color: var(--void); }
+  .sl-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px 28px; flex: 1; }
+  .sl-col { display: flex; flex-direction: column; gap: 7px; min-width: 0; }
+  .sl-title { font-size: 9px; letter-spacing: 0.26em; color: var(--tungsten); text-transform: uppercase; margin-bottom: 2px; }
+  .sl-row { display: flex; align-items: center; gap: 8px; font-size: 9.5px; letter-spacing: 0.08em; color: var(--dim); text-transform: uppercase; }
+  .sl-row span.lbl { flex: 1; min-width: 0; }
+  .sl-row input[type="number"] {
+    width: 48px; flex-shrink: 0; font-family: inherit; font-size: 11px; color: var(--plaster);
+    background: rgba(255,255,255,0.05); border: 1px solid var(--line); border-radius: 4px;
+    padding: 3px 5px; text-align: center;
+  }
+  .sl-row input[type="number"]:focus-visible { outline: 2px solid var(--seafoam); outline-offset: 1px; }
+  #sl-seatgo {
+    font-family: inherit; font-size: 9.5px; letter-spacing: 0.1em; text-transform: uppercase;
+    background: transparent; color: var(--seafoam); border: 1px solid var(--seafoam);
+    border-radius: 14px; padding: 5px 12px; cursor: pointer; transition: background 0.15s, color 0.15s;
+    align-self: flex-start;
+  }
+  #sl-seatgo:hover { background: var(--seafoam); color: var(--void); }
+  #sl-readout { font-size: 9px; color: var(--dim); letter-spacing: 0.06em; min-height: 24px; }
+  @media (max-width: 860px) { .sl-grid { grid-template-columns: 1fr; } }
+
+  /* ---------- XR entry ---------- */
+  #xr-btn {
+    display: none; position: fixed; top: 26px; left: 50%; transform: translateX(-50%);
+    z-index: 30; font-family: inherit; font-size: 11px; letter-spacing: 0.24em;
+    text-transform: uppercase; color: var(--seafoam); background: rgba(13,18,26,0.85);
+    border: 1px solid var(--seafoam); border-radius: 24px; padding: 11px 26px;
+    cursor: pointer; backdrop-filter: blur(10px); transition: background 0.2s, color 0.2s;
+  }
+  #xr-btn:hover { background: var(--seafoam); color: var(--void); }
+  #xr-btn:focus-visible { outline: 2px solid var(--plaster); outline-offset: 2px; }
+
+  /* ---------- OSC monitor ---------- */
+  #osc {
+    position: fixed; top: 122px; right: 32px; z-index: 9; width: 270px;
+    text-align: right; font-size: 9px; letter-spacing: 0.05em; line-height: 1.95;
+    color: var(--dim); pointer-events: none; user-select: none;
+  }
+  #osc::before {
+    content: 'OSC 8000 ▸ SHOW CONTROL';
+    display: block; letter-spacing: 0.26em; font-size: 8.5px;
+    margin-bottom: 6px; opacity: 0.65;
+  }
+  .osc-line { opacity: 0.4; transition: opacity 0.4s; white-space: nowrap; overflow: hidden; }
+  .osc-line:first-of-type { opacity: 1; }
+  .osc-line .a { color: var(--seafoam); }
+  .osc-line .g { color: var(--plaster); }
+
+  @media (max-width: 860px) {
+    #console { flex-direction: column; bottom: 10px; }
+    .bay + .bay { border-left: none; border-top: 1px solid var(--line); }
+    #cue-list { max-height: 66px; }
+    #marquee { top: 18px; left: 18px; }
+    #marquee .sub { display: none; }
+    #readout, #osc { display: none; }
+    #hint { display: none; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    #standby-line.flash { animation: none; }
+  }
+</style>
+</head>
+<body>
+<div id="stage"></div>
+
+<div id="marquee">
+  <div class="eyebrow">Agile Lens · Immersive Design</div>
+  <h1>The Unbuilt<br><em>Theater</em></h1>
+  <div class="sub">Every venue Agile Lens and Fisher Dachs have ever worked on together existed <b>here</b> first — as points in space, waiting for a cue. Take the board. Call the show.</div>
+</div>
+
+<div id="readout">
+  <div>Formation <span class="val" id="ro-form">SITE SCAN</span></div>
+  <div>Camera <span class="val" id="ro-cam">FOH BOOTH</span></div>
+  <div>Points <span class="val" id="ro-pts">96,000</span></div>
+</div>
+
+<div id="osc" aria-hidden="true"></div>
+<button id="hide-ui" aria-label="Hide interface" title="Hide interface (H)">◐</button>
+<button id="copy-link" aria-label="Copy shareable link" title="Copy a link to this exact view">🔗</button>
+<button id="xr-btn" aria-label="Enter immersive VR">◉ Enter the Theater</button>
+
+<div id="hint">drag to orbit · scroll to dolly</div>
+
+<div id="console" role="region" aria-label="Lighting and cue console">
+  <div class="bay" id="cue-bay">
+    <div class="bay-label">Cue Stack — "Opening Night"</div>
+    <div id="cue-list"></div>
+    <div id="go-row">
+      <button id="go" aria-label="Execute next cue">GO</button>
+      <div id="standby-line" class="flash">STANDBY CUE 0.5</div>
+    </div>
+  </div>
+  <div class="bay" id="board-bay">
+    <div class="bay-label">Board</div>
+    <div class="fader-row"><span>Intensity</span><input type="range" id="f-int" min="0" max="100" value="82" aria-label="Master intensity"></div>
+    <div class="fader-row"><span>House</span><input type="range" id="f-house" min="0" max="100" value="22" aria-label="House lights"></div>
+    <div class="fader-row"><span>Gel</span>
+      <div id="gels"></div>
+      <div class="gel-label" id="gel-name">Open White</div>
+    </div>
+    <div class="fader-row"><span>Sound</span><button class="chip" id="snd" aria-label="Toggle sound">ON</button><span style="width:auto;letter-spacing:0.1em">synth · no samples</span></div>
+    <div class="fader-row"><span>XR Sliders</span><button class="chip" id="xr-sliders-toggle" aria-label="Toggle pinch-drag sliders in headset">ON</button><span style="width:auto;letter-spacing:0.1em">pinch-drag bowl in headset</span></div>
+    <div class="fader-row"><span>Points</span><input type="range" id="f-density" min="1" max="8" step="1" value="4" aria-label="Total point density (reloads the page)"><span id="density-label" style="width:auto;letter-spacing:0.1em">96,000 — tap to reload</span></div>
+  </div>
+  <div class="bay" id="views-bay">
+    <div class="bay-label">Camera</div>
+    <div class="chip-row" id="cams"></div>
+    <div class="bay-label" style="margin-top:2px">Formation</div>
+    <div class="chip-row" id="forms"></div>
+    <div class="bay-label" style="margin-top:2px">Effects</div>
+    <div class="chip-row">
+      <button class="chip" id="fx-spot">Followspot</button>
+      <button class="chip" id="fx-twinkle">Chandelier</button>
+      <button class="chip" id="fx-sight">Sightline Studio</button>
+    </div>
+  </div>
+  <div class="bay" id="sight-bay" style="display:none;">
+    <div id="sl-head">
+      <button id="sl-back" aria-label="Back to console">← Console</button>
+      <button id="sl-reframe" aria-label="Reframe camera to see the whole bowl">⤢ Reframe</button>
+      <span style="font-size:9px;letter-spacing:0.1em;color:var(--dim);text-transform:uppercase;">Brightness</span>
+      <input type="range" id="sl-brightness" min="0" max="100" value="82" style="width:80px;flex-shrink:0;" aria-label="Brightness (same control as the Intensity fader)">
+      <div class="bay-label" style="margin:0">Sightline Studio — after Fisher Dachs' Extreme Sightlines</div>
+    </div>
+    <div class="sl-grid">
+      <div class="sl-col">
+        <div class="sl-title">Bowl</div>
+        <div class="sl-row"><span class="lbl">Orchestra Rows</span><input type="number" id="sl-rows" min="4" max="30" value="13"></div>
+        <div class="sl-row"><span class="lbl">Seats / Row</span><input type="number" id="sl-seats" min="6" max="40" value="22"></div>
+        <div class="sl-row"><span class="lbl">Balconies</span><input type="number" id="sl-balc" min="0" max="3" value="1"></div>
+        <div class="sl-row"><span class="lbl">Rows / Balcony</span><input type="number" id="sl-balcrows" min="2" max="12" value="5"></div>
+        <div class="sl-row"><span class="lbl">C-Value (in)</span><input type="number" id="sl-c" min="2" max="8" step="0.5" value="4"></div>
+        <div class="sl-row"><span class="lbl">Show Heads</span><button class="chip" id="sl-heads" aria-label="Toggle occupant heads to check obstruction">OFF</button></div>
+        <div id="sl-heads-hint" style="font-size:9px;color:var(--dim);letter-spacing:0.06em;min-height:12px;display:none;">click any head to jump to that seat</div>
+        <div class="sl-row" style="margin-top:4px"><span class="lbl">Front of House</span></div>
+        <div class="chip-row">
+          <button class="chip" id="fom-pit">Pit</button>
+          <button class="chip" id="fom-apron">Apron</button>
+          <button class="chip" id="fom-close">Close</button>
+        </div>
+      </div>
+      <div class="sl-col">
+        <div class="sl-title">Jump to Seat</div>
+        <div class="sl-row"><span class="lbl">Tier (0 = orch.)</span><input type="number" id="sl-tier" min="0" max="0" value="0"></div>
+        <div class="sl-row"><span class="lbl">Row in Tier</span><input type="number" id="sl-seatrow" min="1" max="13" value="1"></div>
+        <div class="sl-row"><span class="lbl">Seat in Row</span><input type="number" id="sl-seatnum" min="1" max="22" value="11"></div>
+        <button id="sl-seatgo">View From This Seat</button>
+        <div id="sl-readout">Adjust the bowl, then GO to a seat — the sightline to center stage is guaranteed by construction, not by eye.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script type="importmap">
+{ "imports": { "three": "https://cdnjs.cloudflare.com/ajax/libs/three.js/0.160.0/three.module.min.js" } }
+</script>
+<script type="module">
+import * as THREE from 'three';
+(function () {
+  'use strict';
+  const REDUCED = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const qp = new URLSearchParams(location.search); // live tuning: ?k=3&xrsize=0.2&xrboost=1.3
+  const K = Math.min(8, Math.max(1, parseInt(qp.get('k'), 10) || 4)); // density multiplier
+  const N = 24000 * K;
+
+  /* ============================ RENDERER / SCENE ============================ */
+  const container = document.getElementById('stage');
+  THREE.ColorManagement.enabled = false; // keep the palette exactly as tuned
+  const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: false });
+  renderer.outputColorSpace = THREE.LinearSRGBColorSpace;
+  renderer.xr.enabled = true;
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+  renderer.setSize(window.innerWidth, window.innerHeight);
+  container.appendChild(renderer.domElement);
+
+  const scene = new THREE.Scene();
+  const VOID = new THREE.Color(0x0a0e14);
+  const HOUSE_WARM = new THREE.Color(0x241c12);
+  scene.background = VOID.clone();
+  scene.fog = new THREE.FogExp2(0x0a0e14, 0.010);
+
+  const camera = new THREE.PerspectiveCamera(52, window.innerWidth / window.innerHeight, 0.1, 400);
+  const dolly = new THREE.Group();   // in XR the headset drives the camera; presets move this
+  dolly.add(camera);
+  scene.add(dolly);
+  const world = new THREE.Group();   // everything visible lives here so XR can scale to meters
+  scene.add(world);
+
+  // Faint survey grid — the "before the building" datum plane
+  const grid = new THREE.GridHelper(120, 60, 0x2a3644, 0x18202c);
+  grid.material.transparent = true;
+  grid.material.opacity = 0.35;
+  grid.position.y = -0.05;
+  world.add(grid);
+
+  /* ============================ FORMATION GENERATORS ============================ */
+  // Helpers
+  const rand = (a, b) => a + Math.random() * (b - a);
+  function push(arr, col, x, y, z, c) { arr.push(x, y, z); col.push(c.r, c.g, c.b); }
+  const C = {
+    plaster: new THREE.Color(0xe8ddc9),
+    gilt:    new THREE.Color(0xd8a860),
+    velvet:  new THREE.Color(0x9e4458),
+    velvet2: new THREE.Color(0xc25a70),
+    stage:   new THREE.Color(0xcbb99a),
+    chand:   new THREE.Color(0xfff2d8),
+    seafoam: new THREE.Color(0x7fd8c9),
+    deepsea: new THREE.Color(0x3e8a80),
+    graphite:new THREE.Color(0x9aa4b2),
+    steel:   new THREE.Color(0x7fa8d8),
+    steel2:  new THREE.Color(0x4c6a92),
+    tan:     new THREE.Color(0xd9c6a5),
+    mist:    new THREE.Color(0xaebfd4)
+  };
+  function jitterColor(c, amt) {
+    const k = 1 + rand(-amt, amt);
+    return new THREE.Color(Math.min(1, c.r * k), Math.min(1, c.g * k), Math.min(1, c.b * k));
+  }
+
+  /* ---- THE THEATER ---- */
+  let chandStart = 0, chandEnd = 0; // twinkle range
+  function genTheater() {
+    const p = [], col = [];
+
+    // Stage deck (raked slightly toward audience)
+    for (let i = 0; i < 3000 * K; i++) {
+      const x = rand(-13, 13), z = rand(-19, -4.2);
+      push(p, col, x, 0.15 + (z + 19) * 0.006, z, jitterColor(C.stage, 0.10));
+    }
+    // Proscenium — two columns + header + gilt trim
+    for (let i = 0; i < 1500 * K; i++) {
+      const side = Math.random() < 0.5 ? -1 : 1;
+      push(p, col, side * rand(13.4, 14.6), rand(0, 12), rand(-4.6, -3.6), jitterColor(C.plaster, 0.12));
+    }
+    for (let i = 0; i < 1300 * K; i++) {
+      push(p, col, rand(-14.6, 14.6), rand(12, 14.2), rand(-4.6, -3.6), jitterColor(C.plaster, 0.12));
+    }
+    for (let i = 0; i < 700 * K; i++) { // gilt inner trim of the arch
+      const t = Math.random();
+      let x, y;
+      if (t < 0.4) { x = -13.3; y = rand(0.2, 12); }
+      else if (t < 0.8) { x = 13.3; y = rand(0.2, 12); }
+      else { x = rand(-13.3, 13.3); y = 11.9; }
+      push(p, col, x + rand(-0.12, 0.12), y, -4.0 + rand(-0.1, 0.1), jitterColor(C.gilt, 0.15));
+    }
+    // Grand drape legs, swagged with a sine curl
+    for (let i = 0; i < 1400 * K; i++) {
+      const side = Math.random() < 0.5 ? -1 : 1;
+      const u = rand(0, 1); // 0 = outer, 1 = inner edge
+      const x = side * (13.2 - u * 4.4);
+      const y = rand(Math.max(0.2, 9.5 - u * 9.0), 11.9);
+      const z = -4.1 + Math.sin(x * 2.4) * 0.28;
+      push(p, col, x, y, z, jitterColor(C.velvet, 0.16));
+    }
+    // Orchestra seating — raked rows of seat clusters
+    const seatPts = [];
+    for (let row = 0; row < 13; row++) {
+      const z = 0.8 + row * 1.75;
+      const y = 0.35 + row * 0.42;
+      const half = 11.5 - Math.max(0, (row - 8)) * 0.5;
+      for (let x = -half; x <= half; x += 1.35) {
+        if (Math.abs(x) < 1.0 && row < 12) continue; // center aisle
+        seatPts.push([x + rand(-0.1, 0.1), y, z]);
+      }
+    }
+    // Balcony rows
+    for (let row = 0; row < 5; row++) {
+      const z = 14.5 + row * 1.8;
+      const y = 6.8 + row * 0.85;
+      for (let x = -10.5; x <= 10.5; x += 1.35) {
+        if (Math.abs(x) < 1.0) continue;
+        seatPts.push([x + rand(-0.1, 0.1), y, z]);
+      }
+    }
+    const perSeat = Math.max(3, Math.floor(6200 * K / seatPts.length));
+    for (const s of seatPts) {
+      for (let k = 0; k < perSeat; k++) {
+        push(p, col,
+          s[0] + rand(-0.32, 0.32),
+          s[1] + rand(0, 0.85),
+          s[2] + rand(-0.28, 0.28),
+          jitterColor(Math.random() < 0.85 ? C.velvet : C.velvet2, 0.14));
+      }
+    }
+    // Balcony rail (gilt)
+    for (let i = 0; i < 500 * K; i++) {
+      const x = rand(-11.5, 11.5);
+      push(p, col, x, 6.4 + rand(-0.08, 0.30), 13.8 + Math.abs(x) * 0.04, jitterColor(C.gilt, 0.18));
+    }
+    // Side walls with pilaster hints
+    for (let i = 0; i < 2400 * K; i++) {
+      const side = Math.random() < 0.5 ? -1 : 1;
+      const z = rand(-19, 22);
+      const pilaster = Math.abs(((z + 19) % 6) - 3) < 0.4;
+      push(p, col, side * (15.6 + (pilaster ? -0.35 : 0)), rand(0, 13.5), z,
+        jitterColor(pilaster ? C.gilt : C.plaster, 0.14));
+    }
+    // Ceiling with a soft dome scoop
+    for (let i = 0; i < 1600 * K; i++) {
+      const x = rand(-15.5, 15.5), z = rand(-4, 22);
+      const r = Math.sqrt(x * x + (z - 9) * (z - 9));
+      const y = 14.4 + Math.max(0, 2.2 - r * 0.12);
+      push(p, col, x, y, z, jitterColor(C.plaster, 0.10));
+    }
+    // Rear wall
+    for (let i = 0; i < 800 * K; i++) {
+      push(p, col, rand(-15.5, 15.5), rand(0, 14), 23 + rand(-0.4, 0.4), jitterColor(C.plaster, 0.10));
+    }
+    // Chandelier — record index range for twinkle
+    chandStart = p.length / 3;
+    const chandTotal = 1200 * K;
+    for (let i = 0; i < chandTotal; i++) {
+      // tiered crystal: three stacked rings + core
+      const tier = Math.floor(rand(0, 3));
+      const rr = [2.4, 1.7, 1.0][tier] * Math.sqrt(Math.random());
+      const th = rand(0, Math.PI * 2);
+      const y = 12.6 - tier * 0.9 - rand(0, 0.5);
+      push(p, col, Math.cos(th) * rr, y, 8 + Math.sin(th) * rr, jitterColor(C.chand, 0.2));
+    }
+    chandEnd = p.length / 3;
+
+    return fill(p, col);
+  }
+
+  /* ---- SITE SCAN (photogrammetry survey cloud) ---- */
+  function genScan() {
+    const p = [], col = [];
+    const PINE  = new THREE.Color(0x3f7a58), PINE2 = new THREE.Color(0x2e5f46);
+    const LEAF  = new THREE.Color(0x6fae72), MOSS  = new THREE.Color(0x8aa86a);
+    const GRASS = new THREE.Color(0xa8bf7e), BARK  = new THREE.Color(0x8a6a4f);
+    const BIRCH = new THREE.Color(0xd8cfc0);
+    const hillH = (x, z) => Math.max(0.25,
+      2.3 * Math.sin(x * 0.085 + 1.2) * Math.cos(z * 0.07) +
+      1.5 * Math.sin(x * 0.16 + z * 0.13 + 0.5) +
+      0.7 * Math.sin(x * 0.31 - z * 0.27) + 2.6);
+    // Rolling ground, moss in the valleys, grass on the hills
+    for (let i = 0; i < 7200 * K; i++) {
+      const x = rand(-30, 30), z = rand(-26, 26);
+      const h = hillH(x, z);
+      const t = Math.min(1, Math.max(0, h / 6));
+      push(p, col, x, h + rand(-0.12, 0.12), z, jitterColor(MOSS.clone().lerp(GRASS, t), 0.16));
+    }
+    // Trees — deterministic layout, clearing at center stage
+    const trees = [];
+    let seed = 31;
+    const srand = () => { seed = (seed * 16807) % 2147483647; return (seed % 1000) / 1000; };
+    for (let n = 0; n < 240 && trees.length < 64; n++) {
+      const x = (srand() - 0.5) * 56, z = (srand() - 0.5) * 48;
+      if (Math.hypot(x, z) < 5.5) continue;
+      if (trees.some(t => Math.hypot(t.x - x, t.z - z) < 3.4)) continue;
+      trees.push({ x, z, s: 0.8 + srand() * 1.5, conifer: srand() < 0.62, birch: srand() < 0.25 });
+    }
+    const perTree = Math.floor((11000 * K) / trees.length);
+    for (const tr of trees) {
+      const gy = hillH(tr.x, tr.z);
+      const H = 5.5 * tr.s;
+      const trunkN = Math.floor(perTree * 0.22);
+      for (let i = 0; i < trunkN; i++) {
+        const u = Math.random();
+        const rr = 0.22 * tr.s * (1 - u * 0.4) * Math.sqrt(Math.random());
+        const th = rand(0, Math.PI * 2);
+        push(p, col, tr.x + Math.cos(th) * rr + Math.sin(u * 7 + tr.x) * 0.06,
+          gy + u * H * (tr.conifer ? 0.45 : 0.55), tr.z + Math.sin(th) * rr,
+          jitterColor(tr.birch ? BIRCH : BARK, 0.2));
+      }
+      const canN = perTree - trunkN;
+      if (tr.conifer) {
+        for (let i = 0; i < canN; i++) {
+          const u = Math.random();
+          const y = gy + H * (0.3 + u * 0.75);
+          const rad = 1.9 * tr.s * (1 - u) * Math.sqrt(Math.random());
+          const th = rand(0, Math.PI * 2);
+          push(p, col, tr.x + Math.cos(th) * rad, y + rand(-0.1, 0.1), tr.z + Math.sin(th) * rad,
+            jitterColor(u > 0.85 ? PINE : (Math.random() < 0.5 ? PINE : PINE2), 0.2));
+        }
+      } else {
+        for (let i = 0; i < canN; i++) {
+          const b = i % 3;
+          const bx = Math.sin(b * 2.4) * 0.9 * tr.s, bz = Math.cos(b * 2.7) * 0.9 * tr.s;
+          const rr = (1.5 + (b === 0 ? 0.5 : 0)) * tr.s * Math.cbrt(Math.random());
+          const th = rand(0, Math.PI * 2), ph = Math.acos(rand(-1, 1));
+          push(p, col, tr.x + bx + rr * Math.sin(ph) * Math.cos(th),
+            gy + H * 0.62 + (b - 1) * 0.5 * tr.s + rr * Math.cos(ph) * 0.8,
+            tr.z + bz + rr * Math.sin(ph) * Math.sin(th),
+            jitterColor(LEAF, 0.22));
+        }
+      }
+    }
+    // Valley mist
+    for (let i = 0; i < 1600 * K; i++) {
+      const x = rand(-30, 30), z = rand(-26, 26);
+      const h = hillH(x, z);
+      if (h > 3.2) { i--; continue; }
+      push(p, col, x, h + rand(0.4, 1.8), z, jitterColor(C.seafoam, 0.4));
+    }
+    // Photogrammetry drift — it is still a scan, after all
+    while (p.length / 3 < N) {
+      const r = 30 * Math.cbrt(Math.random());
+      const th = rand(0, Math.PI * 2), ph = Math.acos(rand(-1, 1));
+      push(p, col, r * Math.sin(ph) * Math.cos(th), Math.abs(r * Math.cos(ph)) * 0.6 + 3, r * Math.sin(ph) * Math.sin(th), jitterColor(C.mist, 0.5));
+    }
+    return fill(p, col);
+  }
+
+  /* ---- THE HEADSET ---- */
+  function genHeadset() {
+    const p = [], col = [];
+    const S = 2.0, CYc = 7.0;
+    const W = 5.6, Hh = 2.15, D = 1.5;                    // visor half-extents
+    const EXP = 3.2;                                       // superellipse corner roundness
+    const se = (x, y) => Math.pow(Math.abs(x / W), EXP) + Math.pow(Math.abs(y / Hh), EXP);
+    const seEdge = th => { // boundary point of the superellipse at angle th
+      const cs = Math.cos(th), sn = Math.sin(th);
+      const d = Math.pow(Math.pow(Math.abs(cs / W), EXP) + Math.pow(Math.abs(sn / Hh), EXP), 1 / EXP);
+      return [cs / d, sn / d];
+    };
+    const faceZ = (x, y) => D - (x * x) * 0.045 - (y * y) * 0.05; // curved faceplate
+    function put(x, y, z, c, amt) { push(p, col, x * S, CYc + y * S, z * S, jitterColor(c, amt)); }
+    // Front faceplate (white shell)
+    for (let i = 0; i < 5000 * K; i++) {
+      const x = rand(-W, W), y = rand(-Hh, Hh);
+      if (se(x, y) > 1) { i--; continue; }
+      put(x, y, faceZ(x, y) + rand(-0.04, 0.04), C.plaster, 0.08);
+    }
+    // Edge band, front to back
+    for (let i = 0; i < 4200 * K; i++) {
+      const b = seEdge(rand(0, Math.PI * 2));
+      put(b[0], b[1], rand(-D * 0.9, faceZ(b[0], b[1])), C.tan, 0.12);
+    }
+    // Facial gasket (rear foam ring)
+    for (let i = 0; i < 2400 * K; i++) {
+      const b = seEdge(rand(0, Math.PI * 2));
+      const rr = rand(0.83, 0.9);
+      put(b[0] * rr, b[1] * rr, -D * 0.9 + rand(-0.12, 0.12), C.graphite, 0.15);
+    }
+    // Pancake lenses (rear, seafoam rings + soft discs)
+    for (let side = -1; side <= 1; side += 2) {
+      for (let i = 0; i < 1100 * K; i++) {
+        const th = rand(0, Math.PI * 2);
+        const ring = Math.random() < 0.55;
+        const rr = ring ? 1.05 + rand(-0.06, 0.06) : Math.sqrt(Math.random());
+        put(side * 2.55 + Math.cos(th) * rr, Math.sin(th) * rr * 0.95 - 0.05, -D * 0.72, ring ? C.seafoam : C.deepsea, 0.2);
+      }
+    }
+    // Tracking camera pods + center depth sensor on the faceplate
+    for (const pod of [[-4.1, 1.15], [4.1, 1.15], [-4.4, -1.2], [4.4, -1.2], [0, -0.2]]) {
+      for (let i = 0; i < 260 * K; i++) {
+        const th = rand(0, Math.PI * 2), rr = 0.34 * Math.sqrt(Math.random());
+        put(pod[0] + Math.cos(th) * rr, pod[1] + Math.sin(th) * rr, faceZ(pod[0], pod[1]) + 0.06, C.graphite, 0.18);
+      }
+    }
+    // Halo band around the head (gap at the front where the visor sits)
+    const ex = 4.7, ez = 4.6, z0 = 0.55 - ez;
+    for (let i = 0; i < 5000 * K; i++) {
+      const th = rand(0.55, Math.PI * 2 - 0.55);
+      const x = Math.sin(th) * ex * (1 + rand(-0.02, 0.02));
+      const z = z0 + Math.cos(th) * ez * (1 + rand(-0.02, 0.02));
+      const y = rand(-0.55, 0.55) + 0.15;
+      put(x, y, z, Math.abs(y - 0.15) > 0.42 ? C.tan : C.plaster, 0.12);
+    }
+    // Rear cushion + fit dial
+    for (let i = 0; i < 1200 * K; i++) {
+      put(rand(-1.4, 1.4), 0.15 + rand(-0.7, 0.7), z0 - ez + rand(-0.35, 0.1), C.graphite, 0.15);
+    }
+    for (let i = 0; i < 500 * K; i++) {
+      const th = rand(0, Math.PI * 2);
+      const ring = Math.random() < 0.6;
+      const rr = ring ? 0.62 : 0.5 * Math.sqrt(Math.random());
+      put(Math.cos(th) * rr, 0.15 + Math.sin(th) * rr, z0 - ez - 0.45, ring ? C.tan : C.graphite, 0.15);
+    }
+    // Top strap arc
+    for (let i = 0; i < 1300 * K; i++) {
+      const u = Math.random();
+      const y = Hh * 0.4 + Math.sin(u * Math.PI) * 3.2;
+      const z = D * 0.3 - u * (D * 0.3 - (z0 - ez + 0.2));
+      put(rand(-0.5, 0.5), y, z, C.tan, 0.14);
+    }
+    // Ambient sparkle
+    while (p.length / 3 < N * 0.99) {
+      const r = rand(15, 26), th = rand(0, Math.PI * 2), ph = Math.acos(rand(-1, 1));
+      push(p, col, r * Math.sin(ph) * Math.cos(th), Math.abs(r * Math.cos(ph)) * 0.8 + 1, r * Math.sin(ph) * Math.sin(th), jitterColor(C.deepsea, 0.4));
+    }
+    return fill(p, col);
+  }
+
+  /* ---- THE SKYLINE (pre-construction) ---- */
+  function genSkyline() {
+    const p = [], col = [];
+    // deterministic-ish tower field
+    const towers = [];
+    let seed = 7;
+    const srand = () => { seed = (seed * 16807) % 2147483647; return (seed % 1000) / 1000; };
+    for (let gx = -3; gx <= 3; gx++) {
+      for (let gz = -2; gz <= 2; gz++) {
+        if (srand() < 0.22) continue;
+        const w = 2.2 + srand() * 2.6;
+        const h = 4 + srand() * srand() * 26;
+        towers.push({ x: gx * 7 + (srand() - 0.5) * 2.5, z: gz * 7 + (srand() - 0.5) * 2.5, w, h });
+      }
+    }
+    const hero = towers.reduce((a, b) => (b.h > a.h ? b : a), towers[0]);
+    const perTower = Math.floor((N * 0.72) / towers.length);
+    for (const t of towers) {
+      const isHero = t === hero;
+      for (let i = 0; i < perTower; i++) {
+        const face = Math.floor(rand(0, 4));
+        let x, z;
+        const hw = t.w / 2;
+        if (face === 0) { x = -hw; z = rand(-hw, hw); }
+        else if (face === 1) { x = hw; z = rand(-hw, hw); }
+        else if (face === 2) { z = -hw; x = rand(-hw, hw); }
+        else { z = hw; x = rand(-hw, hw); }
+        const y = rand(0, t.h);
+        // floor-line banding: brighten points near floor slabs
+        const band = Math.abs((y % 1.4) - 0.12) < 0.14;
+        const base = isHero ? (band ? C.seafoam : C.deepsea) : (band ? C.tan : C.steel2);
+        push(p, col, t.x + x, y, t.z + z, jitterColor(base, 0.18));
+      }
+      // roof cap
+      for (let i = 0; i < 30 * K; i++) {
+        push(p, col, t.x + rand(-t.w/2, t.w/2), t.h, t.z + rand(-t.w/2, t.w/2), jitterColor(C.plaster, 0.2));
+      }
+    }
+    // ground streets grid
+    while (p.length / 3 < N) {
+      const onX = Math.random() < 0.5;
+      const line = (Math.floor(rand(-3, 4)) * 7) + 3.5;
+      if (onX) push(p, col, rand(-26, 26), 0.05, line + rand(-0.25, 0.25), jitterColor(C.steel2, 0.3));
+      else push(p, col, line + rand(-0.25, 0.25), 0.05, rand(-19, 19), jitterColor(C.steel2, 0.3));
+    }
+    return fill(p, col);
+  }
+
+  // Pad/trim to exactly N points
+  function fill(p, col) {
+    while (p.length / 3 < N) {
+      const j = Math.floor(Math.random() * (p.length / 3));
+      p.push(p[j*3] + rand(-0.3, 0.3), p[j*3+1] + rand(-0.3, 0.3), p[j*3+2] + rand(-0.3, 0.3));
+      col.push(col[j*3], col[j*3+1], col[j*3+2]);
+    }
+    return { pos: new Float32Array(p.slice(0, N * 3)), col: new Float32Array(col.slice(0, N * 3)) };
+  }
+
+  /* ============================ EXTREME SIGHTLINES ============================
+     Parametric bowl using the classic theatre-consulting C-value method: each row's
+     eye height is solved so a sightline from that row, over the head of the row in
+     front (by clearance C), reaches a fixed focal point on stage. Recursive similar-
+     triangles construction — the actual math behind sightline-guaranteed raking,
+     in the spirit of Fisher Dachs' Extreme Sightlines. Rows chain continuously
+     across tiers (with a walkway z-gap at each new balcony), so balconies cantilever
+     out at whatever height the sightline demands rather than a fixed guess.
+
+     All physics below is computed in real feet (so the seat-jump readout reports
+     true distances); SL_SCALE converts feet to this piece's scene units only when
+     emitting particles or aiming the camera. The clearance guarantee is a ratio of
+     distances, so it's scale-invariant — verified numerically before this shipped:
+     every row clears the row ahead by exactly the requested C-value, in feet, at
+     configurations from a single 13-row room to a 24-row/3-balcony house. */
+  const SL_SCALE = 0.42;                   // feet -> scene units
+  const SL_FOCAL = { y: 5.4, z: -30 };     // standing actor eye height, well upstage (feet)
+  const SL_EYE0 = 44 / 12;                 // first-row seated eye height above its own floor: 44in, same figure as SL_EYE_OFFSET
+  const SL_EYE_OFFSET = 44 / 12;            // seated eye height above any row's floor: 44in (Metric Handbook cites 1120mm ≈ 44.1in; range is commonly 42-48in)
+  const SL_ROW_DEPTH = 3.0;                // z spacing between row floors (ft)
+  const SL_TIER_GAP = 5.0;                 // walkway z-gap when a new tier begins (ft)
+  const SL_BALCONY_CLEARANCE = 2.4 * 3.28084; // ≈7.87ft — minimum head clearance under a balcony
+                                              // overhang, cited from auditorium balcony design
+                                              // guidance (industry guideline: 2.4m minimum)
+  const SL_BALCONY_OVERLAP = 18;             // ft — how far the first balcony's front edge
+                                              // pulls back to overhang the orchestra. This one
+                                              // isn't a cited standard, just a reasonable design
+                                              // choice (~6 rows of overhang); easy to retune.
+  const SL_SEAT_W = 1.9;                   // seat pitch (ft)
+  let sightlineRows = [];                  // last-built row metadata in FEET, for the seat picker
+  let headSeats = [];                      // world-space (scene units) head positions, for click-to-jump
+  let headHitMesh = null;                  // invisible InstancedMesh used purely for raycasting against heads
+  let currentSeatRow = null;               // {tier, rowInTier} of wherever you're currently seated — drives proximity density
+  let sightlineStage = null;               // {halfW, zNear, zFar} of the current sightline stage — so the performer knows its bounds
+
+  // Deterministic jitter, keyed by stable identity (tier/row/seat/point), not call order.
+  // Math.random()-based jitter reshuffles EVERY point on EVERY rebuild, even points that
+  // represent the same physical seat before and after — so nothing could ever visibly
+  // "hold still." This makes a seat's jitter a pure function of its own identity: an
+  // unaffected seat gets the exact same offset on every rebuild, byte for byte, so the
+  // per-frame morph naturally shows near-zero motion there and reflow only where the
+  // bowl's actual geometry (row count, balcony count, clearance) changed underneath it.
+  function skey(a, b, c, d) {
+    let h = (a * 374761393) ^ (b * 668265263) ^ (c * 2147483647) ^ (d * 2246822519);
+    h = Math.imul(h ^ (h >>> 15), 2246822519);
+    h = Math.imul(h ^ (h >>> 13), 3266489917);
+    h = h ^ (h >>> 16);
+    return h >>> 0;
+  }
+  function srand(key) { return (key % 1000003) / 1000003; }
+  function srandRange(key, lo, hi) { return lo + srand(key) * (hi - lo); }
+
+  const SL_AISLE_GAP = 2.8; // ft — center aisle width, orchestra only. A real gap between
+                             // seat blocks now, not a seat NUMBER that got silently skipped —
+                             // that mismatch was exactly why "jump to seat" sometimes landed
+                             // you in the aisle: the numbering didn't know which slots were gaps.
+  function seatHalfWidth(row) {
+    const aisle = row.tier === 0 ? SL_AISLE_GAP : 0;
+    return (row.seats * SL_SEAT_W + aisle) / 2;
+  }
+  function seatX(row, seatIdx) { // seatIdx is 0-based; every value in [0,row.seats) is a real seat
+    const aisle = row.tier === 0 ? SL_AISLE_GAP : 0;
+    const half = seatHalfWidth(row);
+    const leftCount = Math.ceil(row.seats / 2);
+    if (seatIdx < leftCount) return -half + seatIdx * SL_SEAT_W + SL_SEAT_W / 2;
+    const rightIdx = seatIdx - leftCount;
+    return -half + leftCount * SL_SEAT_W + aisle + rightIdx * SL_SEAT_W + SL_SEAT_W / 2;
+  }
+
+  function buildSightlineTheater(cfg) {
+    const p = [], col = [];
+    const clr = (cfg.cVal || 4) / 12;      // clearance, inches -> feet
+    const tierPalette = [C.velvet, C.velvet2, C.steel, C.seafoam];
+    const S = SL_SCALE;
+
+    // 0. Stage footprint, computed first: the front-of-house mode decides where row 1
+    //    actually starts, so this has to happen before the row layout below.
+    const stageWidthFt = Math.min(65, Math.max(28, cfg.seats * SL_SEAT_W * 0.65));
+    const stageHalfW = (stageWidthFt / 2) * S;
+    const stageDepthFt = 25;
+    const stageDownstageZ = SL_FOCAL.z + 10;
+    const stageUpstageZ = stageDownstageZ - stageDepthFt;
+    const frontMode = cfg.frontMode || 'pit';
+    // 'close': first row sits right up near the apron, just a walkway gap — no pit, no
+    //   thrust. 'pit'/'apron' both keep the fuller, theatrically realistic gap, but the
+    //   apron mode fills it by extending the stage deck forward, while pit mode sinks an
+    //   actual orchestra pit into it (depth cited from real venue specs: Gershwin 7'3",
+    //   Palace 7'0" below stage; general range 4-8ft, width 24-30ft).
+    const frontGapFt = frontMode === 'close' ? 4 : 15;
+    const firstRowZ = stageDownstageZ + frontGapFt;
+    const apronZ = frontMode === 'apron' ? firstRowZ - 3 : stageDownstageZ; // thrust nearly to the first row
+
+    // 1. Lay out every row, main floor then balconies, as one continuous sequence (feet).
+    //    Two Z values per row: `z` is the true physical position (what renders and where
+    //    the camera goes — balconies legitimately overlap forward over the orchestra here);
+    //    `zSight` is a monotonically-receding bookkeeping Z used ONLY by the clearance math
+    //    below, so pulling a balcony forward can't make the sightline formula see the
+    //    distance-from-stage go backwards, which would break its monotonic assumption.
+    const rows = [];
+    let z = firstRowZ, zSight = firstRowZ;
+    for (let r = 0; r < cfg.rows; r++) { rows.push({ tier: 0, rowInTier: r + 1, z, zSight, seats: cfg.seats }); z += SL_ROW_DEPTH; zSight += SL_ROW_DEPTH; }
+    // Balconies overhang the tier below rather than starting behind it — real multi-tier
+    // houses stack balconies roughly ABOVE one another (mezzanine above orchestra, upper
+    // balcony above mezzanine), not each one set further back. A cited source on this
+    // directly: a steep rake that "forces the balcony...to be higher, pushing the audience
+    // further from the performance" is described as the tradeoff to minimize, not the goal
+    // — real balconies "keep audiences closer to the stage" specifically via stacking.
+    // Previously only the first balcony got this treatment; additional tiers just kept
+    // stepping back with no overlap at all, compounding into a long receding staircase.
+    let tierLastZ = z - SL_ROW_DEPTH;   // reference Z for the next tier's overlap pull-back
+    let tierDepth = tierLastZ - firstRowZ;
+    for (let b = 0; b < cfg.balconies; b++) {
+      let bz = tierLastZ - Math.min(SL_BALCONY_OVERLAP, tierDepth * 0.65);
+      const tierStartZ = bz;
+      zSight += SL_TIER_GAP; // physics still gets an honest "further back" step for the clearance math
+      for (let r = 0; r < cfg.balcRows; r++) {
+        rows.push({ tier: b + 1, rowInTier: r + 1, z: bz, zSight, seats: cfg.seats });
+        bz += SL_ROW_DEPTH * 0.9; zSight += SL_ROW_DEPTH * 0.9;
+      }
+      tierLastZ = bz - SL_ROW_DEPTH * 0.9; // this tier's last row becomes the next tier's overlap reference
+      tierDepth = tierLastZ - tierStartZ;
+    }
+
+    // 2. Recursive C-value sightline solve: E_i = Fy + (D_i/D_(i-1)) * (E_(i-1) + clr - Fy)
+    //    Purely sequential/local — row k's result depends only on row k-1, never on the
+    //    total row count — so adding a row never moves any existing row's floor height.
+    //    At a tier break (a new balcony beginning), the pure sightline formula alone only
+    //    produces a modest step — nowhere near enough to walk under, since it optimizes for
+    //    sightline clearance only. A real balcony also needs the walkway clearance below it.
+    let prevD = Math.abs(rows[0].zSight - SL_FOCAL.z), prevE = SL_EYE0;
+    rows[0].eye = prevE; rows[0].floor = prevE - SL_EYE_OFFSET;
+    for (let i = 1; i < rows.length; i++) {
+      const D = Math.abs(rows[i].zSight - SL_FOCAL.z);
+      let E = SL_FOCAL.y + (D / prevD) * (prevE + clr - SL_FOCAL.y);
+      let floor = Math.max(rows[i - 1].floor + 0.1, E - SL_EYE_OFFSET); // monotonic guard
+      if (rows[i].tier !== rows[i - 1].tier) {
+        const minFloor = rows[i - 1].floor + SL_BALCONY_CLEARANCE;
+        if (minFloor > floor) { floor = minFloor; E = floor + SL_EYE_OFFSET; } // raising floor only improves clearance, never violates the C-value guarantee
+      }
+      rows[i].eye = E;
+      rows[i].floor = floor;
+      prevD = D; prevE = E;
+    }
+
+    // 3. Emit seat particles (scaled to scene units) + optional heads (reallocated from the
+    //    same per-seat point budget, so turning heads on never changes the total point count)
+    //    + a front breast-wall rail per tier
+    const headFrac = cfg.showHeads ? 0.35 : 0;
+    headSeats = []; // world-space (scene units) head positions, for click-to-jump picking
+
+    // Proximity weighting: rows near wherever you're currently seated get denser point
+    // clouds (so the seat you're in, and the row right in front of you, actually resolve),
+    // while distant rows thin out. The budget is conserved exactly — this redistributes
+    // the existing seat-point total, it doesn't add points on top of it.
+    const baseBudget = rows.map(row => Math.max(3, Math.floor((610 * K) / row.seats)) * row.seats); // 420->610: part of the ambient-sparkle reallocation below
+    const targetTotal = baseBudget.reduce((a, b) => a + b, 0);
+    let weights;
+    if (currentSeatRow) {
+      weights = rows.map(row => {
+        const rowDist = Math.abs(row.rowInTier - currentSeatRow.rowInTier) + (row.tier !== currentSeatRow.tier ? 9 : 0);
+        return Math.max(0.22, 3.4 - rowDist * 0.11);
+      });
+    } else {
+      weights = rows.map(() => 1);
+    }
+    const weightTotal = rows.reduce((sum, row, i) => sum + weights[i] * row.seats, 0);
+
+    let curTier = -1;
+    for (let ri = 0; ri < rows.length; ri++) {
+      const row = rows[ri];
+      const half = seatHalfWidth(row);
+      row.half = half;
+      const perSeatPts = Math.max(3, Math.round((targetTotal * weights[ri]) / weightTotal));
+      const cushionPts = cfg.showHeads ? Math.max(2, Math.round(perSeatPts * (1 - headFrac))) : perSeatPts;
+      const headPts = perSeatPts - cushionPts;
+      const tierColor = tierPalette[row.tier % tierPalette.length];
+      const rz = row.z * S, rf = row.floor * S;
+      const headY = rf + (SL_EYE_OFFSET + 0.15) * S; // head center sits a touch above eye level
+      for (let s = 0; s < row.seats; s++) {
+        const rx = seatX(row, s) * S;
+        // Seat pan (dense, ~17in real height) + a proper seatback rising toward eye level —
+        // the old version was a squat ~11in blob, leaving a ~33in gap of nothing before the
+        // eye position. A real chair back closes most of that gap.
+        const panPts = Math.max(1, Math.round(cushionPts * 0.62));
+        const backPts = cushionPts - panPts;
+        for (let k = 0; k < panPts; k++) {
+          push(p, col,
+            rx + srandRange(skey(row.tier, row.rowInTier, s, k * 3), -0.17, 0.17),
+            rf + srandRange(skey(row.tier, row.rowInTier, s, k * 3 + 1), 0, 0.60),
+            rz + srandRange(skey(row.tier, row.rowInTier, s, k * 3 + 2), -0.15, 0.15),
+            jitterColor(tierColor, 0.14));
+        }
+        for (let k = 0; k < backPts; k++) {
+          push(p, col,
+            rx + srandRange(skey(row.tier, row.rowInTier, s, 5000 + k * 3), -0.14, 0.14),
+            rf + srandRange(skey(row.tier, row.rowInTier, s, 5000 + k * 3 + 1), 0.45, 1.42),
+            rz + srandRange(skey(row.tier, row.rowInTier, s, 5000 + k * 3 + 2), 0.12, 0.30),
+            jitterColor(tierColor, 0.18));
+        }
+        // Skip the head for whichever seat you're actually sitting in — the camera lands
+        // almost exactly at that position (eye height is only ~1.8in below the head's own
+        // center), so without this exclusion you'd be looking at the inside of your own
+        // head, which is exactly what was reported: looking straight down shows the head
+        // "you should be inside of" sitting just below you.
+        const isMySeat = lastSeatSpec && row.tier === lastSeatSpec.tier &&
+          row.rowInTier === lastSeatSpec.rowInTier && (s + 1) === lastSeatSpec.seatN;
+        if (cfg.showHeads && !isMySeat) {
+          for (let k = 0; k < headPts; k++) {
+            push(p, col,
+              rx + srandRange(skey(row.tier, row.rowInTier, s, 9000 + k * 3), -0.13, 0.13),
+              headY + srandRange(skey(row.tier, row.rowInTier, s, 9000 + k * 3 + 1), -0.11, 0.13),
+              rz + srandRange(skey(row.tier, row.rowInTier, s, 9000 + k * 3 + 2), -0.12, 0.12),
+              jitterColor(C.tan, 0.16));
+          }
+          headSeats.push({ tier: row.tier, rowInTier: row.rowInTier, seatIdx: s, x: rx, y: headY, z: rz });
+        }
+      }
+      if (row.tier !== curTier) { // gilt rail marking the front edge of a new tier
+        curTier = row.tier;
+        for (let i = 0; i < 260 * K; i++) {
+          push(p, col,
+            srandRange(skey(900, curTier, i, 0), -half * S, half * S),
+            rf - 0.05 + srandRange(skey(900, curTier, i, 1), -0.03, 0.28),
+            rz - SL_ROW_DEPTH * S * 0.45,
+            jitterColor(C.gilt, 0.15));
+        }
+      }
+    }
+    sightlineRows = rows;
+
+    // 4. Stage, proscenium, set, and room enclosure — replacing the old bare deck + generic
+    //    "proscenium-ish" back wall. Everything here gets a visually distinct color so the
+    //    elements read apart from each other at a glance, and the point budget freed by
+    //    removing the ambient sparkle field (see below) is spent here and on the seats
+    //    themselves, rather than on floating background dust.
+    const stageNearSc = apronZ * S, stageFarSc = stageUpstageZ * S;
+    sightlineStage = { halfW: stageHalfW, zNear: stageNearSc, zFar: stageFarSc }; // for the performer's walk path
+
+    // Stage deck (apron mode thrusts this forward, nearly to the first row)
+    for (let i = 0; i < 3000 * K; i++) {
+      push(p, col,
+        srandRange(skey(901, 0, i, 0), -stageHalfW, stageHalfW), 0.06,
+        srandRange(skey(901, 0, i, 1), stageFarSc, stageNearSc),
+        jitterColor(C.stage, 0.1));
+    }
+    // Orchestra pit — sunk between the true proscenium edge and the first row, cited from
+    // real venue specs (Gershwin: pit 7'3" below stage; Palace: 7'0"; general range 4-8ft
+    // deep, 24-30ft wide). Only rendered in 'pit' mode; apron/close modes have no gap left
+    // to put one in.
+    if (frontMode === 'pit') {
+      const pitDepthFt = 6.5, pitHalfW = stageHalfW * 0.82;
+      const pitNearZ = firstRowZ * S - 1.5, pitFarZ = stageDownstageZ * S;
+      const pitFloorY = -pitDepthFt * S;
+      for (let i = 0; i < 900 * K; i++) { // pit floor
+        push(p, col,
+          srandRange(skey(910, 0, i, 0), -pitHalfW, pitHalfW),
+          pitFloorY + srandRange(skey(910, 0, i, 1), -0.05, 0.05),
+          srandRange(skey(910, 0, i, 2), pitFarZ, pitNearZ),
+          jitterColor(C.graphite, 0.14));
+      }
+      for (let i = 0; i < 400 * K; i++) { // low front rail, audience side
+        push(p, col,
+          srandRange(skey(911, 0, i, 0), -pitHalfW, pitHalfW),
+          srandRange(skey(911, 0, i, 1), pitFloorY, 0.15),
+          pitNearZ + srandRange(skey(911, 0, i, 2), -0.12, 0.12),
+          jitterColor(C.graphite, 0.2));
+      }
+    }
+    // Proscenium arch — two columns + a header, framing the opening at the downstage edge.
+    // Height scales with width using the ratio implied by real published venues (Marquis
+    // 40w/28.5h, Palace 40.8w/30.5h, Poway 39.5w/24h -> roughly 0.6-0.75), clamped to a
+    // sane range.
+    const prosceniumH = Math.min(35, Math.max(15, stageWidthFt * 0.68)) * S;
+    const prosceniumZ = stageDownstageZ * S + 0.3; // the true proscenium line, not the (possibly thrust) apron edge
+    for (let i = 0; i < 2500 * K; i++) {
+      const side = (i % 2 === 0) ? -1 : 1;
+      push(p, col,
+        side * stageHalfW + srandRange(skey(905, side, i, 0), -0.22, 0.22),
+        srandRange(skey(905, side, i, 1), 0, prosceniumH),
+        prosceniumZ + srandRange(skey(905, side, i, 2), -0.22, 0.22),
+        jitterColor(C.gilt, 0.14));
+    }
+    for (let i = 0; i < 1000 * K; i++) { // header beam across the top
+      push(p, col,
+        srandRange(skey(906, 0, i, 0), -stageHalfW - 0.3, stageHalfW + 0.3),
+        prosceniumH + srandRange(skey(906, 0, i, 1), -0.22, 0.22),
+        prosceniumZ + srandRange(skey(906, 0, i, 2), -0.22, 0.22),
+        jitterColor(C.gilt, 0.14));
+    }
+    // Backdrop / cyclorama — a colored drop upstage, visible through the arch
+    for (let i = 0; i < 2250 * K; i++) {
+      push(p, col,
+        srandRange(skey(907, 0, i, 0), -stageHalfW * 1.05, stageHalfW * 1.05),
+        srandRange(skey(907, 0, i, 1), 0, prosceniumH * 1.1),
+        stageFarSc - 0.4 + srandRange(skey(907, 0, i, 2), -0.15, 0.15),
+        jitterColor(C.seafoam, 0.16));
+    }
+    // A few simple set pieces (flats/legs) on stage, distinct from both the deck and drop
+    const setPieceCount = 3;
+    for (let sp = 0; sp < setPieceCount; sp++) {
+      const spx = srandRange(skey(908, sp, 0, 0), -stageHalfW * 0.6, stageHalfW * 0.6);
+      const spz = stageFarSc + srandRange(skey(908, sp, 0, 1), 1.5, (stageNearSc - stageFarSc) * 0.6);
+      const spH = srandRange(skey(908, sp, 0, 2), prosceniumH * 0.35, prosceniumH * 0.75);
+      for (let i = 0; i < 1750 * K / setPieceCount; i++) {
+        push(p, col,
+          spx + srandRange(skey(908, sp, i, 3), -1.1, 1.1),
+          srandRange(skey(908, sp, i, 4), 0, spH),
+          spz + srandRange(skey(908, sp, i, 5), -0.18, 0.18),
+          jitterColor(C.steel2, 0.18));
+      }
+    }
+    // Focal-point marker — small, just a faint locator now that the set gives real reference
+    for (let i = 0; i < 75 * K; i++) {
+      const th = srandRange(skey(903, 0, i, 0), 0, Math.PI * 2);
+      const rr = 0.3 * Math.sqrt(srand(skey(903, 0, i, 1)));
+      push(p, col, Math.cos(th) * rr, SL_FOCAL.y * S + Math.sin(th) * rr, SL_FOCAL.z * S,
+        jitterColor(C.chand, 0.15));
+    }
+    // Side walls of the AUDITORIUM (not the stage) — running the full depth of the seating
+    // bowl on both sides, tall enough to pass behind the highest balcony, so orchestra and
+    // balconies read as one enclosed room instead of separate floating platforms.
+    const wallHalfW = Math.max(...rows.map(r => r.half)) + 1.2;
+    const wallZNear = rows[0].z * S - 2;
+    const wallZFar = rows[rows.length - 1].z * S + 2;
+    const wallTop = rows[rows.length - 1].floor * S + 6;
+    for (let i = 0; i < 2000 * K; i++) {
+      const side = (i % 2 === 0) ? -1 : 1;
+      push(p, col,
+        side * wallHalfW * S + srandRange(skey(909, side, i, 0), -0.2, 0.2),
+        srandRange(skey(909, side, i, 1), 0, wallTop),
+        srandRange(skey(909, side, i, 2), wallZFar, wallZNear),
+        jitterColor(C.mist, 0.16));
+    }
+    // The green ambient-sparkle field that used to fill the rest of the point budget has
+    // been removed entirely — those ~48,000 points are now spent above (proscenium,
+    // backdrop, set, walls) and on the boosted seat/head density near wherever you're
+    // actually seated, instead of floating background dust in open space.
+    return fill(p, col);
+  }
+
+  /* ---- THE MARQUEE (the name in lights) ---- */
+  let marqStart = 0, marqEnd = 0;
+  const BULB_PTS = 12 * K;
+  function genMarquee() {
+    const p = [], col = [];
+    const ROSE = new THREE.Color(0xff9eb4);
+    const cv = document.createElement('canvas');
+    cv.width = 800; cv.height = 160;
+    const cx = cv.getContext('2d');
+    cx.fillStyle = '#000'; cx.fillRect(0, 0, 800, 160);
+    cx.fillStyle = '#fff';
+    cx.font = '900 96px "Helvetica Neue", Arial, sans-serif';
+    cx.textAlign = 'center'; cx.textBaseline = 'middle';
+    cx.fillText('AGILE LENS', 400, 84);
+    const img = cx.getImageData(0, 0, 800, 160).data;
+    const pts = [];
+    for (let y = 0; y < 160; y += 2)
+      for (let x = 0; x < 800; x += 2)
+        if (img[(y * 800 + x) * 4] > 110) pts.push([x, y]);
+    const wantText = Math.floor(N * 0.6);
+    for (let i = 0; i < wantText && pts.length > 0; i++) {
+      const s = pts[Math.floor(Math.random() * pts.length)];
+      const wx = (s[0] - 400) / 800 * 44 + rand(-0.15, 0.15);
+      const wy = 7.6 + (80 - s[1]) / 160 * 9 + rand(-0.15, 0.15);
+      const u = s[0] / 800;
+      const c = u < 0.5
+        ? C.seafoam.clone().lerp(C.plaster, u * 2)
+        : C.plaster.clone().lerp(ROSE, (u - 0.5) * 2);
+      push(p, col, wx, wy, rand(-0.55, 0.55), jitterColor(c, 0.12));
+    }
+    // Marquee bulbs — a chase border, recorded for animation
+    marqStart = p.length / 3;
+    const border = [];
+    for (let x = -25; x <= 25; x += 1.15) { border.push([x, 1.6]); border.push([x, 13.4]); }
+    for (let y = 2.75; y < 13.4; y += 1.15) { border.push([-25, y]); border.push([25, y]); }
+    for (const b of border) {
+      for (let k = 0; k < BULB_PTS; k++) {
+        const rr = 0.22 * Math.sqrt(Math.random());
+        const th = rand(0, Math.PI * 2);
+        push(p, col, b[0] + Math.cos(th) * rr, b[1] + Math.sin(th) * rr, rand(-0.1, 0.1), jitterColor(C.chand, 0.15));
+      }
+    }
+    marqEnd = p.length / 3;
+    // Ambient sparkle dome
+    while (p.length / 3 < N * 0.985) {
+      const r = rand(18, 30);
+      const th = rand(0, Math.PI * 2), ph = Math.acos(rand(-1, 1));
+      push(p, col, r * Math.sin(ph) * Math.cos(th), Math.abs(r * Math.cos(ph)) * 0.8 + 0.5, r * Math.sin(ph) * Math.sin(th), jitterColor(C.deepsea, 0.4));
+    }
+    return fill(p, col);
+  }
+
+  /* ---- THE GUITAR ---- */
+  function genGuitar() {
+    const p = [], col = [];
+    const W = y => { // half-width of the body at height y (two overlapping bouts make the waist)
+      const lower = 1 - Math.pow((y - 4.0) / 4.3, 2);
+      const upper = 1 - Math.pow((y - 9.3) / 3.2, 2);
+      return Math.max(lower > 0 ? 4.3 * Math.sqrt(lower) : 0, upper > 0 ? 3.2 * Math.sqrt(upper) : 0);
+    };
+    const CY = -0.4;
+    // Sides (rim)
+    for (let i = 0; i < 2600 * K; i++) {
+      const y = rand(-0.28, 12.5);
+      const w = W(y);
+      if (w < 0.25) { i--; continue; }
+      const side = Math.random() < 0.5 ? -1 : 1;
+      push(p, col, side * w + rand(-0.06, 0.06), y + CY, rand(-1.2, 1.2), jitterColor(C.gilt, 0.18));
+    }
+    // Soundboard with sound hole + rosette
+    const holeY = 7.3, holeR = 1.35;
+    for (let i = 0; i < 4200 * K; i++) {
+      const y = rand(-0.2, 12.4);
+      const w = W(y);
+      if (w < 0.25) { i--; continue; }
+      const x = rand(-w, w);
+      if (Math.hypot(x, y - holeY) < holeR) { i--; continue; }
+      push(p, col, x, y + CY, 1.2 + rand(-0.05, 0.05), jitterColor(C.tan, 0.10));
+    }
+    for (let i = 0; i < 500 * K; i++) {
+      const th = rand(0, Math.PI * 2);
+      const rr = holeR + 0.12 + rand(0, 0.22);
+      push(p, col, Math.cos(th) * rr, holeY + Math.sin(th) * rr + CY, 1.28, jitterColor(C.gilt, 0.15));
+    }
+    // Back
+    for (let i = 0; i < 1100 * K; i++) {
+      const y = rand(-0.2, 12.4);
+      const w = W(y);
+      if (w < 0.25) { i--; continue; }
+      push(p, col, rand(-w, w), y + CY, -1.2 + rand(-0.05, 0.05), jitterColor(C.gilt, 0.2));
+    }
+    // Bridge
+    for (let i = 0; i < 260 * K; i++) push(p, col, rand(-1.5, 1.5), 3.6 + rand(-0.3, 0.3) + CY, 1.32, jitterColor(C.deepsea, 0.15));
+    // Neck + fretboard
+    for (let i = 0; i < 1500 * K; i++) push(p, col, rand(-0.68, 0.68), rand(12.2, 21) + CY, rand(0.85, 1.3), jitterColor(C.deepsea, 0.18));
+    // Frets — spacing shrinks up the neck, rule-of-18 style
+    let fy = 12.6, gap = 1.05;
+    while (fy < 20.9) {
+      for (let i = 0; i < 46 * K; i++) push(p, col, rand(-0.68, 0.68), fy + CY + rand(-0.03, 0.03), 1.33, jitterColor(C.chand, 0.12));
+      gap *= 0.944; fy += gap;
+    }
+    // Headstock + tuners
+    for (let i = 0; i < 620 * K; i++) push(p, col, rand(-1.0, 1.0), rand(21, 23.6) + CY, rand(0.8, 1.25), jitterColor(C.velvet, 0.15));
+    for (let s = 0; s < 6; s++) {
+      const side = s < 3 ? -1 : 1, k = s % 3;
+      for (let i = 0; i < 26 * K; i++) {
+        const th = rand(0, Math.PI * 2), rr = 0.22 * Math.sqrt(Math.random());
+        push(p, col, side * 1.15 + Math.cos(th) * rr, 21.6 + k * 0.75 + Math.sin(th) * rr + CY, 1.1, jitterColor(C.chand, 0.15));
+      }
+    }
+    // Six strings, bridge to nut
+    for (let s = 0; s < 6; s++) {
+      const x = -0.5 + s * 0.2;
+      for (let i = 0; i < 190 * K; i++) {
+        push(p, col, x + rand(-0.015, 0.015), rand(3.6, 21) + CY, 1.42, jitterColor(C.mist, 0.12));
+      }
+    }
+    while (p.length / 3 < N * 0.985) {
+      const r = rand(16, 28), th = rand(0, Math.PI * 2), ph = Math.acos(rand(-1, 1));
+      push(p, col, r * Math.sin(ph) * Math.cos(th), Math.abs(r * Math.cos(ph)) * 0.85 + 0.5, r * Math.sin(ph) * Math.sin(th), jitterColor(C.deepsea, 0.4));
+    }
+    return fill(p, col);
+  }
+
+  /* ---- THE WAVE ---- */
+  function genWave() {
+    const p = [], col = [];
+    const white = new THREE.Color(0xf2fffb);
+    function waterColor(y, foam) {
+      if (foam) return jitterColor(white, 0.08);
+      const t = Math.min(1, Math.max(0, y / 7));
+      return jitterColor(C.deepsea.clone().lerp(C.seafoam, t), 0.15);
+    }
+    // Open water fore and aft
+    for (let i = 0; i < 6200 * K; i++) {
+      const x = rand(-26, 26);
+      const z = Math.random() < 0.62 ? rand(8.5, 20) : rand(-20, -7);
+      const y = 0.4 + 0.5 * Math.sin(x * 0.25) * Math.cos(z * 0.2) + rand(-0.15, 0.15);
+      push(p, col, x, y, z, waterColor(y + 1.5, false));
+    }
+    // The rising face
+    for (let i = 0; i < 7200 * K; i++) {
+      const x = rand(-26, 26);
+      const zc = -1 + Math.sin(x * 0.22) * 1.2;
+      const h = 6.2 + Math.sin(x * 0.13 + 1.7) * 0.9;
+      const s = Math.random();
+      const z = 8.5 - s * (8.5 - zc);
+      const y = Math.pow(s, 1.35) * h + rand(-0.12, 0.12);
+      push(p, col, x, y, z, waterColor(y, false));
+    }
+    // The curl
+    for (let i = 0; i < 6200 * K; i++) {
+      const x = rand(-26, 26);
+      const zc = -1 + Math.sin(x * 0.22) * 1.2;
+      const h = 6.2 + Math.sin(x * 0.13 + 1.7) * 0.9;
+      const u = Math.random();
+      const phi = Math.PI * 0.5 - u * Math.PI * 1.45;
+      const rr = (3.1 - u * 2.1) * (h / 6.2);
+      const y = (h - rr * 0.4) * 0.82 + rr * Math.sin(phi);
+      const z = zc - rr * Math.cos(phi);
+      const foam = u > 0.8 || Math.random() < 0.04;
+      push(p, col, x, Math.max(0.1, y), z, waterColor(y, foam));
+    }
+    // Spray off the lip
+    for (let i = 0; i < 1400 * K; i++) {
+      const x = rand(-26, 26);
+      const h = 6.2 + Math.sin(x * 0.13 + 1.7) * 0.9;
+      push(p, col, x + rand(-0.5, 0.5), h + rand(-0.4, 2.6), -1 + Math.sin(x * 0.22) * 1.2 + rand(-3.2, 0.6), waterColor(9, Math.random() < 0.7));
+    }
+    while (p.length / 3 < N) {
+      push(p, col, rand(-26, 26), rand(0, 0.5), rand(-20, 20), waterColor(0.8, false));
+    }
+    return fill(p, col);
+  }
+
+  /* ---- WORLD TOUR (client sites, home beacon NYC) ---- */
+  function genGlobe() {
+    const p = [], col = [];
+    const R = 9.5, cy = 10.5, lonOff = 74 * Math.PI / 180; // rotate so NYC faces front
+    function onGlobe(latDeg, lonDeg, rr) {
+      const la = latDeg * Math.PI / 180, lo = lonDeg * Math.PI / 180 + lonOff;
+      return [rr * Math.cos(la) * Math.sin(lo), cy + rr * Math.sin(la), rr * Math.cos(la) * Math.cos(lo)];
+    }
+    // Faint sphere shell
+    for (let i = 0; i < 6000 * K; i++) {
+      const th = rand(0, Math.PI * 2), ph = Math.acos(rand(-1, 1));
+      push(p, col, R * Math.sin(ph) * Math.cos(th), cy + R * Math.cos(ph), R * Math.sin(ph) * Math.sin(th), jitterColor(C.steel2, 0.45));
+    }
+    // Latitude rings (equator brighter)
+    for (let la = -75; la <= 75; la += 15) {
+      const circ = 2 * Math.PI * R * Math.cos(la * Math.PI / 180);
+      const n = Math.max(40 * K, Math.floor(circ * K / 0.22));
+      for (let i = 0; i < n; i++) {
+        const v = onGlobe(la, (i / n) * 360, R);
+        push(p, col, v[0] + rand(-0.05, 0.05), v[1] + rand(-0.05, 0.05), v[2] + rand(-0.05, 0.05),
+          jitterColor(la === 0 ? C.steel : C.steel2, 0.18));
+      }
+    }
+    // Meridians
+    for (let lo = 0; lo < 360; lo += 10) {
+      for (let i = 0; i < 90 * K; i++) {
+        const la = -82 + (i / (90 * K - 1)) * 164;
+        const v = onGlobe(la, lo, R);
+        push(p, col, v[0], v[1], v[2], jitterColor(C.steel2, 0.22));
+      }
+    }
+    // Sites: [lat, lon, home?] — NYC, Orlando, DC, Stratford-upon-Avon, Austin, Edinburgh, Stockholm
+    const SITES = [
+      [40.71, -74.01, true], [28.54, -81.38, false], [38.90, -77.04, false],
+      [52.19, -1.71, false], [30.27, -97.74, false], [55.95, -3.19, false], [59.33, 18.07, false]
+    ];
+    const HOME_ROSE = new THREE.Color(0xff9eb4);
+    const beacons = [];
+    for (const s of SITES) {
+      beacons.push(onGlobe(s[0], s[1], R));
+      for (let i = 0; i < 220 * K; i++) {
+        const v = onGlobe(s[0], s[1], R + rand(0, 2.4));
+        push(p, col, v[0] + rand(-0.12, 0.12), v[1] + rand(-0.12, 0.12), v[2] + rand(-0.12, 0.12),
+          jitterColor(s[2] ? HOME_ROSE : C.chand, 0.15));
+      }
+    }
+    // Great-circle arcs, home to everywhere
+    const ctr = new THREE.Vector3(0, cy, 0);
+    const home = new THREE.Vector3(beacons[0][0], beacons[0][1], beacons[0][2]).sub(ctr).normalize();
+    for (let bi = 1; bi < beacons.length; bi++) {
+      const dst = new THREE.Vector3(beacons[bi][0], beacons[bi][1], beacons[bi][2]).sub(ctr).normalize();
+      const ang = home.angleTo(dst), sa = Math.sin(ang);
+      if (sa < 0.001) continue;
+      for (let i = 0; i < 260 * K; i++) {
+        const s = i / (260 * K - 1);
+        const v = home.clone().multiplyScalar(Math.sin((1 - s) * ang) / sa)
+          .add(dst.clone().multiplyScalar(Math.sin(s * ang) / sa));
+        const rr = R * (1 + 0.22 * Math.sin(Math.PI * s));
+        push(p, col, v.x * rr + rand(-0.06, 0.06), cy + v.y * rr + rand(-0.06, 0.06), v.z * rr + rand(-0.06, 0.06),
+          jitterColor(C.seafoam, 0.15));
+      }
+    }
+    // Stars
+    while (p.length / 3 < N) {
+      const r = rand(16, 30), th = rand(0, Math.PI * 2), ph = Math.acos(rand(-1, 1));
+      push(p, col, r * Math.sin(ph) * Math.cos(th), cy + r * Math.cos(ph) * 0.8, r * Math.sin(ph) * Math.sin(th), jitterColor(C.mist, 0.5));
+    }
+    return fill(p, col);
+  }
+
+  /* ---- DOMINOES (frozen mid-cascade) ---- */
+  function genDominoes() {
+    const p = [], col = [];
+    const TILES = 26, FALLEN = 11, FALLING = 5;
+    const path = s => [Math.sin(s * Math.PI * 1.5) * 13, -15 + s * 30];
+    for (let k = 0; k < TILES; k++) {
+      const s = k / (TILES - 1);
+      const a0 = path(s);
+      const b0 = path(Math.max(0, s - 0.005)), b1 = path(Math.min(1, s + 0.005));
+      let tx = b1[0] - b0[0], tz = b1[1] - b0[1];
+      const tl = Math.hypot(tx, tz); tx /= tl; tz /= tl;   // run direction
+      const sx = -tz, sz = tx;                              // side axis
+      let tilt;
+      if (k < FALLEN) tilt = Math.PI / 2 - 0.06;
+      else if (k < FALLEN + FALLING) tilt = (1 - (k - FALLEN + 1) / (FALLING + 1)) * Math.PI / 2;
+      else tilt = 0;
+      const ct = Math.cos(tilt), st = Math.sin(tilt);
+      const isFaller = k >= FALLEN && k < FALLEN + FALLING;
+      for (let i = 0; i < 620 * K; i++) {
+        let a, b, h;
+        const face = Math.random();
+        if (face < 0.42) { a = 0.18; b = rand(-0.72, 0.72); h = rand(0, 2.5); }
+        else if (face < 0.7) { a = -0.18; b = rand(-0.72, 0.72); h = rand(0, 2.5); }
+        else if (face < 0.86) { a = rand(-0.18, 0.18); b = Math.random() < 0.5 ? -0.72 : 0.72; h = rand(0, 2.5); }
+        else { a = rand(-0.18, 0.18); b = rand(-0.72, 0.72); h = Math.random() < 0.5 ? 0.02 : 2.5; }
+        const a2 = a * ct + h * st, h2 = -a * st + h * ct; // tip about the base edge
+        push(p, col, a0[0] + tx * a2 + sx * b, Math.max(0.03, h2), a0[1] + tz * a2 + sz * b,
+          jitterColor(isFaller ? C.seafoam : C.plaster, 0.12));
+      }
+      // Pips
+      const pipN = 3 + (k % 6);
+      for (let q = 0; q < pipN * 14 * K; q++) {
+        const pipI = q % pipN;
+        const b = -0.5 + (pipI / Math.max(1, pipN - 1)) + rand(-0.05, 0.05);
+        const h = (pipI % 2 === 0 ? 0.7 : 1.8) + rand(-0.05, 0.05);
+        const a2 = 0.2 * ct + h * st, h2 = -0.2 * st + h * ct;
+        push(p, col, a0[0] + tx * a2 + sx * b, Math.max(0.03, h2), a0[1] + tz * a2 + sz * b, jitterColor(C.velvet2, 0.12));
+      }
+    }
+    // Path dots on the floor
+    for (let i = 0; i < 900 * K; i++) {
+      const v = path(Math.random());
+      push(p, col, v[0] + rand(-0.4, 0.4), 0.03, v[1] + rand(-0.4, 0.4), jitterColor(C.steel2, 0.3));
+    }
+    while (p.length / 3 < N * 0.985) {
+      const r = rand(16, 28), th = rand(0, Math.PI * 2), ph = Math.acos(rand(-1, 1));
+      push(p, col, r * Math.sin(ph) * Math.cos(th), Math.abs(r * Math.cos(ph)) * 0.85 + 0.5, r * Math.sin(ph) * Math.sin(th), jitterColor(C.deepsea, 0.4));
+    }
+    return fill(p, col);
+  }
+
+
+  /* ---- THE MONOCLE ---- */
+  function genMonocle() {
+    const p = [], col = [];
+    const R = 7.2, CYm = 11.5, TUBE = 0.38;
+    // Rim: gilt torus facing the audience
+    for (let i = 0; i < 6200 * K; i++) {
+      const th = rand(0, Math.PI * 2), ph = rand(0, Math.PI * 2);
+      const rr = R + TUBE * Math.cos(ph);
+      push(p, col, Math.cos(th) * rr, CYm + Math.sin(th) * rr, TUBE * Math.sin(ph), jitterColor(C.gilt, 0.14));
+    }
+    // Inner bevel ring
+    for (let i = 0; i < 1200 * K; i++) {
+      const th = rand(0, Math.PI * 2);
+      const rr = R - 0.5 + rand(-0.05, 0.05);
+      push(p, col, Math.cos(th) * rr, CYm + Math.sin(th) * rr, 0.18, jitterColor(C.chand, 0.15));
+    }
+    // Glass: faint dome, edge-biased like real refraction
+    for (let i = 0; i < 5200 * K; i++) {
+      const th = rand(0, Math.PI * 2);
+      const rr = (R - 0.6) * Math.pow(Math.random(), 0.35);
+      const dome = 0.5 * (1 - (rr / R) * (rr / R));
+      push(p, col, Math.cos(th) * rr, CYm + Math.sin(th) * rr, dome + rand(-0.04, 0.04),
+        jitterColor(Math.random() < 0.8 ? C.mist : C.seafoam, 0.35));
+    }
+    // Specular crescent, upper left
+    const WHITE = new THREE.Color(0xffffff);
+    for (let i = 0; i < 1100 * K; i++) {
+      const th = rand(Math.PI * 0.55, Math.PI * 0.95);
+      const rr = R - 1.5 + rand(-0.5, 0.5);
+      push(p, col, Math.cos(th) * rr, CYm + Math.sin(th) * rr, 0.55, jitterColor(WHITE, 0.1));
+    }
+    // Gallery knob at lower right, where the chain attaches
+    const ang0 = -Math.PI * 0.22;
+    const sx = Math.cos(ang0) * (R + 0.5), sy = CYm + Math.sin(ang0) * (R + 0.5);
+    for (let i = 0; i < 500 * K; i++) {
+      const rr = 0.5 * Math.cbrt(Math.random());
+      const th = rand(0, Math.PI * 2), ph = Math.acos(rand(-1, 1));
+      push(p, col, sx + rr * Math.sin(ph) * Math.cos(th), sy + rr * Math.cos(ph), rr * Math.sin(ph) * Math.sin(th), jitterColor(C.gilt, 0.15));
+    }
+    // Chain: alternating oval links, catenary sag down to the tail bar
+    const x0 = sx, y0 = sy - 0.5, x1 = x0 + 6.5, y1 = 1.6, LINKS = 15;
+    for (let li = 0; li < LINKS; li++) {
+      const u = li / (LINKS - 1);
+      const cx = x0 + (x1 - x0) * u;
+      const cy = y0 + (y1 - y0) * u - Math.sin(u * Math.PI) * 2.6;
+      const cz = Math.sin(u * 2.2) * 0.4;
+      const vert = li % 2 === 0;
+      for (let i = 0; i < 240 * K; i++) {
+        const th = rand(0, Math.PI * 2), ph = rand(0, Math.PI * 2);
+        const rr = 0.42 + 0.09 * Math.cos(ph);
+        const ax = Math.cos(th) * rr, ay = Math.sin(th) * rr * 1.4;
+        if (vert) push(p, col, cx + ax, cy + ay, cz + 0.09 * Math.sin(ph), jitterColor(C.gilt, 0.16));
+        else push(p, col, cx + ax, cy + 0.09 * Math.sin(ph) * 1.4, cz + ay * 0.7, jitterColor(C.gilt, 0.16));
+      }
+    }
+    // Tail bar
+    for (let i = 0; i < 400 * K; i++) {
+      push(p, col, x1 + rand(-0.9, 0.9), y1 + rand(-0.12, 0.12), rand(-0.12, 0.12), jitterColor(C.gilt, 0.14));
+    }
+    // Ambient sparkle
+    while (p.length / 3 < N * 0.99) {
+      const r = rand(16, 28), th = rand(0, Math.PI * 2), ph = Math.acos(rand(-1, 1));
+      push(p, col, r * Math.sin(ph) * Math.cos(th), Math.abs(r * Math.cos(ph) * 0.8) + 1.5, r * Math.sin(ph) * Math.sin(th), jitterColor(C.mist, 0.5));
+    }
+    return fill(p, col);
+  }
+
+  const FORMS = {
+    scan:     { name: 'FOREST SCAN', gen: genScan },
+    theater:  { name: 'THEATER',    gen: genTheater },
+    headset:  { name: 'HEADSET',    gen: genHeadset },
+    skyline:  { name: 'SKYLINE',    gen: genSkyline },
+    marquee:  { name: 'MARQUEE',    gen: genMarquee },
+    guitar:   { name: 'GUITAR',     gen: genGuitar },
+    wave:     { name: 'THE WAVE',   gen: genWave },
+    globe:    { name: 'WORLD TOUR', gen: genGlobe },
+    dominoes: { name: 'DOMINOES',   gen: genDominoes },
+    monocle:  { name: 'MONOCLE',    gen: genMonocle }
+  };
+  function formData(key) { // generate lazily; pregen fills these in idle time
+    if (!FORMS[key].data) FORMS[key].data = FORMS[key].gen();
+    return FORMS[key].data;
+  }
+
+  /* ============================ POINTS OBJECT ============================ */
+  // Instanced billboard quads instead of gl_Points: point primitives hit a hardware
+  // gl_PointSize cap (~64 px on Apple GPUs), which starves additive accumulation on
+  // high-res HMD framebuffers. Quads have no cap; falloff is computed in-shader.
+  const QUAD = new Float32Array([-0.5,-0.5,0, 0.5,-0.5,0, 0.5,0.5,0, -0.5,-0.5,0, 0.5,0.5,0, -0.5,0.5,0]);
+  function makeSplatMaterial(size) {
+    return new THREE.ShaderMaterial({
+      uniforms: { uSize: { value: size }, uTint: { value: new THREE.Color(0xffffff) } },
+      vertexShader: [
+        'attribute vec3 offset;',
+        'attribute vec3 aColor;',
+        'uniform float uSize;',
+        'varying vec3 vColor;',
+        'varying vec2 vQ;',
+        'void main() {',
+        '  vColor = aColor;',
+        '  vQ = position.xy * 2.0;',
+        '  vec4 mv = modelViewMatrix * vec4(offset, 1.0);',
+        '  float sz = min(uSize, 0.22 * -mv.z);', // angular clamp: fill-rate + near-bloom guard
+        '  mv.xy += position.xy * sz;',
+        '  gl_Position = projectionMatrix * mv;',
+        '}'
+      ].join('\n'),
+      fragmentShader: [
+        'varying vec3 vColor;',
+        'varying vec2 vQ;',
+        'uniform vec3 uTint;',
+        'void main() {',
+        '  float d = dot(vQ, vQ);',
+        '  if (d > 1.0) discard;',
+        '  float a = 1.0 - d;',
+        '  a *= a;',
+        '  gl_FragColor = vec4(vColor * uTint * a, a);',
+        '}'
+      ].join('\n'),
+      transparent: true, depthWrite: false, blending: THREE.AdditiveBlending
+    });
+  }
+  function makeSplatGeometry(data) {
+    const g = new THREE.InstancedBufferGeometry();
+    g.setAttribute('position', new THREE.BufferAttribute(QUAD, 3));
+    g.setAttribute('offset', new THREE.InstancedBufferAttribute(data.pos.slice(), 3).setUsage(THREE.DynamicDrawUsage));
+    g.setAttribute('aColor', new THREE.InstancedBufferAttribute(data.col.slice(), 3).setUsage(THREE.DynamicDrawUsage));
+    return g;
+  }
+  const geo = makeSplatGeometry(formData('scan'));
+  const posAttr = geo.getAttribute('offset');
+  const colAttr = geo.getAttribute('aColor');
+  const mat = makeSplatMaterial(0.22);
+  const points = new THREE.Mesh(geo, mat);
+  points.frustumCulled = false;
+  world.add(points);
+  let baseSize = 0.22; // XR session resizes this for meter scale + per-eye resolution
+
+  // Morph state
+  const target = { pos: formData('scan').pos.slice(), col: formData('scan').col.slice() };
+  const baseCol = formData('scan').col.slice(); // colors before twinkle
+  let morphT = 1; // 1 = settled
+  let seatLocked = false; // true while parked in a specific seat — suppresses idle auto-rotate
+  let currentForm = 'scan';
+  const roForm = document.getElementById('ro-form');
+
+  function setFormation(key, scatterFirst) {
+    if (!FORMS[key]) return;
+    if (key !== 'theater') setPerformer(false);
+    seatLocked = false;
+    seatFirstPerson = false;
+    lastSeatSpec = null; // a seat spec only makes sense inside Sightline Studio
+    currentForm = key;
+    osc('/scene/load', '"' + FORMS[key].name.toLowerCase().replace(' ', '_') + '"');
+    roForm.textContent = FORMS[key].name;
+    const fd = formData(key);
+    target.pos.set(fd.pos);
+    target.col.set(fd.col);
+    baseCol.set(fd.col);
+    if (scatterFirst) {
+      // fling current points outward so the rebuild reads as an assembly
+      const arr = posAttr.array;
+      for (let i = 0; i < N; i++) {
+        const j = i * 3;
+        arr[j]   += rand(-14, 14);
+        arr[j+1] += rand(2, 18);
+        arr[j+2] += rand(-14, 14);
+      }
+      posAttr.needsUpdate = true;
+    }
+    morphT = 0;
+    document.querySelectorAll('#forms .chip').forEach(c => c.classList.toggle('on', c.dataset.form === key));
+  }
+
+  /* ---- Sightline Studio: dynamic, non-cached formation driven by the panel inputs ---- */
+  let sightlineCfg = { rows: 13, seats: 22, balconies: 1, balcRows: 5, cVal: 4, showHeads: false, frontMode: 'pit' };
+  function applySightline(scatterFirst) {
+    // Only disable the performer when actually LEAVING to some other formation — not on
+    // every in-place sightline rebuild (parameter tweak or seat jump), which was resetting
+    // it every time and made the actors stop moving the moment you jumped seats.
+    if (currentForm !== 'theater' && currentForm !== 'sightline') setPerformer(false);
+    seatLocked = false;
+    seatFirstPerson = false;
+    currentForm = 'sightline';
+    const fd = buildSightlineTheater(sightlineCfg); // also (re)populates sightlineRows, in feet
+    roForm.textContent = 'SIGHTLINE STUDY';
+    osc('/sightline/rebuild', JSON.stringify(sightlineCfg));
+    target.pos.set(fd.pos);
+    target.col.set(fd.col);
+    baseCol.set(fd.col);
+    if (scatterFirst) {
+      const arr = posAttr.array;
+      for (let i = 0; i < N; i++) {
+        const j = i * 3;
+        arr[j]   += rand(-14, 14);
+        arr[j+1] += rand(2, 18);
+        arr[j+2] += rand(-14, 14);
+      }
+      posAttr.needsUpdate = true;
+    }
+    morphT = 0;
+    document.querySelectorAll('#forms .chip').forEach(c => c.classList.remove('on'));
+    rebuildHeadHitMesh();
+    // The camera is NEVER moved automatically in Sightline Studio, on open or on any
+    // parameter change — the whole point is watching the bowl grow, shrink, and add
+    // balconies from a fixed vantage. reframeSightline() below is the on-demand escape
+    // hatch, wired to an explicit button, for when you actually want a wide view.
+  }
+  function rebuildHeadHitMesh() {
+    if (headHitMesh) { world.remove(headHitMesh); headHitMesh.geometry.dispose(); headHitMesh.material.dispose(); headHitMesh = null; }
+    if (!sightlineCfg.showHeads || !headSeats.length) return;
+    const geo = new THREE.SphereGeometry(0.24, 8, 6); // hit radius a touch bigger than the visual head blob — easier to click
+    const mat = new THREE.MeshBasicMaterial({ transparent: true, opacity: 0, depthWrite: false });
+    headHitMesh = new THREE.InstancedMesh(geo, mat, headSeats.length);
+    headHitMesh.frustumCulled = false;
+    const m = new THREE.Matrix4();
+    headSeats.forEach((h, i) => { m.makeTranslation(h.x, h.y, h.z); headHitMesh.setMatrixAt(i, m); });
+    headHitMesh.instanceMatrix.needsUpdate = true;
+    world.add(headHitMesh);
+  }
+  function reframeSightline() {
+    if (!sightlineRows.length) return;
+    const first = sightlineRows[0], last = sightlineRows[sightlineRows.length - 1];
+    const zSpan = (last.z - first.z) * SL_SCALE;
+    const ySpan = last.floor * SL_SCALE;
+    const centerZ = (SL_FOCAL.z * SL_SCALE * 0.3) + ((first.z + last.z) * SL_SCALE * 0.5) * 0.7;
+    const camObj = { key: 'sl-overview', name: 'SIGHTLINE OVERVIEW',
+      theta: 0.42, phi: 1.02,
+      r: Math.max(26, zSpan * 0.85 + ySpan * 0.4),
+      t: [0, Math.max(2, ySpan * 0.32), centerZ] };
+    if (renderer.xr.isPresenting) xrTeleport(camObj); else goCamera(camObj);
+  }
+
+  /* ============================ OSC MONITOR ============================ */
+  const oscEl = document.getElementById('osc');
+  let lastHb = -1;
+  function osc(addr, args) {
+    if (!oscEl) return;
+    const d = document.createElement('div');
+    d.className = 'osc-line';
+    d.innerHTML = '<span class="a">' + addr + '</span>' + (args !== undefined ? ' <span class="g">' + args + '</span>' : '');
+    oscEl.prepend(d);
+    while (oscEl.children.length > 9) oscEl.removeChild(oscEl.lastChild);
+  }
+  let oscThrottle = 0;
+  function faderOsc(input, v) {
+    const now = performance.now();
+    if (now - oscThrottle < 150) return;
+    oscThrottle = now;
+    osc(input.id === 'f-int' ? '/board/dimmer/master' : '/board/house/level', (v / 100).toFixed(2));
+  }
+
+  /* ============================ SOUND (all synthesized, no samples) ============================ */
+  let AC = null, master = null, bed = null, soundOn = true, tuningNodes = [];
+  function audio() {
+    if (!AC) {
+      try {
+        AC = new (window.AudioContext || window.webkitAudioContext)();
+        master = AC.createGain();
+        master.gain.value = soundOn ? 0.5 : 0.0001;
+        master.connect(AC.destination);
+      } catch (e) { return null; }
+    }
+    if (AC.state === 'suspended') AC.resume();
+    return AC;
+  }
+  function beep(freq, dur, vol, type) {
+    if (!audio()) return;
+    const o = AC.createOscillator(), g = AC.createGain();
+    o.type = type || 'square';
+    o.frequency.value = freq;
+    g.gain.setValueAtTime(vol, AC.currentTime);
+    g.gain.exponentialRampToValueAtTime(0.0001, AC.currentTime + dur);
+    o.connect(g); g.connect(master);
+    o.start(); o.stop(AC.currentTime + dur + 0.05);
+  }
+  function startBed() { // preshow: room tone + the orchestra finding its A
+    if (!audio() || bed) return;
+    bed = AC.createGain(); bed.gain.value = 0; bed.connect(master);
+    const buf = AC.createBuffer(1, AC.sampleRate * 2, AC.sampleRate);
+    const d = buf.getChannelData(0);
+    for (let i = 0; i < d.length; i++) d[i] = (Math.random() * 2 - 1) * 0.35;
+    const src = AC.createBufferSource(); src.buffer = buf; src.loop = true;
+    const lp = AC.createBiquadFilter(); lp.type = 'lowpass'; lp.frequency.value = 380;
+    src.connect(lp); lp.connect(bed); src.start();
+    [438.8, 440, 441.3, 220].forEach((f, i) => {
+      const o = AC.createOscillator(); o.type = 'sine'; o.frequency.value = f;
+      const g = AC.createGain(); g.gain.value = i === 3 ? 0.012 : 0.02;
+      o.connect(g); g.connect(bed); o.start();
+      tuningNodes.push(o);
+    });
+    bed.gain.linearRampToValueAtTime(0.55, AC.currentTime + 2.5);
+    osc('/audio/preshow', 'on');
+  }
+  function stopBed() {
+    if (!bed) return;
+    const b = bed; bed = null;
+    b.gain.linearRampToValueAtTime(0.0001, AC.currentTime + 1.8);
+    setTimeout(() => { try { b.disconnect(); } catch (e) {} tuningNodes = []; }, 2200);
+    osc('/audio/preshow', 'off');
+  }
+  function swell() { // the build chord — an A rising out of the tuning note
+    if (!audio()) return;
+    [110, 164.8, 220, 277.2, 329.6].forEach(f => {
+      const o = AC.createOscillator(); o.type = 'triangle';
+      o.frequency.setValueAtTime(f * 0.5, AC.currentTime);
+      o.frequency.exponentialRampToValueAtTime(f, AC.currentTime + 2.4);
+      const g = AC.createGain();
+      g.gain.setValueAtTime(0.0001, AC.currentTime);
+      g.gain.exponentialRampToValueAtTime(0.045, AC.currentTime + 1.8);
+      g.gain.exponentialRampToValueAtTime(0.0001, AC.currentTime + 5);
+      o.connect(g); g.connect(master);
+      o.start(); o.stop(AC.currentTime + 5.2);
+    });
+  }
+  let motionNodes = null;
+  function ensureMotion() { // a whoosh whose loudness/pitch follow the morph itself
+    if (motionNodes || !audio()) return;
+    const g = AC.createGain(); g.gain.value = 0;
+    const bp = AC.createBiquadFilter(); bp.type = 'bandpass'; bp.Q.value = 0.9; bp.frequency.value = 800;
+    const buf = AC.createBuffer(1, AC.sampleRate * 2, AC.sampleRate);
+    const d = buf.getChannelData(0);
+    for (let i = 0; i < d.length; i++) d[i] = Math.random() * 2 - 1;
+    const src = AC.createBufferSource(); src.buffer = buf; src.loop = true;
+    src.connect(bp); bp.connect(g); g.connect(master);
+    src.start();
+    motionNodes = { g, bp };
+  }
+  function chime() {
+    [523.25, 659.25, 783.99, 1046.5].forEach((f, i) =>
+      setTimeout(() => beep(f, 1.4, 0.05, 'sine'), i * 150));
+  }
+
+  /* ============================ THE PERFORMER + FOLLOWSPOT ============================ */
+  const PERF_N = 750 * K;
+  const perfBase = new Float32Array(PERF_N * 3);
+  const perfColArr = new Float32Array(PERF_N * 3);
+  {
+    const white = new THREE.Color(0xeafffa);
+    for (let i = 0; i < PERF_N; i++) {
+      const r = Math.random();
+      let x, y, z;
+      if (r < 0.14) { // head
+        const rr = 0.34 * Math.cbrt(Math.random());
+        const th = rand(0, Math.PI * 2), ph = Math.acos(rand(-1, 1));
+        x = rr * Math.sin(ph) * Math.cos(th); y = 3.5 + rr * Math.cos(ph); z = rr * Math.sin(ph) * Math.sin(th);
+      } else if (r < 0.5) { // torso
+        const th = rand(0, Math.PI * 2), rr = Math.sqrt(Math.random());
+        x = Math.cos(th) * 0.5 * rr; z = Math.sin(th) * 0.34 * rr;
+        y = 2.35 + rand(-0.85, 0.85) * (1 - rr * 0.3);
+      } else if (r < 0.64) { // arms
+        const side = Math.random() < 0.5 ? -1 : 1, u = Math.random();
+        x = side * (0.55 + u * 0.42) + rand(-0.07, 0.07);
+        y = 2.95 - u * 1.35 + Math.sin(u * Math.PI) * 0.1 + rand(-0.07, 0.07);
+        z = u * 0.25 + rand(-0.07, 0.07);
+      } else { // flowing lower half — the ghost light walks
+        const u = Math.random();
+        const rr = (0.28 + u * 0.62) * Math.sqrt(Math.random());
+        const th = rand(0, Math.PI * 2);
+        x = Math.cos(th) * rr; z = Math.sin(th) * rr;
+        y = 1.5 - u * 1.5;
+      }
+      perfBase[i * 3] = x; perfBase[i * 3 + 1] = y; perfBase[i * 3 + 2] = z;
+      const g = Math.min(1, Math.max(0, y / 3.8));
+      const c = C.deepsea.clone().lerp(C.seafoam, Math.min(1, g * 1.4)).lerp(white, Math.max(0, g - 0.55) * 1.6);
+      perfColArr[i * 3] = c.r; perfColArr[i * 3 + 1] = c.g; perfColArr[i * 3 + 2] = c.b;
+    }
+  }
+  const perfGeo = makeSplatGeometry({ pos: perfBase, col: perfColArr });
+  const perfMat = makeSplatMaterial(0.24);
+  const perfPoints = new THREE.Mesh(perfGeo, perfMat);
+  perfPoints.frustumCulled = false;
+  perfPoints.visible = false;
+  world.add(perfPoints);
+  const perfPosAttr = perfGeo.getAttribute('offset');
+
+  const spotGroup = new THREE.Group();
+  const pool = new THREE.Mesh(
+    new THREE.CircleGeometry(2.3, 32),
+    new THREE.MeshBasicMaterial({ color: 0xffcf8a, transparent: true, opacity: 0.15, blending: THREE.AdditiveBlending, depthWrite: false })
+  );
+  pool.rotation.x = -Math.PI / 2; pool.position.y = 0.22;
+  const spotCone = new THREE.Mesh(
+    new THREE.ConeGeometry(2.3, 14.5, 24, 1, true),
+    new THREE.MeshBasicMaterial({ color: 0xffcf8a, transparent: true, opacity: 0.045, blending: THREE.AdditiveBlending, depthWrite: false, side: THREE.DoubleSide })
+  );
+  spotCone.position.y = 7.4;
+  spotGroup.add(pool, spotCone);
+  spotGroup.visible = false;
+  world.add(spotGroup);
+
+  let perfOn = false, perfStart = 0;
+  function setPerformer(on) {
+    if (on === perfOn) return;
+    // The performer also works inside Sightline Studio (checking a sightline against a
+    // moving reference point is the whole idea) — only force-switch formation when we're
+    // somewhere that has no stage to stand on at all.
+    if (on && currentForm !== 'theater' && currentForm !== 'sightline') setFormation('theater', true);
+    perfOn = on;
+    perfPoints.visible = on;
+    spotGroup.visible = on;
+    if (on) perfStart = clock.getElapsedTime();
+    const chip = document.getElementById('fx-spot');
+    if (chip) chip.classList.toggle('on', on);
+    const roP = document.getElementById('ro-pts');
+    if (roP) roP.textContent = (on ? N + PERF_N : N).toLocaleString('en-US');
+    osc('/spot/1/' + (on ? 'pickup' : 'douse'), on ? '"performer_01"' : undefined);
+  }
+
+  /* ============================ CAMERA RIG ============================ */
+  const rig = {
+    theta: Math.PI * 0.02, phi: 1.22, radius: 46,
+    tx: 0, ty: 5.5, tz: 2,
+    // tween targets
+    gTheta: null, gPhi: null, gRadius: null, gtx: null, gty: null, gtz: null, tweening: false
+  };
+  // Once a seat-jump's fly-in tween settles, the camera switches from "orbit around
+  // a distant target" to "fixed at the eye position, only the look direction turns" —
+  // the actual difference between flying toward a seat and sitting in it.
+  let seatFirstPerson = false;
+  const seatEyePos = new THREE.Vector3();
+  let seatYaw = 0, seatPitch = 0;
+  let lastCamKey = 'booth', gelIndex = 0, lastSeatSpec = null; // tracked purely for the shareable-link URL
+  const CAMS = [
+    { key: 'booth',    name: 'FOH BOOTH',  theta:  0.03, phi: 1.18, r: 47, t: [0, 5.5, 2] },
+    { key: 'orch',     name: 'ORCH ROW F', theta:  0.00, phi: 1.42, r: 22, t: [0, 4.5, -4] },
+    { key: 'balcony',  name: 'BALC RAIL',  theta: -0.35, phi: 1.05, r: 30, t: [0, 5, -2] },
+    { key: 'dsc',      name: 'DOWNSTAGE',  theta:  Math.PI, phi: 1.35, r: 26, t: [0, 5, 6] },
+    { key: 'fly',      name: 'FLY GALLERY',theta:  0.6,  phi: 0.62, r: 38, t: [0, 3, 2] }
+  ];
+  const roCam = document.getElementById('ro-cam');
+  function goCamera(c, snap) {
+    if (c.key !== 'seat') { seatLocked = false; seatFirstPerson = false; } // leaving the seated view — resume normal camera behavior
+    if (['booth', 'orch', 'balcony', 'dsc', 'fly'].includes(c.key)) lastCamKey = c.key; // for the shareable link — ignore internal keys like 'seat'/'sl-overview'
+    roCam.textContent = c.name;
+    osc('/cam/recall', '"' + c.key + '"');
+    if (renderer.xr.isPresenting) { xrTeleport(c); return; }
+    document.querySelectorAll('#cams .chip').forEach(ch => ch.classList.toggle('on', ch.dataset.cam === c.key));
+    if (snap || REDUCED) {
+      rig.theta = c.theta; rig.phi = c.phi; rig.radius = c.r;
+      rig.tx = c.t[0]; rig.ty = c.t[1]; rig.tz = c.t[2];
+      rig.tweening = false;
+      return;
+    }
+    rig.gTheta = c.theta; rig.gPhi = c.phi; rig.gRadius = c.r;
+    rig.gtx = c.t[0]; rig.gty = c.t[1]; rig.gtz = c.t[2];
+    rig.tweening = true;
+  }
+  function applyCamera() {
+    if (rig.tweening) {
+      const k = 0.045;
+      rig.theta += (rig.gTheta - rig.theta) * k;
+      rig.phi += (rig.gPhi - rig.phi) * k;
+      rig.radius += (rig.gRadius - rig.radius) * k;
+      rig.tx += (rig.gtx - rig.tx) * k;
+      rig.ty += (rig.gty - rig.ty) * k;
+      rig.tz += (rig.gtz - rig.tz) * k;
+      // Convergence check: was theta+radius only, which let phi (and the target) still be
+      // mid-tween when seatFirstPerson froze the eye position — confirmed via simulation to
+      // produce a real, if usually small, height error. Now requires all six values close.
+      if (Math.abs(rig.gTheta - rig.theta) < 0.0008 && Math.abs(rig.gRadius - rig.radius) < 0.015 &&
+          Math.abs(rig.gPhi - rig.phi) < 0.0008 &&
+          Math.abs(rig.gtx - rig.tx) < 0.01 && Math.abs(rig.gty - rig.ty) < 0.01 && Math.abs(rig.gtz - rig.tz) < 0.01) {
+        rig.tweening = false;
+      }
+    }
+
+    // The instant a seat's fly-in tween settles, freeze the eye position and hand off
+    // to first-person look — from here, dragging turns your head, it doesn't orbit the stage.
+    if (seatLocked && !rig.tweening && !seatFirstPerson) {
+      seatEyePos.set(
+        rig.tx + rig.radius * Math.sin(rig.phi) * Math.sin(rig.theta),
+        rig.ty + rig.radius * Math.cos(rig.phi),
+        rig.tz + rig.radius * Math.sin(rig.phi) * Math.cos(rig.theta)
+      );
+      const dir = new THREE.Vector3(rig.tx, rig.ty, rig.tz).sub(seatEyePos).normalize();
+      seatYaw = Math.atan2(dir.x, dir.z);
+      seatPitch = Math.asin(Math.max(-1, Math.min(1, dir.y)));
+      seatFirstPerson = true;
+    }
+
+    if (seatFirstPerson) {
+      const cp = Math.cos(seatPitch);
+      camera.position.copy(seatEyePos);
+      camera.lookAt(
+        seatEyePos.x + Math.sin(seatYaw) * cp,
+        seatEyePos.y + Math.sin(seatPitch),
+        seatEyePos.z + Math.cos(seatYaw) * cp
+      );
+      return;
+    }
+
+    // These clamps exist to keep free (mouse-drag) orbiting from reaching gimbal-lock-ish
+    // extreme angles. They must NOT apply while tweening toward — or settled at — a seat:
+    // a seat's target phi/radius are exact geometry, already computed correctly, and can
+    // legitimately fall outside this range (confirmed: real seats need phi up to ~1.69,
+    // this clamp capped at 1.52 — the tween could never converge, so the camera stayed
+    // permanently pinned at the clamp ceiling instead of its true, lower, correct height).
+    if (!seatLocked) {
+      rig.phi = Math.max(0.25, Math.min(1.52, rig.phi));
+      rig.radius = Math.max(8, Math.min(110, rig.radius));
+    }
+    camera.position.set(
+      rig.tx + rig.radius * Math.sin(rig.phi) * Math.sin(rig.theta),
+      rig.ty + rig.radius * Math.cos(rig.phi),
+      rig.tz + rig.radius * Math.sin(rig.phi) * Math.cos(rig.theta)
+    );
+    camera.lookAt(rig.tx, rig.ty, rig.tz);
+  }
+
+  // Pointer controls
+  let dragging = false, px = 0, py = 0, pinchDist = 0, downX = 0, downY = 0;
+  const el = renderer.domElement;
+  const headRaycaster = new THREE.Raycaster();
+  el.addEventListener('pointerdown', e => { dragging = true; px = e.clientX; py = e.clientY; downX = e.clientX; downY = e.clientY; rig.tweening = false; });
+  window.addEventListener('pointermove', e => {
+    if (!dragging) return;
+    if (seatFirstPerson) {
+      // Seated: dragging turns your head in place, it does not leave the seat.
+      seatYaw -= (e.clientX - px) * 0.0045;
+      seatPitch = Math.max(-1.4, Math.min(1.4, seatPitch - (e.clientY - py) * 0.0038));
+      px = e.clientX; py = e.clientY;
+      roCam.textContent = roCam.textContent; // unchanged — still labeled with the seat
+      return;
+    }
+    rig.theta -= (e.clientX - px) * 0.0055;
+    rig.phi -= (e.clientY - py) * 0.0045;
+    px = e.clientX; py = e.clientY;
+    document.querySelectorAll('#cams .chip').forEach(ch => ch.classList.remove('on'));
+    roCam.textContent = 'FREE ORBIT';
+  });
+  window.addEventListener('pointerup', e => {
+    dragging = false;
+    // A "click" (near-zero movement) on a head, while heads are showing, jumps you there.
+    // Anything that moved more than a few px was an orbit/look drag, not a pick.
+    if (Math.hypot(e.clientX - downX, e.clientY - downY) < 5 &&
+        currentForm === 'sightline' && sightlineCfg.showHeads && headHitMesh && !renderer.xr.isPresenting) {
+      const ndc = new THREE.Vector2((e.clientX / window.innerWidth) * 2 - 1, -(e.clientY / window.innerHeight) * 2 + 1);
+      headRaycaster.setFromCamera(ndc, camera);
+      const hits = headRaycaster.intersectObject(headHitMesh);
+      if (hits.length && hits[0].instanceId !== undefined) {
+        const h = headSeats[hits[0].instanceId];
+        if (h) jumpToSeat(h.tier, h.rowInTier, h.seatIdx + 1);
+      }
+    }
+  });
+  el.addEventListener('wheel', e => {
+    e.preventDefault();
+    if (seatFirstPerson) return; // no dollying while seated — you're in a specific numbered seat, not floating
+    rig.tweening = false;
+    rig.radius *= 1 + Math.sign(e.deltaY) * 0.07;
+  }, { passive: false });
+  el.addEventListener('touchstart', e => {
+    if (e.touches.length === 2) {
+      pinchDist = Math.hypot(e.touches[0].clientX - e.touches[1].clientX, e.touches[0].clientY - e.touches[1].clientY);
+    }
+  }, { passive: true });
+  el.addEventListener('touchmove', e => {
+    if (e.touches.length === 2) {
+      const d = Math.hypot(e.touches[0].clientX - e.touches[1].clientX, e.touches[0].clientY - e.touches[1].clientY);
+      rig.radius *= pinchDist / Math.max(1, d);
+      rig.radius = Math.max(8, Math.min(110, rig.radius));
+      pinchDist = d;
+      rig.tweening = false;
+    }
+  }, { passive: true });
+
+  /* ============================ BOARD (gels / faders) ============================ */
+  const GELS = [
+    { name: 'Open White',   hex: '#ffffff' },
+    { name: 'R02 Tungsten', hex: '#ffb457' },
+    { name: 'Seafoam Wash', hex: '#7fd8c9' },
+    { name: 'R33 Rose',     hex: '#ff7f9e' },
+    { name: 'R80 Steel',    hex: '#7fa8d8' }
+  ];
+  const gelWrap = document.getElementById('gels');
+  const gelName = document.getElementById('gel-name');
+  let gelColor = new THREE.Color('#ffffff');
+  GELS.forEach((g, i) => {
+    const b = document.createElement('button');
+    b.className = 'gel' + (i === 0 ? ' on' : '');
+    b.style.background = g.hex;
+    b.title = g.name;
+    b.setAttribute('aria-label', 'Gel: ' + g.name);
+    b.addEventListener('click', () => {
+      gelColor = new THREE.Color(g.hex);
+      gelName.textContent = g.name;
+      gelIndex = i;
+      osc('/board/gel', '"' + g.name + '"');
+      document.querySelectorAll('.gel').forEach(x => x.classList.remove('on'));
+      b.classList.add('on');
+      syncUrlThrottled();
+    });
+    gelWrap.appendChild(b);
+  });
+  const fInt = document.getElementById('f-int');
+  const fHouse = document.getElementById('f-house');
+  fInt.addEventListener('input', () => { faderOsc(fInt, Number(fInt.value)); slBrightness.value = fInt.value; syncUrlThrottled(); });
+
+  const slBrightness = document.getElementById('sl-brightness');
+  slBrightness.value = fInt.value;
+  slBrightness.addEventListener('input', () => { fInt.value = slBrightness.value; faderOsc(fInt, Number(fInt.value)); syncUrlThrottled(); });
+  fHouse.addEventListener('input', () => { faderOsc(fHouse, Number(fHouse.value)); syncUrlThrottled(); });
+
+  const sndChip = document.getElementById('snd');
+  sndChip.classList.add('on');
+  sndChip.addEventListener('click', () => {
+    soundOn = !soundOn;
+    sndChip.textContent = soundOn ? 'ON' : 'OFF';
+    sndChip.classList.toggle('on', soundOn);
+    if (audio() && master) master.gain.linearRampToValueAtTime(soundOn ? 0.5 : 0.0001, AC.currentTime + 0.2);
+    osc('/audio/master', soundOn ? 1 : 0);
+    syncUrlThrottled();
+  });
+
+  /* ---- Fly controls (flat screen): WASD to move, Space/Shift for up/down ---- */
+  const flyKeys = { w: false, a: false, s: false, d: false, ' ': false, shift: false };
+  function typingInField() {
+    const tag = (document.activeElement && document.activeElement.tagName) || '';
+    return tag === 'INPUT' || tag === 'TEXTAREA';
+  }
+  window.addEventListener('keydown', e => {
+    if (typingInField()) return;
+    const k = e.key.toLowerCase();
+    if (k === 'w' || k === 'a' || k === 's' || k === 'd') flyKeys[k] = true;
+    if (e.key === ' ') { flyKeys[' '] = true; e.preventDefault(); } // stop the page from scrolling
+    if (e.key === 'Shift') flyKeys.shift = true;
+  });
+  window.addEventListener('keyup', e => {
+    const k = e.key.toLowerCase();
+    if (k === 'w' || k === 'a' || k === 's' || k === 'd') flyKeys[k] = false;
+    if (e.key === ' ') flyKeys[' '] = false;
+    if (e.key === 'Shift') flyKeys.shift = false;
+  });
+  window.addEventListener('blur', () => { // e.g. alt-tabbing away mid-press — don't leave a key "stuck"
+    flyKeys.w = flyKeys.a = flyKeys.s = flyKeys.d = flyKeys[' '] = flyKeys.shift = false;
+  });
+
+  /* ---- Hide-UI toggle (flat screen) ---- */
+  const hideUiBtn = document.getElementById('hide-ui');
+  function setUiHidden(hidden) {
+    document.body.classList.toggle('ui-hidden', hidden);
+    hideUiBtn.textContent = hidden ? '◑' : '◐';
+    hideUiBtn.title = hidden ? 'Show interface (H)' : 'Hide interface (H)';
+  }
+  hideUiBtn.addEventListener('click', () => setUiHidden(!document.body.classList.contains('ui-hidden')));
+  window.addEventListener('keydown', e => {
+    if (e.key === 'h' || e.key === 'H') {
+      const tag = (document.activeElement && document.activeElement.tagName) || '';
+      if (tag === 'INPUT' || tag === 'TEXTAREA') return; // don't hijack typing into the sightline fields
+      setUiHidden(!document.body.classList.contains('ui-hidden'));
+    }
+  });
+
+  /* ---- XR sliders enable/disable (decided before entering the headset) ---- */
+  let xrSlidersEnabled = true;
+  const xrSlidersChip = document.getElementById('xr-sliders-toggle');
+  xrSlidersChip.classList.add('on');
+  xrSlidersChip.addEventListener('click', () => {
+    xrSlidersEnabled = !xrSlidersEnabled;
+    xrSlidersChip.textContent = xrSlidersEnabled ? 'ON' : 'OFF';
+    xrSlidersChip.classList.toggle('on', xrSlidersEnabled);
+    if (xrPanelGroup) xrPanelGroup.visible = xrSlidersEnabled && renderer.xr.isPresenting;
+  });
+
+  /* ---- Point density: N is fixed at load (every formation's buffers are sized to it),
+     so this can't resize live — it previews the new total, then reloads with ?k=N to
+     rebuild everything at that density. Honest tradeoff rather than a silent limitation. */
+  const densitySlider = document.getElementById('f-density');
+  const densityLabel = document.getElementById('density-label');
+  densitySlider.value = K;
+  densityLabel.textContent = N.toLocaleString('en-US') + ' — tap to reload';
+  densitySlider.addEventListener('input', () => {
+    densityLabel.textContent = (24000 * Number(densitySlider.value)).toLocaleString('en-US') + ' — release to reload';
+  });
+  densitySlider.addEventListener('change', () => {
+    const url = new URL(location.href);
+    url.searchParams.set('k', densitySlider.value);
+    location.href = url.toString();
+  });
+
+  function applyBoard() {
+    const xrBoost = renderer.xr.isPresenting ? XR_BOOST * BRIGHT[brightIdx] : 1;
+    const inten = (0.12 + (fInt.value / 100) * 1.15) * xrBoost;
+    mat.uniforms.uTint.value.setRGB(gelColor.r * inten, gelColor.g * inten, gelColor.b * inten);
+    const h = fHouse.value / 100;
+    scene.background.copy(VOID).lerp(HOUSE_WARM, h);
+    scene.fog.color.copy(scene.background);
+    grid.material.opacity = 0.12 + h * 0.35;
+  }
+
+  /* ============================ CUE STACK ============================ */
+  const CUES = [
+    { num: '0.5', label: 'House to half — quiet please, places',
+      run: () => { slideTo(fHouse, 45); startBed(); } },
+    { num: '1',   label: 'Survey resolves — the site as found',
+      run: () => { setFormation('scan', false); slideTo(fInt, 70); pickGel(2); goCamera(CAMS[4]); } },
+    { num: '2',   label: 'BUILD — raise the room from the scan',
+      run: () => { setFormation('theater', true); pickGel(0); slideTo(fInt, 85); goCamera(CAMS[0]); stopBed(); swell(); } },
+    { num: '3',   label: 'Warmers up — settle into Row F',
+      run: () => { pickGel(1); slideTo(fInt, 92); slideTo(fHouse, 30); goCamera(CAMS[1]); } },
+    { num: '4',   label: 'Chandelier — balcony rail, seafoam accents',
+      run: () => { setTwinkle(true); goCamera(CAMS[2]); } },
+    { num: '5',   label: 'Performer enters — followspot, pick up stage left',
+      run: () => { setPerformer(true); pickGel(0); goCamera(CAMS[1]); slideTo(fHouse, 15); } },
+    { num: '6',   label: 'Actor\'s view — turn it around, downstage',
+      run: () => { pickGel(3); goCamera(CAMS[3]); slideTo(fHouse, 45); } },
+    { num: '7',   label: 'Marquee — put the name in lights',
+      run: () => { setFormation('marquee', true); pickGel(0); slideTo(fInt, 95); slideTo(fHouse, 8); goCamera(CAMS[0]); chime(); } },
+    { num: '8',   label: 'Restore — rebuild the house, board is yours',
+      run: () => { setTwinkle(false); setFormation('theater', true); pickGel(0); slideTo(fHouse, 12); slideTo(fInt, 82); goCamera(CAMS[0]); } }
+  ];
+  let cueIdx = 0;
+  let twinkle = false;
+  function setTwinkle(on) {
+    twinkle = on;
+    if (!on) { // hand the crystals back their resting color
+      const cArr = colAttr.array;
+      for (let i = chandStart * 3; i < chandEnd * 3; i++) cArr[i] = baseCol[i];
+      colAttr.needsUpdate = true;
+    }
+    const chip = document.getElementById('fx-twinkle');
+    if (chip) chip.classList.toggle('on', on);
+    osc('/fx/chandelier', on ? 1 : 0);
+  }
+  const cueList = document.getElementById('cue-list');
+  const standbyLine = document.getElementById('standby-line');
+  const goBtn = document.getElementById('go');
+
+  CUES.forEach((c, i) => {
+    const d = document.createElement('div');
+    d.className = 'cue' + (i === 0 ? ' standby' : '');
+    d.innerHTML = '<span class="num">CUE ' + c.num + '</span><span>' + c.label + '</span>';
+    cueList.appendChild(d);
+  });
+  const cueEls = Array.from(cueList.children);
+
+  function slideTo(input, val) {
+    // animate a fader like a board op riding it
+    const start = Number(input.value), delta = val - start, t0 = performance.now(), dur = REDUCED ? 0 : 900;
+    function step(now) {
+      const t = dur === 0 ? 1 : Math.min(1, (now - t0) / dur);
+      input.value = start + delta * (t * t * (3 - 2 * t));
+      faderOsc(input, Number(input.value));
+      if (t < 1) requestAnimationFrame(step);
+    }
+    requestAnimationFrame(step);
+  }
+  function pickGel(i) { gelWrap.children[i].click(); }
+
+  goBtn.addEventListener('click', () => {
+    if (cueIdx >= CUES.length) return;
+    audio();
+    ensureMotion();
+    beep(1650, 0.07, 0.09);
+    osc('/cue/' + CUES[cueIdx].num + '/fire');
+    CUES[cueIdx].run();
+    cueEls[cueIdx].classList.remove('standby');
+    cueEls[cueIdx].classList.add('done');
+    cueIdx++;
+    if (cueIdx < CUES.length) {
+      cueEls[cueIdx].classList.add('standby');
+      cueEls[cueIdx].scrollIntoView({ block: 'nearest', behavior: REDUCED ? 'auto' : 'smooth' });
+      standbyLine.textContent = 'STANDBY CUE ' + CUES[cueIdx].num;
+    } else {
+      standbyLine.textContent = 'END OF STACK — BOARD IS YOURS';
+      standbyLine.classList.remove('flash');
+      goBtn.classList.add('spent');
+      goBtn.textContent = 'CLEAR';
+      goBtn.classList.remove('spent'); // keep it usable as reset
+      goBtn.onclick = resetStack;
+    }
+  });
+  function resetStack() {
+    cueIdx = 0;
+    cueEls.forEach((e, i) => { e.classList.remove('done', 'standby'); if (i === 0) e.classList.add('standby'); });
+    standbyLine.textContent = 'STANDBY CUE 0.5';
+    standbyLine.classList.add('flash');
+    goBtn.textContent = 'GO';
+    goBtn.onclick = null;
+  }
+
+  /* ============================ VIEW / FORM CHIPS ============================ */
+  const camWrap = document.getElementById('cams');
+  CAMS.forEach((c, i) => {
+    const b = document.createElement('button');
+    b.className = 'chip cam' + (i === 0 ? ' on' : '');
+    b.dataset.cam = c.key;
+    b.textContent = c.name;
+    b.addEventListener('click', () => { goCamera(c); syncUrlThrottled(); });
+    camWrap.appendChild(b);
+  });
+  const formWrap = document.getElementById('forms');
+  [['scan', 'Forest Scan'], ['theater', 'Theater'], ['headset', 'Headset'], ['skyline', 'Skyline'], ['marquee', 'Marquee'], ['guitar', 'Guitar'], ['wave', 'The Wave'], ['globe', 'World Tour'], ['dominoes', 'Dominoes'], ['monocle', 'Monocle']].forEach(([k, label], i) => {
+    const b = document.createElement('button');
+    b.className = 'chip' + (i === 0 ? ' on' : '');
+    b.dataset.form = k;
+    b.textContent = label;
+    b.addEventListener('click', () => { setFormation(k, true); syncUrlThrottled(); });
+    formWrap.appendChild(b);
+  });
+  document.getElementById('fx-spot').addEventListener('click', () => { setPerformer(!perfOn); syncUrlThrottled(); });
+  document.getElementById('fx-twinkle').addEventListener('click', () => { setTwinkle(!twinkle); syncUrlThrottled(); });
+
+  /* ---- Show Heads: obstruction check + click-to-jump ---- */
+  const headsChip = document.getElementById('sl-heads');
+  const headsHint = document.getElementById('sl-heads-hint');
+  headsChip.addEventListener('click', () => {
+    sightlineCfg.showHeads = !sightlineCfg.showHeads;
+    headsChip.textContent = sightlineCfg.showHeads ? 'ON' : 'OFF';
+    headsChip.classList.toggle('on', sightlineCfg.showHeads);
+    headsHint.style.display = sightlineCfg.showHeads ? 'block' : 'none';
+    el.style.cursor = sightlineCfg.showHeads && currentForm === 'sightline' ? 'pointer' : 'grab';
+    audio(); beep(sightlineCfg.showHeads ? 600 : 460, 0.05, 0.04, 'sine');
+    if (currentForm === 'sightline') applySightline(false); // reflow to reallocate points into/out of heads
+    syncUrlThrottled();
+  });
+
+  /* ---- Front of House mode: pit / apron / close ---- */
+  const fomChips = { pit: document.getElementById('fom-pit'), apron: document.getElementById('fom-apron'), close: document.getElementById('fom-close') };
+  function setFrontMode(mode) {
+    sightlineCfg.frontMode = mode;
+    Object.entries(fomChips).forEach(([k, el2]) => el2.classList.toggle('on', k === mode));
+    audio(); beep(mode === 'pit' ? 340 : mode === 'apron' ? 460 : 580, 0.05, 0.04, 'sine');
+    if (currentForm === 'sightline') applySightline(false);
+    syncUrlThrottled();
+  }
+  Object.entries(fomChips).forEach(([k, el2]) => el2.addEventListener('click', () => setFrontMode(k)));
+  fomChips[sightlineCfg.frontMode].classList.add('on');
+
+  /* ---- Sightline Studio wiring: swaps in as the console's 4th bay ---- */
+  const sightBay = document.getElementById('sight-bay');
+  const otherBays = [document.getElementById('cue-bay'), document.getElementById('board-bay'), document.getElementById('views-bay')];
+  const fxSight = document.getElementById('fx-sight');
+  const slInputs = { rows: 'sl-rows', seats: 'sl-seats', balconies: 'sl-balc', balcRows: 'sl-balcrows', cVal: 'sl-c' };
+  function openSightBay(open) {
+    sightBay.style.display = open ? 'flex' : 'none';
+    otherBays.forEach(b => { b.style.display = open ? 'none' : 'flex'; });
+    fxSight.classList.toggle('on', open);
+    if (open) {
+      lastSeatSpec = null; // fresh entry — no seat chosen yet in this session
+      applySightline(true); // entering the studio: scatter-rebuild, camera untouched
+      if (!perfOn) setPerformer(true); // sightline-checking wants a moving reference on stage by default
+    }
+  }
+  fxSight.addEventListener('click', () => openSightBay(sightBay.style.display !== 'flex'));
+  document.getElementById('sl-back').addEventListener('click', () => openSightBay(false));
+  document.getElementById('sl-reframe').addEventListener('click', () => { audio(); beep(700, 0.05, 0.04, 'sine'); reframeSightline(); });
+
+  // Seat-picker bounds always reflect the CURRENT bowl, so an invalid seat can't be entered
+  const slTier = document.getElementById('sl-tier'), slSeatRow = document.getElementById('sl-seatrow'), slSeatNum = document.getElementById('sl-seatnum');
+  function syncSeatBounds() {
+    slTier.max = sightlineCfg.balconies;
+    slTier.value = Math.min(slTier.max, Math.max(0, Math.round(parseFloat(slTier.value) || 0)));
+    const tier = parseInt(slTier.value, 10);
+    const rowsInTier = tier === 0 ? sightlineCfg.rows : sightlineCfg.balcRows;
+    slSeatRow.max = rowsInTier;
+    slSeatRow.value = Math.min(rowsInTier, Math.max(1, Math.round(parseFloat(slSeatRow.value) || 1)));
+    slSeatNum.max = sightlineCfg.seats;
+    slSeatNum.value = Math.min(sightlineCfg.seats, Math.max(1, Math.round(parseFloat(slSeatNum.value) || 1)));
+  }
+  slTier.addEventListener('input', syncSeatBounds);
+  slSeatRow.addEventListener('input', () => { slSeatRow.value = Math.min(parseFloat(slSeatRow.max), Math.max(1, Math.round(parseFloat(slSeatRow.value) || 1))); });
+  slSeatNum.addEventListener('input', () => { slSeatNum.value = Math.min(parseFloat(slSeatNum.max), Math.max(1, Math.round(parseFloat(slSeatNum.value) || 1))); });
+
+  let slTimer = null;
+  function slRebuild() {
+    clearTimeout(slTimer);
+    slTimer = setTimeout(() => {
+      for (const k in slInputs) {
+        const el = document.getElementById(slInputs[k]);
+        const v = parseFloat(el.value);
+        const lo = parseFloat(el.min), hi = parseFloat(el.max);
+        sightlineCfg[k] = Math.min(hi, Math.max(lo, isNaN(v) ? sightlineCfg[k] : v));
+        el.value = sightlineCfg[k];
+      }
+      audio(); beep(520, 0.05, 0.04, 'sine');
+      applySightline(false); // reflow in place, camera held — no scatter, every tweak
+      syncSeatBounds(); // bowl just changed shape — re-clamp the seat picker to what still exists
+      document.getElementById('sl-readout').textContent =
+        sightlineCfg.rows + ' orchestra rows × ' + sightlineCfg.seats + ' seats, ' +
+        sightlineCfg.balconies + ' balcon' + (sightlineCfg.balconies === 1 ? 'y' : 'ies') +
+        ' @ ' + sightlineCfg.balcRows + ' rows, ' + sightlineCfg.cVal + '" clearance — ' +
+        sightlineRows.length + ' rows solved, every seat sights the stage.';
+      syncUrlThrottled();
+    }, 260);
+  }
+  Object.values(slInputs).forEach(id => document.getElementById(id).addEventListener('input', slRebuild));
+  syncSeatBounds(); // set correct bounds for the default config on load
+
+  function jumpToSeat(tier, rowN, seatN) {
+    // Resolve which row/seat this actually is FIRST, using whatever row data currently
+    // exists. If we're not in sightline mode yet (or have no data at all), do one cheap
+    // preliminary build just to get valid geometry to resolve against — this only happens
+    // once per session, on the very first jump.
+    if (currentForm !== 'sightline' || !sightlineRows.length) applySightline(true);
+    const tierRows = sightlineRows.filter(r => r.tier === tier);
+    if (!tierRows.length) { document.getElementById('sl-readout').textContent = 'No such tier — check Balconies above.'; return; }
+    const row = tierRows[Math.min(rowN, tierRows.length) - 1];
+    const seatIdx = Math.min(seatN, row.seats) - 1;
+    currentSeatRow = { tier, rowInTier: row.rowInTier }; // drives proximity density
+    // Set BEFORE the real rebuild below, not after — the self-head-exclusion check inside
+    // buildSightlineTheater reads lastSeatSpec, so if this were set afterward the exclusion
+    // would always be one seat behind (still showing the head at the seat you just left).
+    lastSeatSpec = { tier, rowInTier: row.rowInTier, seatN: seatIdx + 1 };
+    // Rebuild so points redistribute around the new seat AND the correct head is excluded.
+    // Stage, backwall, rails, and any performer don't depend on currentSeatRow/lastSeatSpec,
+    // so those hold completely still while only the seat/head density and exclusion update.
+    applySightline(false);
+    const sx = seatX(row, seatIdx); // feet — same helper the renderer used, so this is always a real seat, never the aisle
+    const eyeFt = new THREE.Vector3(sx, row.floor + SL_EYE_OFFSET, row.z); // feet — for the readout
+    const focalFt = new THREE.Vector3(0, SL_FOCAL.y, SL_FOCAL.z);
+    const vFt = eyeFt.clone().sub(focalFt);
+    // scene-scaled versions drive the actual camera, since particles live in scene units
+    const eyeSc = eyeFt.clone().multiplyScalar(SL_SCALE);
+    const focalSc = focalFt.clone().multiplyScalar(SL_SCALE);
+    const vSc = eyeSc.clone().sub(focalSc);
+    const radius = Math.max(0.5, vSc.length());
+    const theta = Math.atan2(vSc.x, vSc.z);
+    const phi = Math.acos(Math.min(1, Math.max(-1, vSc.y / radius)));
+    goCamera({ key: 'seat', name: (tier === 0 ? 'ORCH' : 'BALC ' + tier) + ' R' + rowN + ' S' + seatN,
+      theta, phi, r: radius, t: [focalSc.x, focalSc.y, focalSc.z] });
+    seatFirstPerson = false; // reset BEFORE the tween starts, so flying to a new seat animates properly
+    seatLocked = true; // holds the view still once arrived — no idle drift while "sitting" in a specific seat
+    audio(); beep(1200, 0.06, 0.05, 'sine');
+    document.getElementById('sl-readout').textContent =
+      (tier === 0 ? 'Orchestra' : 'Balcony ' + tier) + ', row ' + rowN + ', seat ' + seatN +
+      ' — ' + vFt.length().toFixed(1) + ' ft to center stage, eye height ' + (SL_EYE_OFFSET*12).toFixed(0) + '" (seated).';
+    syncUrlThrottled();
+  }
+  document.getElementById('sl-seatgo').addEventListener('click', () => {
+    syncSeatBounds(); // belt-and-suspenders: the fields can't hold an invalid value, but re-clamp anyway
+    jumpToSeat(parseInt(slTier.value, 10), parseInt(slSeatRow.value, 10), parseInt(slSeatNum.value, 10));
+  });
+
+  /* ============================ MAIN LOOP ============================ */
+  const clock = new THREE.Clock();
+  let hintFaded = false, prevT = 0, waveTick = 0;
+  function animate(time, frame) {
+    const t = clock.getElapsedTime();
+    if (frame && renderer.xr.isPresenting) {
+      const refSpace = renderer.xr.getReferenceSpace();
+      if (refSpace) updateXRPanel(frame, refSpace);
+    }
+    const dt = Math.min(0.05, t - prevT); prevT = t;
+
+    // Morph positions & colors toward target (time-based: same speed at 60 or 90 Hz)
+    if (morphT < 1) {
+      morphT = REDUCED ? 1 : Math.min(1, morphT + dt * 0.55);
+      const ease = 1 - Math.exp(-dt * (3.4 + morphT * 2.2));
+      const pArr = posAttr.array, cArr = colAttr.array;
+      for (let i = 0; i < N * 3; i++) {
+        pArr[i] += (target.pos[i] - pArr[i]) * ease;
+        cArr[i] += (target.col[i] - cArr[i]) * ease;
+      }
+      posAttr.needsUpdate = true;
+      colAttr.needsUpdate = true;
+    }
+
+    // Chandelier twinkle (theater only)
+    if (twinkle && currentForm === 'theater' && !REDUCED) {
+      const cArr = colAttr.array;
+      for (let i = chandStart; i < chandEnd; i++) {
+        const s = 0.75 + 0.6 * Math.abs(Math.sin(t * 2.2 + i * 0.7));
+        const j = i * 3;
+        cArr[j]   = Math.min(1, baseCol[j] * s);
+        cArr[j+1] = Math.min(1, baseCol[j+1] * s);
+        cArr[j+2] = Math.min(1, baseCol[j+2] * s * 0.92);
+      }
+      colAttr.needsUpdate = true;
+    }
+
+    // Marquee bulb chase
+    if (currentForm === 'marquee' && morphT > 0.5 && !REDUCED) {
+      const cArr = colAttr.array;
+      const step = Math.floor(t * 6);
+      const nBulbs = Math.floor((marqEnd - marqStart) / BULB_PTS);
+      for (let b = 0; b < nBulbs; b++) {
+        const bright = ((b + step) % 3 === 0) ? 1.55 : 0.4;
+        for (let k = 0; k < BULB_PTS; k++) {
+          const j = (marqStart + b * BULB_PTS + k) * 3;
+          cArr[j]   = Math.min(1, baseCol[j] * bright);
+          cArr[j+1] = Math.min(1, baseCol[j+1] * bright);
+          cArr[j+2] = Math.min(1, baseCol[j+2] * bright * 0.88);
+        }
+      }
+      colAttr.needsUpdate = true;
+    }
+
+    // The wave rolls once it has settled (every other frame: 96k sins is real work)
+    if (currentForm === 'wave' && morphT >= 1 && !REDUCED && (waveTick++ & 1) === 0) {
+      const pArr = posAttr.array;
+      for (let i = 0; i < N; i++) {
+        const j = i * 3;
+        pArr[j + 1] = target.pos[j + 1] + 0.28 * Math.sin(target.pos[j] * 0.2 + t * 1.35 + target.pos[j + 2] * 0.12);
+      }
+      posAttr.needsUpdate = true;
+    }
+
+    // The performer — enters from the wing, then wanders the apron. Body geometry and the
+    // walk path below were both originally tuned for the 'theater' formation's own arbitrary
+    // scale. Sightline Studio is real-feet-based (SL_SCALE), so displaying the performer
+    // there unscaled would render roughly 9ft tall and walk off the edge of the (correctly
+    // sized, per the citation above) stage — both are corrected here when in that formation.
+    if (perfOn) {
+      const inSightline = currentForm === 'sightline' && sightlineStage;
+      // Target a realistic ~5.8ft standing height (consistent with SL_FOCAL.y = 5.4ft eye
+      // height); the performer's raw geometry spans about 3.84 units tall.
+      const bodyScale = inSightline ? (5.8 * SL_SCALE) / 3.84 : 1;
+      const stageScaleX = inSightline ? sightlineStage.halfW / 13 : 1;
+      const stageScaleZ = inSightline ? (sightlineStage.zNear - sightlineStage.zFar) / 7.5 : 1;
+      const zCenter = inSightline ? (sightlineStage.zNear + sightlineStage.zFar) / 2 : -10.25;
+
+      const pt = t - perfStart;
+      const entry = Math.min(1, pt / 6);
+      const ease = entry * entry * (3 - 2 * entry);
+      const wf = Math.max(0, Math.min(1, (pt - 6) / 5));
+      const px = (-14 + ease * 14 + wf * Math.sin((pt - 6) * 0.22) * 4.5) * stageScaleX;
+      const zPattern = -11.5 + ease * 2.5 + wf * Math.sin((pt - 6) * 0.15) * 2.0;
+      const pz = zCenter + (zPattern + 10.25) * stageScaleZ;
+      const bob = REDUCED ? 0 : Math.sin(pt * 2.1) * 0.07 * bodyScale;
+      const sway = REDUCED ? 0 : Math.sin(pt * 0.31) * 0.5;
+      const cs = Math.cos(sway), sn = Math.sin(sway);
+      const arr = perfPosAttr.array;
+      for (let i = 0; i < PERF_N; i++) {
+        const j = i * 3;
+        const bx = perfBase[j] * bodyScale, by = perfBase[j+1] * bodyScale, bz = perfBase[j+2] * bodyScale;
+        const wob = REDUCED ? 0 : 0.05 * bodyScale * Math.sin(pt * 3 + i * 1.7);
+        arr[j]   = px + bx * cs - bz * sn + wob;
+        arr[j+1] = by + bob + (REDUCED ? 0 : 0.04 * bodyScale * Math.sin(pt * 2.4 + i));
+        arr[j+2] = pz + bx * sn + bz * cs + wob * 0.6;
+      }
+      perfPosAttr.needsUpdate = true;
+      spotGroup.position.set(px, 0, pz);
+      if (!REDUCED) pool.material.opacity = 0.13 + 0.03 * Math.sin(t * 6.3);
+    }
+
+    // Motion audio rides the morph: loud + bright while points fly, settles as they land
+    if (AC && motionNodes) {
+      const m = morphT < 1 ? Math.pow(1 - morphT, 0.7) : 0;
+      motionNodes.g.gain.setTargetAtTime(m * 0.5, AC.currentTime, 0.08);
+      motionNodes.bp.frequency.setTargetAtTime(320 + m * 2500, AC.currentTime, 0.1);
+    }
+
+    // Show-control heartbeat
+    const hb = Math.floor(t / 10);
+    if (hb !== lastHb) { lastHb = hb; osc('/eos/ping', hb); }
+
+    // Idle drift when settled and hands-off
+    if (!dragging && !rig.tweening && !REDUCED && !seatLocked) rig.theta += 0.0005;
+
+    // Fly controls: WASD moves the orbit target along the camera's own facing directions,
+    // which drags the camera with it (same radius/theta/phi offset preserved) — moving the
+    // "thing you're orbiting" is a simpler way to fly than maintaining a whole separate
+    // free-camera mode, and it means mouse-drag orbiting still works seamlessly afterward.
+    if (!renderer.xr.isPresenting) {
+      const flying = flyKeys.w || flyKeys.a || flyKeys.s || flyKeys.d || flyKeys[' '] || flyKeys.shift;
+      if (flying) {
+        seatLocked = false; seatFirstPerson = false; rig.tweening = false;
+        document.querySelectorAll('#cams .chip').forEach(ch => ch.classList.remove('on'));
+        roCam.textContent = 'FREE FLIGHT';
+        const fwd = new THREE.Vector3(); camera.getWorldDirection(fwd);
+        const right = new THREE.Vector3().crossVectors(fwd, camera.up).normalize();
+        const speed = 16 * dt; // scene units/sec — tune here if it feels too fast/slow for a given formation's scale
+        if (flyKeys.w) { rig.tx += fwd.x * speed; rig.ty += fwd.y * speed; rig.tz += fwd.z * speed; }
+        if (flyKeys.s) { rig.tx -= fwd.x * speed; rig.ty -= fwd.y * speed; rig.tz -= fwd.z * speed; }
+        if (flyKeys.d) { rig.tx += right.x * speed; rig.ty += right.y * speed; rig.tz += right.z * speed; }
+        if (flyKeys.a) { rig.tx -= right.x * speed; rig.ty -= right.y * speed; rig.tz -= right.z * speed; }
+        if (flyKeys[' ']) rig.ty += speed;
+        if (flyKeys.shift) rig.ty -= speed;
+      }
+    }
+
+    // Breathing point size — splat shimmer
+    if (!REDUCED) mat.uniforms.uSize.value = baseSize + Math.sin(t * 1.3) * 0.02 * (baseSize / 0.22);
+
+    if (renderer.xr.isPresenting && t - lastHudDraw > 0.5) { lastHudDraw = t; drawHud(); }
+    applyBoard();
+    if (!renderer.xr.isPresenting) applyCamera();
+    renderer.render(scene, camera);
+
+    if (!hintFaded && t > 9) {
+      hintFaded = true;
+      document.getElementById('hint').style.opacity = '0';
+    }
+  }
+
+  window.addEventListener('resize', () => {
+    camera.aspect = window.innerWidth / window.innerHeight;
+    camera.updateProjectionMatrix();
+    renderer.setSize(window.innerWidth, window.innerHeight);
+  });
+
+  /* ============================ WEBXR (Vision Pro / Quest) ============================ */
+  const XR_SCALE = 0.6;            // 1 scene unit -> 0.6 m: ~7 m proscenium, ~17 m stage
+  // Calibration: matching the 2D look exactly means splat size scales with the world
+  // (0.22 * 0.6 = 0.13). Default sits slightly above that for body; tune via URL or left pinch.
+  const XR_SIZE = Math.min(1, parseFloat(qp.get('xrsize')) || 0.16);
+  const XR_BOOST = Math.min(4, parseFloat(qp.get('xrboost')) || 1.0);
+  const BRIGHT = [0.5, 0.75, 1, 1.5, 2.25]; // left pinch cycles these live in-headset
+  let brightIdx = 2;
+  const xrBtn = document.getElementById('xr-btn');
+  let hud = null, hudCtx = null, hudTex = null, lastHudDraw = 0;
+
+  function buildHud() {
+    const cv = document.createElement('canvas');
+    cv.width = 1024; cv.height = 256;
+    hudCtx = cv.getContext('2d');
+    hudTex = new THREE.CanvasTexture(cv);
+    const m = new THREE.Mesh(
+      new THREE.PlaneGeometry(0.5, 0.125),
+      new THREE.MeshBasicMaterial({ map: hudTex, transparent: true, depthTest: false })
+    );
+    m.position.set(0, -0.32, -0.9); // low in the view, out of the sightline
+    m.renderOrder = 999;
+    m.visible = false;
+    camera.add(m);
+    return m;
+  }
+  function drawHud() {
+    if (!hudCtx) return;
+    const c = hudCtx;
+    c.clearRect(0, 0, 1024, 256);
+    c.fillStyle = 'rgba(13,18,26,0.72)';
+    if (c.roundRect) { c.beginPath(); c.roundRect(0, 0, 1024, 256, 28); c.fill(); }
+    else c.fillRect(0, 0, 1024, 256);
+    c.textAlign = 'center';
+    c.fillStyle = '#ffb457';
+    c.font = '600 44px "IBM Plex Mono", monospace';
+    c.fillText(cueIdx < CUES.length ? 'PINCH FOR: CUE ' + CUES[cueIdx].num : 'PINCH TO RESET THE STACK', 512, 92);
+    c.fillStyle = '#e8ddc9';
+    c.font = '34px "IBM Plex Mono", monospace';
+    c.fillText(cueIdx < CUES.length ? CUES[cueIdx].label : 'End of stack — the board is yours', 512, 170);
+    c.fillStyle = '#7fd8c9';
+    c.font = '24px "IBM Plex Mono", monospace';
+    c.fillText('LEFT PINCH: BRIGHTNESS ×' + BRIGHT[brightIdx].toFixed(2) + '   ·   SPLAT ' + baseSize.toFixed(2) + ' m', 512, 228);
+    hudTex.needsUpdate = true;
+  }
+  function xrTeleport(c) {
+    const s = XR_SCALE;
+    const cx = c.t[0] + c.r * Math.sin(c.phi) * Math.sin(c.theta);
+    const cy2 = c.t[1] + c.r * Math.cos(c.phi);
+    const cz = c.t[2] + c.r * Math.sin(c.phi) * Math.cos(c.theta);
+    // put the user's head roughly where the 2D camera sat (local-floor adds real head height)
+    dolly.position.set(cx * s, Math.max(0, cy2 * s - 1.55), cz * s);
+    const dx = (c.t[0] - cx) * s, dz = (c.t[2] - cz) * s;
+    dolly.rotation.set(0, Math.atan2(-dx, -dz), 0);
+    osc('/xr/teleport', '"' + c.key + '"');
+  }
+  /* ============================ XR SPATIAL SLIDERS ============================
+     DOM Overlay (the spec mechanism for showing HTML inside a WebXR session) is
+     defined as AR-only per the W3C module ("This API is an add-on feature for
+     WebXR and the WebXR AR module, and is only available in that context") and
+     visionOS doesn't support immersive-ar sessions at all — so the flat console
+     genuinely cannot be reused in-headset. This builds real 3D controls instead:
+     five pinch-and-drag sliders for the Sightline Studio bowl parameters, mounted
+     near the seat, read via the WebXR Hand Input Module's joint tracking (which
+     Safari on visionOS does support). Untested on real hardware — PINCH_DIST and
+     GRAB_RADIUS below are the two constants most likely to need on-device tuning. */
+  const PINCH_DIST = 0.028;   // meters between thumb-tip and index-tip to count as a pinch
+  const GRAB_RADIUS = 0.055;  // meters from a puck to count as "grabbing" it
+  const SL_SLIDER_DEFS = [
+    { key: 'rows',     label: 'Orch. Rows',  min: 4,  max: 30, step: 1 },
+    { key: 'seats',    label: 'Seats / Row', min: 6,  max: 40, step: 1 },
+    { key: 'balconies',label: 'Balconies',   min: 0,  max: 3,  step: 1 },
+    { key: 'balcRows', label: 'Balc. Rows',  min: 2,  max: 12, step: 1 },
+    { key: 'cVal',     label: 'C-Value (in)',min: 2,  max: 8,  step: 0.5 }
+  ];
+  const SL_TRACK_LEN = 0.30;
+  let xrPanelGroup = null, xrPanelTex = null, xrPanelCtx = null, xrPanelTexObj = null;
+  const xrSliders = []; // { def, puck, t } — t is 0..1 position along the track
+  const gripState = { left: null, right: null };      // slider currently being dragged, per hand
+  const wasPinching = { left: false, right: false };
+  const suppressSelect = { left: false, right: false }; // consumed once by the 'select' handler
+  let xrPanelDirty = false, xrPanelLastRebuild = 0;
+
+  function buildXRPanel() {
+    const g = new THREE.Group();
+    const bg = new THREE.Mesh(
+      new THREE.PlaneGeometry(0.4, 0.34),
+      new THREE.MeshBasicMaterial({ color: 0x0d121a, transparent: true, opacity: 0.82, side: THREE.DoubleSide })
+    );
+    g.add(bg);
+    const cv = document.createElement('canvas'); cv.width = 640; cv.height = 544;
+    xrPanelCtx = cv.getContext('2d');
+    xrPanelTexObj = new THREE.CanvasTexture(cv);
+    const labelPlane = new THREE.Mesh(
+      new THREE.PlaneGeometry(0.4, 0.34),
+      new THREE.MeshBasicMaterial({ map: xrPanelTexObj, transparent: true, depthTest: true })
+    );
+    labelPlane.position.z = 0.001;
+    g.add(labelPlane);
+    const trackMat = new THREE.MeshBasicMaterial({ color: 0x3a4250 });
+    const puckMat = () => new THREE.MeshBasicMaterial({ color: 0x7fd8c9 });
+    SL_SLIDER_DEFS.forEach((def, i) => {
+      const y = 0.115 - i * 0.062;
+      const track = new THREE.Mesh(new THREE.BoxGeometry(SL_TRACK_LEN, 0.006, 0.006), trackMat);
+      track.position.set(0, y, 0.003);
+      g.add(track);
+      const puck = new THREE.Mesh(new THREE.SphereGeometry(0.016, 16, 12), puckMat());
+      const t0 = (sightlineCfg[def.key] - def.min) / (def.max - def.min);
+      puck.position.set(-SL_TRACK_LEN / 2 + t0 * SL_TRACK_LEN, y, 0.01);
+      g.add(puck);
+      xrSliders.push({ def, puck, track, t: t0, baseY: y });
+    });
+    // Mounted to the dolly (room-space, not head-locked): sits like an armrest
+    // console at the user's side, so it stays put as you look around.
+    g.position.set(0.46, 0.30, -0.34);
+    g.rotation.set(-0.12, -0.55, 0);
+    g.visible = false;
+    dolly.add(g);
+    drawXRPanel();
+    return g;
+  }
+  function drawXRPanel() {
+    if (!xrPanelCtx) return;
+    const c = xrPanelCtx;
+    c.clearRect(0, 0, 640, 544);
+    c.textAlign = 'left';
+    c.fillStyle = '#ffb457'; c.font = '600 26px "IBM Plex Mono", monospace';
+    c.fillText('SIGHTLINE STUDIO', 24, 40);
+    c.fillStyle = '#5a6470'; c.font = '16px "IBM Plex Mono", monospace';
+    c.fillText('pinch a puck, slide along the bar', 24, 66);
+    SL_SLIDER_DEFS.forEach((def, i) => {
+      const yPix = 130 + i * 99;
+      c.fillStyle = '#7fd8c9'; c.font = '600 20px "IBM Plex Mono", monospace';
+      c.fillText(def.label, 24, yPix);
+      c.fillStyle = '#e8ddc9'; c.font = '20px "IBM Plex Mono", monospace';
+      c.textAlign = 'right';
+      c.fillText(String(sightlineCfg[def.key]), 616, yPix);
+      c.textAlign = 'left';
+    });
+    xrPanelTexObj.needsUpdate = true;
+  }
+
+  function updateXRPanel(frame, refSpace) {
+    if (!xrPanelGroup || !xrPanelGroup.visible) return;
+    const rightAxis = new THREE.Vector3(1, 0, 0);
+    const panelQuat = new THREE.Quaternion();
+    xrPanelGroup.getWorldQuaternion(panelQuat);
+    rightAxis.applyQuaternion(panelQuat).normalize();
+
+    for (const source of frame.session.inputSources) {
+      if (!source.hand) continue;
+      const handedness = source.handedness; // 'left' | 'right'
+      const idx = source.hand.get('index-finger-tip');
+      const thumb = source.hand.get('thumb-tip');
+      if (!idx || !thumb) continue;
+      const idxPose = frame.getJointPose(idx, refSpace);
+      const thumbPose = frame.getJointPose(thumb, refSpace);
+      if (!idxPose || !thumbPose) continue;
+      const ip = idxPose.transform.position, tp = thumbPose.transform.position;
+      const pinchDist = Math.hypot(ip.x - tp.x, ip.y - tp.y, ip.z - tp.z);
+      const pinching = pinchDist < PINCH_DIST;
+      const indexWorld = new THREE.Vector3(ip.x, ip.y, ip.z);
+
+      if (pinching && !wasPinching[handedness] && !gripState[handedness]) {
+        // pinch just started with an empty hand — check if it started on a puck
+        let nearest = null, nearestD = GRAB_RADIUS;
+        for (const s of xrSliders) {
+          const wp = new THREE.Vector3(); s.puck.getWorldPosition(wp);
+          const d = wp.distanceTo(indexWorld);
+          if (d < nearestD) { nearest = s; nearestD = d; }
+        }
+        if (nearest) { gripState[handedness] = nearest; suppressSelect[handedness] = true; nearest.puck.material.color.setHex(0xff9eb4); }
+      }
+      if (pinching && gripState[handedness]) {
+        const s = gripState[handedness];
+        const trackWorldPos = new THREE.Vector3(); s.track.getWorldPosition(trackWorldPos);
+        const rel = indexWorld.clone().sub(trackWorldPos).dot(rightAxis);
+        let t = Math.min(1, Math.max(0, rel / SL_TRACK_LEN + 0.5));
+        s.t = t;
+        s.puck.position.x = -SL_TRACK_LEN / 2 + t * SL_TRACK_LEN;
+        const raw = s.def.min + t * (s.def.max - s.def.min);
+        const stepped = Math.round(raw / s.def.step) * s.def.step;
+        if (sightlineCfg[s.def.key] !== stepped) {
+          sightlineCfg[s.def.key] = stepped;
+          xrPanelDirty = true;
+          drawXRPanel();
+        }
+      }
+      if (!pinching && gripState[handedness]) {
+        gripState[handedness].puck.material.color.setHex(0x7fd8c9);
+        gripState[handedness] = null;
+      }
+      wasPinching[handedness] = pinching;
+    }
+
+    // Throttled live rebuild while dragging — 96k points every frame would stutter;
+    // once every ~180ms keeps it feeling live without hitching.
+    const now = performance.now();
+    if (xrPanelDirty && now - xrPanelLastRebuild > 180) {
+      xrPanelLastRebuild = now;
+      xrPanelDirty = false;
+      applySightline(false); // no scatter: a smooth continuous reshape while you drag
+    }
+  }
+
+  async function enterXR() {
+    try {
+      const session = await navigator.xr.requestSession('immersive-vr', {
+        optionalFeatures: ['local-floor', 'hand-tracking']
+      });
+      renderer.xr.setReferenceSpaceType('local-floor');
+      await renderer.xr.setSession(session);
+      audio();
+      ensureMotion();
+      // Vision Pro transient-pointer: any gaze+pinch fires 'select' -> take the cue
+      session.addEventListener('select', (ev) => {
+        const hand = ev.inputSource && ev.inputSource.handedness;
+        if (suppressSelect[hand]) { suppressSelect[hand] = false; return; } // that pinch was a slider drag, not a cue
+        if (hand === 'left') { // live brightness ladder
+          brightIdx = (brightIdx + 1) % BRIGHT.length;
+          beep(880 + brightIdx * 140, 0.06, 0.05, 'sine');
+          osc('/xr/brightness', BRIGHT[brightIdx].toFixed(2));
+        } else {
+          goBtn.click();
+        }
+        drawHud();
+      });
+    } catch (e) {
+      xrBtn.textContent = 'Immersive session refused';
+      console.error('WebXR session error:', e);
+    }
+  }
+  if (navigator.xr && navigator.xr.isSessionSupported) {
+    navigator.xr.isSessionSupported('immersive-vr').then(ok => {
+      if (ok) { xrBtn.style.display = 'block'; xrBtn.addEventListener('click', enterXR); }
+    }).catch(() => {});
+  }
+  renderer.xr.addEventListener('sessionstart', () => {
+    world.scale.setScalar(XR_SCALE);
+    baseSize = XR_SIZE;
+    perfMat.uniforms.uSize.value = XR_SIZE * 1.1;
+    if (!hud) hud = buildHud();
+    hud.visible = true;
+    drawHud();
+    xrTeleport(CAMS[1]); // open in Row F — the money seat
+    if (!xrPanelGroup) xrPanelGroup = buildXRPanel();
+    xrPanelGroup.visible = xrSlidersEnabled;
+    if (xrSlidersEnabled) drawXRPanel();
+    osc('/xr/session', 'start');
+  });
+  renderer.xr.addEventListener('sessionend', () => {
+    world.scale.setScalar(1);
+    baseSize = 0.22;
+    mat.uniforms.uSize.value = 0.22;
+    perfMat.uniforms.uSize.value = 0.24;
+    if (hud) hud.visible = false;
+    if (xrPanelGroup) xrPanelGroup.visible = false;
+    gripState.left = null; gripState.right = null;
+    dolly.position.set(0, 0, 0);
+    dolly.rotation.set(0, 0, 0);
+    osc('/xr/session', 'end');
+  });
+
+  /* ============================ SHAREABLE LINK ============================
+     Every setting that matters gets folded into the query string (?rows=15&
+     seats=20&...) and the address bar updates live via history.replaceState
+     as things change — no reload, no new history entries. Only non-default
+     values are included, so a lightly-customized view still gets a short
+     link and a heavily-customized one gets a longer, fully explicit one. */
+  function encodeStateToParams() {
+    const p = new URLSearchParams();
+    p.set('form', currentForm);
+    if (K !== 4) p.set('k', String(K));
+    if (currentForm === 'sightline') {
+      if (sightlineCfg.rows !== 13) p.set('rows', sightlineCfg.rows);
+      if (sightlineCfg.seats !== 22) p.set('seats', sightlineCfg.seats);
+      if (sightlineCfg.balconies !== 1) p.set('balc', sightlineCfg.balconies);
+      if (sightlineCfg.balcRows !== 5) p.set('balcrows', sightlineCfg.balcRows);
+      if (sightlineCfg.cVal !== 4) p.set('cval', sightlineCfg.cVal);
+      if (sightlineCfg.showHeads) p.set('heads', '1');
+      if (sightlineCfg.frontMode !== 'pit') p.set('front', sightlineCfg.frontMode);
+      if (lastSeatSpec) p.set('seat', lastSeatSpec.tier + '.' + lastSeatSpec.rowInTier + '.' + lastSeatSpec.seatN);
+      else if (lastCamKey !== 'booth') p.set('cam', lastCamKey);
+    } else if (lastCamKey !== 'booth') {
+      p.set('cam', lastCamKey);
+    }
+    if (perfOn) p.set('spot', '1');
+    if (twinkle) p.set('twinkle', '1');
+    if (gelIndex !== 0) p.set('gel', String(gelIndex));
+    if (Number(fInt.value) !== 82) p.set('int', fInt.value);
+    if (Number(fHouse.value) !== 22) p.set('house', fHouse.value);
+    if (!soundOn) p.set('sound', '0');
+    return p;
+  }
+  function syncUrl() {
+    const qs = encodeStateToParams().toString();
+    history.replaceState(null, '', location.pathname + (qs ? '?' + qs : ''));
+  }
+  let urlSyncTimer = null;
+  function syncUrlThrottled() { clearTimeout(urlSyncTimer); urlSyncTimer = setTimeout(syncUrl, 150); }
+
+  function loadStateFromUrl() {
+    const lp = new URLSearchParams(location.search);
+    const form = lp.get('form');
+    if (form === 'sightline') {
+      if (lp.has('rows')) sightlineCfg.rows = Math.max(4, Math.min(30, parseInt(lp.get('rows'), 10) || sightlineCfg.rows));
+      if (lp.has('seats')) sightlineCfg.seats = Math.max(6, Math.min(40, parseInt(lp.get('seats'), 10) || sightlineCfg.seats));
+      if (lp.has('balc')) sightlineCfg.balconies = Math.max(0, Math.min(3, parseInt(lp.get('balc'), 10)));
+      if (lp.has('balcrows')) sightlineCfg.balcRows = Math.max(2, Math.min(12, parseInt(lp.get('balcrows'), 10) || sightlineCfg.balcRows));
+      if (lp.has('cval')) sightlineCfg.cVal = Math.max(2, Math.min(8, parseFloat(lp.get('cval')) || sightlineCfg.cVal));
+      if (lp.get('heads') === '1') sightlineCfg.showHeads = true;
+      if (['pit', 'apron', 'close'].includes(lp.get('front'))) sightlineCfg.frontMode = lp.get('front');
+      openSightBay(true);
+      document.getElementById('sl-rows').value = sightlineCfg.rows;
+      document.getElementById('sl-seats').value = sightlineCfg.seats;
+      document.getElementById('sl-balc').value = sightlineCfg.balconies;
+      document.getElementById('sl-balcrows').value = sightlineCfg.balcRows;
+      document.getElementById('sl-c').value = sightlineCfg.cVal;
+      if (sightlineCfg.showHeads) { headsChip.textContent = 'ON'; headsChip.classList.add('on'); headsHint.style.display = 'block'; }
+      Object.entries(fomChips).forEach(([k, el2]) => el2.classList.toggle('on', k === sightlineCfg.frontMode));
+      syncSeatBounds();
+      const seatSpec = lp.get('seat');
+      if (seatSpec) {
+        const parts = seatSpec.split('.').map(x => parseInt(x, 10));
+        if (parts.length === 3 && parts.every(x => !isNaN(x))) {
+          document.getElementById('sl-tier').value = parts[0];
+          document.getElementById('sl-seatrow').value = parts[1];
+          document.getElementById('sl-seatnum').value = parts[2];
+          jumpToSeat(parts[0], parts[1], parts[2]);
+        }
+      } else {
+        const camObj = CAMS.find(c => c.key === lp.get('cam'));
+        if (camObj) goCamera(camObj, true);
+      }
+    } else if (form && FORMS[form]) {
+      setFormation(form, false); // smooth morph in from the initial scan, not an instant snap
+      const camObj = CAMS.find(c => c.key === lp.get('cam'));
+      if (camObj) goCamera(camObj, true);
+    } else {
+      return; // no recognizable 'form' param — nothing to restore, keep the defaults already applied
+    }
+    if (lp.get('spot') === '1') setPerformer(true);
+    if (lp.get('twinkle') === '1') setTwinkle(true);
+    if (lp.has('gel')) { const gi = parseInt(lp.get('gel'), 10); if (gi >= 0 && gi < GELS.length) pickGel(gi); }
+    if (lp.has('int')) fInt.value = Math.max(0, Math.min(100, parseFloat(lp.get('int')) || 82));
+    if (lp.has('house')) fHouse.value = Math.max(0, Math.min(100, parseFloat(lp.get('house')) || 22));
+    if (lp.get('sound') === '0') sndChip.click();
+    syncUrl(); // normalize back to clean, canonical param values
+  }
+
+  const copyLinkBtn = document.getElementById('copy-link');
+  copyLinkBtn.addEventListener('click', async () => {
+    syncUrl();
+    try { await navigator.clipboard.writeText(location.href); }
+    catch (e) { window.prompt('Copy this link:', location.href); }
+    copyLinkBtn.classList.add('copied');
+    copyLinkBtn.textContent = '✓';
+    setTimeout(() => { copyLinkBtn.classList.remove('copied'); copyLinkBtn.textContent = '🔗'; }, 1400);
+    audio(); beep(900, 0.05, 0.04, 'sine');
+  });
+
+  // Open on the survey, booth view
+  document.getElementById('ro-pts').textContent = N.toLocaleString('en-US');
+  goCamera(CAMS[0], true);
+  applyBoard();
+  loadStateFromUrl(); // if the URL encodes a specific view, this overrides the defaults just set above
+  renderer.setAnimationLoop(animate);
+  // Pregenerate the remaining formations during idle time so GO never hitches
+  const PREGEN = ['theater', 'headset', 'marquee', 'skyline', 'guitar', 'wave', 'globe', 'dominoes', 'monocle'];
+  let pgi = 0;
+  (function pregen() {
+    if (pgi >= PREGEN.length) return;
+    formData(PREGEN[pgi++]);
+    setTimeout(pregen, 250);
+  })();
+})();
+</script>
+</body>
+</html>

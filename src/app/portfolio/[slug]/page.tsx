@@ -55,6 +55,12 @@ function embedAllow(e: Embed): string {
   return 'autoplay';
 }
 
+function parsePressItem(item: string): { label: string; url: string } | string {
+  const mdLink = item.match(/^\[([^\]]+)\]\((https?:\/\/[^)]+)\)$/);
+  if (mdLink) return { label: mdLink[1], url: mdLink[2] };
+  return item;
+}
+
 export default async function ProjectPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
   const project = getProjectBySlug(slug);
@@ -297,13 +303,18 @@ export default async function ProjectPage({ params }: { params: Promise<{ slug: 
             <div className="p-6 rounded-xl border border-border bg-surface">
               <h3 className="text-sm font-bold uppercase tracking-wider text-pink mb-4">Press</h3>
               <div className="space-y-2">
-                {pressList.map((item, i) => (
-                  <p key={i} className="text-sm text-muted">
-                    {item.startsWith('http') ? (
-                      <a href={item} target="_blank" rel="noopener noreferrer" className="text-pink hover:underline break-all">{item}</a>
-                    ) : item}
-                  </p>
-                ))}
+                {pressList.map((item, i) => {
+                  const parsed = parsePressItem(item);
+                  return (
+                    <p key={i} className="text-sm text-muted">
+                      {typeof parsed === 'object' ? (
+                        <a href={parsed.url} target="_blank" rel="noopener noreferrer" className="text-pink hover:underline">{parsed.label}</a>
+                      ) : item.startsWith('http') ? (
+                        <a href={item} target="_blank" rel="noopener noreferrer" className="text-pink hover:underline break-all">{item}</a>
+                      ) : item}
+                    </p>
+                  );
+                })}
               </div>
             </div>
           )}
