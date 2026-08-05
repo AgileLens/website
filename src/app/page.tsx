@@ -62,7 +62,6 @@ const pillars = [
 ];
 
 const products = [
-  { group: 'Pre-construction', tag: 'green', name: 'Hyperreal Estate', slug: 'hyperreal-estate', description: 'Photoreal 3D architectural and design visualization. Raytraced with UE and optimized for high-end VR.', image: 'https://cdn.prod.website-files.com/68d9482320210cfdb85c1d57/68f7ab0c726658f5fdb8f437_FSLA-Boathouse.png' },
   { group: 'Pre-construction', tag: 'green', name: 'Blueprint Immersive', slug: 'blueprint-immersive', description: 'High-fidelity event venue configuration and previs software. Used by top architects and design professionals to optimize construction planning.', image: 'https://cdn.prod.website-files.com/68d9482320210cfdb85c1d57/68ef32e1a167946204a6770e_blueprint3.avif' },
   { group: 'Pre-construction', tag: 'green', name: 'Floor Tour', slug: 'floor-tour', description: 'Self-service, real-world scale floor plan visualization software. Walk your portfolio of designs and renders in VR with just a few clicks.', image: 'https://cdn.prod.website-files.com/68d9482320210cfdb85c1d57/68f7a976635f1d32bcc41c82_floorTour.avif' },
   { group: 'Entertainment', tag: 'pink', name: 'Holodeck Anywhere', slug: 'holodeck-anywhere', description: 'Multiuser colocated VR. Solutions are available for both ultra-high fidelity and standalone flexibility.', image: 'https://cdn.prod.website-files.com/68d9482320210cfdb85c1d57/68f7a77310538a13ec8f9d28_NYC-Holodeck_Cropped.png' },
@@ -133,9 +132,11 @@ function PinkQuote() {
 /* ── Scroll-Driven Hero Panels ── */
 function HeroPanels() {
   const containerRef = useRef<HTMLDivElement>(null);
-  const leftRef = useRef<HTMLDivElement>(null);
-  const middleRef = useRef<HTMLDivElement>(null);
-  const rightRef = useRef<HTMLDivElement>(null);
+  const leftBlockRef = useRef<HTMLDivElement>(null);
+  const leftMediaRef = useRef<HTMLDivElement>(null);
+  const middleMediaRef = useRef<HTMLDivElement>(null);
+  const rightBlockRef = useRef<HTMLDivElement>(null);
+  const rightMediaRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const container = containerRef.current;
@@ -157,32 +158,34 @@ function HeroPanels() {
       const expandT = Math.min(1, progress / 0.5); // 0->1 over first 50%
       const flyT = Math.max(0, Math.min(1, (progress - 0.5) / 0.1)); // 0->1 over 50-60%
 
-      const left = leftRef.current;
-      const middle = middleRef.current;
-      const right = rightRef.current;
-      if (!left || !middle || !right) return;
+      const leftBlock = leftBlockRef.current;
+      const leftMedia = leftMediaRef.current;
+      const middleMedia = middleMediaRef.current;
+      const rightBlock = rightBlockRef.current;
+      const rightMedia = rightMediaRef.current;
+      if (!leftBlock || !leftMedia || !middleMedia || !rightBlock || !rightMedia) return;
 
       // Center panel: width 30vw -> 90vw, height 50vh -> 90vh
       const centerW = 30 + expandT * 60; // 30 -> 90 vw
       const centerH = 50 + expandT * 40; // 50 -> 90 vh
-      middle.style.width = `${centerW}vw`;
-      middle.style.height = `${centerH}vh`;
+      middleMedia.style.width = `${centerW}vw`;
+      middleMedia.style.height = `${centerH}vh`;
 
       // Side panels: height 50vh -> 90vh, width stays 30vw
       const sideH = 50 + expandT * 40;
-      left.style.height = `${sideH}vh`;
-      right.style.height = `${sideH}vh`;
+      leftMedia.style.height = `${sideH}vh`;
+      rightMedia.style.height = `${sideH}vh`;
 
       // Side panels fly off: translate X and slight Y
       const leftX = flyT * -40; // 0 -> -40vw
       const rightX = flyT * 40; // 0 -> 40vw
       const sideY = flyT * -5; // 0 -> -5vh
-      left.style.transform = `translate(${leftX}vw, ${sideY}vh)`;
-      right.style.transform = `translate(${rightX}vw, ${sideY}vh)`;
+      leftBlock.style.transform = `translate(${leftX}vw, ${sideY}vh)`;
+      rightBlock.style.transform = `translate(${rightX}vw, ${sideY}vh)`;
 
       // Border radius shrinks as center expands
       const radius = 1.5 * (1 - expandT * 0.7);
-      middle.style.borderRadius = `${radius}rem`;
+      middleMedia.style.borderRadius = `${radius}rem`;
     };
 
     window.addEventListener('scroll', onScroll, { passive: true });
@@ -194,34 +197,49 @@ function HeroPanels() {
     <div ref={containerRef} className="hero-scroll-container">
       <div className="hero-scroll-sticky">
         {/* Left panel */}
-        <div ref={leftRef} className="hero-img-panel hero-img-left">
-          <img
-            src="https://cdn.prod.website-files.com/68d9482320210cfdb85c1d57/68f7a2f10aa3450ae58b3419_RoyalCaribbeanUser.jpg"
-            alt="Royal Caribbean VR activation"
-            className="w-full h-full object-cover"
-          />
+        <div ref={leftBlockRef} className="hero-img-block hero-img-left">
+          <div ref={leftMediaRef} className="hero-img-panel">
+            <img
+              src="https://cdn.prod.website-files.com/68d9482320210cfdb85c1d57/68f7a2f10aa3450ae58b3419_RoyalCaribbeanUser.jpg"
+              alt="Royal Caribbean VR activation"
+              className="w-full h-full object-cover"
+            />
+          </div>
+          <p className="hero-img-caption mt-3 text-center text-sm text-muted max-w-[90%]">
+            with Endorphin Partners for Royal Caribbean
+          </p>
         </div>
         {/* Center video */}
-        <div ref={middleRef} className="hero-img-panel hero-img-center">
-          <video
-            autoPlay
-            loop
-            muted
-            playsInline
-            poster="https://cdn.prod.website-files.com/68d9482320210cfdb85c1d57%2F68f7caf71105556d6bc665f4_AspenShortv2_2-poster-00001.jpg"
-            className="w-full h-full object-cover"
-          >
-            <source src="https://cdn.prod.website-files.com/68d9482320210cfdb85c1d57%2F68f7caf71105556d6bc665f4_AspenShortv2_2-transcode.mp4" type="video/mp4" />
-            <source src="https://cdn.prod.website-files.com/68d9482320210cfdb85c1d57%2F68f7caf71105556d6bc665f4_AspenShortv2_2-transcode.webm" type="video/webm" />
-          </video>
+        <div className="hero-img-block hero-img-center">
+          <div ref={middleMediaRef} className="hero-img-panel">
+            <video
+              autoPlay
+              loop
+              muted
+              playsInline
+              poster="https://cdn.prod.website-files.com/68d9482320210cfdb85c1d57%2F68f7caf71105556d6bc665f4_AspenShortv2_2-poster-00001.jpg"
+              className="w-full h-full object-cover"
+            >
+              <source src="https://cdn.prod.website-files.com/68d9482320210cfdb85c1d57%2F68f7caf71105556d6bc665f4_AspenShortv2_2-transcode.mp4" type="video/mp4" />
+              <source src="https://cdn.prod.website-files.com/68d9482320210cfdb85c1d57%2F68f7caf71105556d6bc665f4_AspenShortv2_2-transcode.webm" type="video/webm" />
+            </video>
+          </div>
+          <p className="hero-img-caption mt-3 text-center text-sm text-muted max-w-[90%]">
+            with DBOX and Pureblink for Four Seasons
+          </p>
         </div>
         {/* Right panel */}
-        <div ref={rightRef} className="hero-img-panel hero-img-right">
-          <img
-            src="https://cdn.prod.website-files.com/68d9482320210cfdb85c1d57/68f4c0ba5c9627c728ed3cf0_Rice-fromConceptToCompletion%20(2).avif"
-            alt="Rice University virtual theater"
-            className="w-full h-full object-cover"
-          />
+        <div ref={rightBlockRef} className="hero-img-block hero-img-right">
+          <div ref={rightMediaRef} className="hero-img-panel">
+            <img
+              src="https://cdn.prod.website-files.com/68d9482320210cfdb85c1d57/68f4c0ba5c9627c728ed3cf0_Rice-fromConceptToCompletion%20(2).avif"
+              alt="Rice University virtual theater"
+              className="w-full h-full object-cover"
+            />
+          </div>
+          <p className="hero-img-caption mt-3 text-center text-sm text-muted max-w-[90%]">
+            with Fisher Dachs Associates for Rice University
+          </p>
         </div>
       </div>
     </div>
