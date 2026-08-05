@@ -165,29 +165,32 @@ body {
   align-items: flex-start;
   margin-top: 5.5rem;
 }
-.hero-img-panel {
+.hero-img-block {
   position: absolute;
-  border-radius: 1.5rem;
-  overflow: hidden;
-  width: 30vw;
-  will-change: width, height, transform, border-radius;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  will-change: transform;
 }
-.hero-img-panel.hero-img-left {
+.hero-img-block.hero-img-left {
   z-index: 2;
   right: 58vw;
   margin-top: 5vh;
-  height: 50vh;
 }
-.hero-img-panel.hero-img-center {
+.hero-img-block.hero-img-center {
   z-index: 3;
-  width: 30vw;
-  height: 50vh;
 }
-.hero-img-panel.hero-img-right {
+.hero-img-block.hero-img-right {
   z-index: 1;
   left: 58vw;
   margin-top: 5vh;
+}
+.hero-img-panel {
+  border-radius: 1.5rem;
+  overflow: hidden;
+  width: 30vw;
   height: 50vh;
+  will-change: width, height, border-radius;
 }
 @media (max-width: 768px) {
   .hero-scroll-container {
@@ -203,14 +206,17 @@ body {
     gap: 1rem;
     padding: 2rem 1rem;
   }
-  .hero-img-panel {
+  .hero-img-block {
     position: relative !important;
     width: 90vw !important;
-    height: 50vw !important;
     right: auto !important;
     left: auto !important;
     margin-top: 0 !important;
     transform: none !important;
+  }
+  .hero-img-panel {
+    width: 100% !important;
+    height: 50vw !important;
   }
 }
 

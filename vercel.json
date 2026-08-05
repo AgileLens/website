@@ -1,0 +1,9 @@
+{
+  "redirects": [
+    {
+      "source": "/portfolio/ny-57th-street-holodeck-popup",
+      "destination": "/portfolio/four-seasons-lake-austin-nyc-vr-experience-pop-up",
+      "permanent": true
+    }
+  ]
+}

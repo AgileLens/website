@@ -631,8 +631,8 @@ https://www.businesswire.com/news/home/20230719281018/en/Infinite-Reality-and-Vo
     steamUrl: 'https://store.steampowered.com/app/3615440/La_Pasion_XR/',
   },
   {
-    slug: 'ny-57th-street-holodeck-popup',
-    name: 'NY 57th Street Holodeck Popup',
+    slug: 'four-seasons-lake-austin-nyc-vr-experience-pop-up',
+    name: 'Four Seasons Lake Austin NYC VR Experience Pop-up',
     status: 'Completed',
     featured: false,
     yearStarted: '2026',
@@ -652,8 +652,8 @@ https://www.businesswire.com/news/home/20230719281018/en/Infinite-Reality-and-Vo
     links: '',
     category1: 'Real Estate',
     category2: 'Architecture',
-    image: '/portfolio/ny-57th-street-holodeck-popup/01.jpg',
-    images: ['/portfolio/ny-57th-street-holodeck-popup/01.jpg'],
+    image: '/portfolio/four-seasons-lake-austin-nyc-vr-experience-pop-up/01.jpg',
+    images: ['/portfolio/four-seasons-lake-austin-nyc-vr-experience-pop-up/01.jpg'],
   },
   {
     slug: 'the-poly-awards-2026',
