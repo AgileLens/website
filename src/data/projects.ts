@@ -525,7 +525,7 @@ export const projects: Project[] = [
     category1: 'Real Estate',
     category2: '',
     image: '/portfolio/four-seasons-lake-austin/01.jpg',
-    images: ['/portfolio/four-seasons-lake-austin/01.jpg', '/portfolio/four-seasons-lake-austin/02.jpeg', '/portfolio/four-seasons-lake-austin/03.jpg', '/portfolio/four-seasons-lake-austin/04.jpg', '/portfolio/four-seasons-lake-austin/05.jpg', '/portfolio/four-seasons-lake-austin/06.jpg', '/portfolio/four-seasons-lake-austin/07.jpg', '/portfolio/four-seasons-lake-austin/08.jpg'],
+    images: ['/portfolio/four-seasons-lake-austin/01.jpg', '/portfolio/four-seasons-lake-austin/03.jpg', '/portfolio/four-seasons-lake-austin/04.jpg', '/portfolio/four-seasons-lake-austin/05.jpg', '/portfolio/four-seasons-lake-austin/06.jpg', '/portfolio/four-seasons-lake-austin/07.jpg', '/portfolio/four-seasons-lake-austin/08.jpg'],
   },
   {
     slug: 'dell-cybersecurity-vr-challenge',
