@@ -65,8 +65,7 @@ export const products: Product[] = [
       'Minimal configuration, fast turnaround',
       'Shareable experiences for client presentations',
     ],
-    image:
-      'https://cdn.prod.website-files.com/68d9482320210cfdb85c1d57/68f7a976635f1d32bcc41c82_floorTour.avif',
+    image: '/products/floor-tour.png',
   },
   {
     slug: 'holodeck-anywhere',

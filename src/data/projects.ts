@@ -904,8 +904,8 @@ https://www.broadwayworld.com/off-off-broadway/article/THE-HARMNF-LiveVR-Hybrid-
     links: '',
     category1: 'Real Estate',
     category2: 'Architecture',
-    image: '/portfolio/floor-tour/01.jpg',
-    images: ['/portfolio/floor-tour/01.jpg', '/portfolio/floor-tour/02.jpg', '/portfolio/floor-tour/03.jpg', '/portfolio/floor-tour/04.jpg'],
+    image: '/portfolio/floor-tour/05.jpg',
+    images: ['/portfolio/floor-tour/05.jpg', '/portfolio/floor-tour/01.jpg', '/portfolio/floor-tour/02.jpg', '/portfolio/floor-tour/03.jpg', '/portfolio/floor-tour/04.jpg'],
   },
   {
     slug: 'blueprint-immersive',
