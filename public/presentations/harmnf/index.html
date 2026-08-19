@@ -662,26 +662,6 @@ body.fx-fs-active #fx-fs-hint{opacity:1}
 </style>
 </head>
 <body>
-<div id="pw-gate" style="position:fixed;inset:0;z-index:9999;background:#060810;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:16px;font-family:'Space Grotesk',system-ui,sans-serif;color:#f0f4ff">
-  <div style="font-size:.72rem;letter-spacing:.2em;text-transform:uppercase;color:rgba(240,244,255,.4)">Agile Lens &middot; Internal</div>
-  <input id="pw-input" type="password" placeholder="Password" autocomplete="off" style="background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.15);border-radius:10px;padding:12px 18px;color:#f0f4ff;font-size:1rem;width:240px;text-align:center;outline:none">
-  <button id="pw-submit" style="background:#00d4ff;color:#060810;border:none;border-radius:10px;padding:10px 28px;font-weight:700;cursor:pointer;font-size:.9rem">Enter</button>
-  <div id="pw-err" style="color:#f43f5e;font-size:.8rem;opacity:0;min-height:1em">Wrong password.</div>
-</div>
-<script>
-(function(){
-  var PW='harmnf2027';
-  var gate=document.getElementById('pw-gate'),input=document.getElementById('pw-input'),btn=document.getElementById('pw-submit'),err=document.getElementById('pw-err');
-  if(sessionStorage.getItem('harmnf-pw-ok')==='1'){gate.style.display='none';}
-  function tryPw(){
-    if(input.value.trim().toLowerCase()===PW.toLowerCase()){sessionStorage.setItem('harmnf-pw-ok','1');gate.style.display='none';}
-    else{err.style.opacity='1';input.value='';input.focus();}
-  }
-  btn.addEventListener('click',tryPw);
-  input.addEventListener('keydown',function(e){if(e.key==='Enter')tryPw();});
-  setTimeout(function(){input.focus();},150);
-})();
-</script>
 <div class="bg"><div class="bg-gradient"></div><canvas id="stars"></canvas><div class="bg-overlay bg-overlay--aurora"><div class="blob b1"></div><div class="blob b2"></div><div class="blob b3"></div></div><div class="bg-overlay bg-overlay--ember"><div class="blob b1"></div><div class="blob b2"></div><div class="blob b3"></div></div><div class="bg-overlay bg-overlay--ghost"><div class="blob b1"></div><div class="blob b2"></div><div class="blob b3"></div><div class="blob b4"></div></div><div class="bg-overlay bg-overlay--nebula"><div class="swirl"></div><div class="blob b1"></div><div class="blob b2"></div><div class="blob b3"></div></div><div class="bg-overlay bg-overlay--extreme"><div class="blob b1"></div><div class="blob b2"></div><div class="blob b3"></div><div class="blob b4"></div></div></div>
 <div id="deck"></div>
 <div id="counter"></div>
