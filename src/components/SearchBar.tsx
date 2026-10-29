@@ -45,6 +45,7 @@ const products = [
 const pages = [
   { title: 'Home', href: '/' },
   { title: 'Portfolio', href: '/portfolio' },
+  { title: 'Vision Pro', href: '/vision-pro' },
   { title: 'Unreal NYC', href: '/unrealnyc' },
   { title: 'Team', href: '/team' },
   { title: 'Contact', href: '/contact' },

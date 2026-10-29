@@ -360,6 +360,24 @@ export default function HomePage() {
         </div>
       </Section>
 
+      <Section className="max-w-[1400px] mx-auto px-6 md:px-12 pb-8">
+        <Link href="/vision-pro" className="group block border border-border rounded-2xl bg-surface p-8 md:p-12 hover:border-pink/60 transition-colors">
+          <div className="grid md:grid-cols-[1.2fr_1fr] gap-8 md:gap-16 items-center">
+            <div>
+              <p className="text-xs font-bold uppercase tracking-[0.2em] text-pink mb-5">Unreal Engine × Apple Vision Pro</p>
+              <h2 className="text-3xl md:text-4xl font-bold tracking-tight mb-4">Your Unreal world.<br />A new point of view.</h2>
+              <span className="inline-flex items-center gap-4 text-sm font-semibold mt-4">Explore our approach <span aria-hidden="true" className="group-hover:translate-x-1 transition-transform">↗</span></span>
+            </div>
+            <div>
+              <p className="text-muted leading-relaxed mb-6">From adapting an existing experience to engine development and native RealityKit presentation, we choose the path around your project.</p>
+              <div className="flex flex-wrap gap-2 text-xs text-text/80">
+                {['01 / Porting', '02 / Engine', '03 / UnRealityKit'].map((label) => <span key={label} className="border border-border rounded-full px-3 py-2">{label}</span>)}
+              </div>
+            </div>
+          </div>
+        </Link>
+      </Section>
+
       {/* ── Core Products (sticky stacking cards) ── */}
       <Section id="products" className="max-w-[1100px] mx-auto px-6 md:px-12 pt-32 pb-24">
         <div className="mb-16">

@@ -223,6 +223,15 @@ When anyone says "add a portfolio page for [project name]":
 - **Static export** — `output: 'export'` is required in next.config.ts. Don't remove it.
 - **Homepage images from Webflow CDN** — will break when Webflow subscription ends. Self-host migration is TODO.
 
+## Vision Pro preview (October 2026)
+
+`/vision-pro` and the homepage entry use the current main-branch design and static
+export. Keep the page in the navigation, footer and SearchBar page index together.
+UnRealityKit attribution belongs to Alex Coulombe Presents. Do not restore the
+old dev-branch exclusivity, endorsement, private-beta availability or native
+feature-parity claims without new evidence. Alex reviews copy/branding before
+a production merge. Do not merge the unrelated dev branch to publish this page.
+
 ## Owner
 
 Alex Coulombe — Founder/CEO of Agile Lens. Prefers direct, technically precise communication. No hand-holding.
