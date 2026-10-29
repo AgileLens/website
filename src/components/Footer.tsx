@@ -46,7 +46,7 @@ export default function Footer() {
         <div className="grid md:grid-cols-3 gap-12">
           <div>
             <Link href="/" className="flex items-center gap-2 mb-4">
-              <img src="/logos/Icon.svg" alt="Agile Lens" className="h-8 w-8" />
+              <img src="/logos/Icon.svg" alt="" className="h-8 w-8" />
               <span className="text-lg font-bold">Agile Lens</span>
             </Link>
             <p className="text-sm text-muted leading-relaxed mb-6">
