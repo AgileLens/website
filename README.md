@@ -56,6 +56,7 @@ portfolio_data.csv            # Source data for portfolio projects
 | `/portfolio/[slug]` | Individual project page with image carousel, video, credits, and press |
 | `/team` | Team bios and headshots |
 | `/contact` | Contact information and inquiry form |
+| `/vision-pro` | Three development paths for Unreal Engine on Apple Vision Pro, with project-fit guidance and an inquiry link |
 
 ---
 
@@ -90,7 +91,14 @@ Because `output: 'export'` is set in `next.config.ts`, the build produces a full
 2. **Navigate to `/portfolio`** — real client projects organized by category (Architecture, Entertainment, Marketing, R&D) with filterable tabs.
 3. **Open `src/` and edit the hero headline copy in the home page component** — Next.js HMR reflects the change instantly in the browser without a full reload.
 4. **Run `npm run build`** — Next.js produces a fully static export in `/out`; open `out/index.html` directly in a browser to verify it works with no server.
-5. **Push to `main`** — Vercel auto-deploys; check [agilelens.com](https://agilelens.com) within ~90 seconds to see the live update.
+5. **Open `/vision-pro` on desktop and mobile** — explore the three paths, follow the in-page links, and check that the mobile menu links to the page. Feature branches are for preview; merging to `main` publishes to production.
+
+### Vision Pro page review
+
+The page is prepared on current `main`, independently of the older `dev` branch.
+Its copy keeps UnRealityKit attribution with Alex Coulombe Presents and avoids
+unverified exclusivity, beta availability, platform-feature parity, and third-party
+endorsement claims. Alex's copy/branding review remains the production gate.
 
 ## Deployment
 
